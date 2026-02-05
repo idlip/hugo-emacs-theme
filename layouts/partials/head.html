@@ -52,8 +52,9 @@
 {{- $echoArea := resources.Get "css/echo-area.css" -}}
 {{- $syntax := resources.Get "css/syntax.css" -}}
 {{- $mobile := resources.Get "css/mobile.css" -}}
+{{- $custom := resources.Get "css/custom.css" -}}
 
-{{- $allCSS := slice $themes $main $menuBar $windows $modeline $echoArea $syntax $mobile | resources.Concat "css/bundle.css" | minify | fingerprint -}}
+{{- $allCSS := slice $themes $main $menuBar $windows $modeline $echoArea $syntax $mobile $custom | resources.Concat "css/bundle.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $allCSS.RelPermalink }}" integrity="{{ $allCSS.Data.Integrity }}">
 
 {{- /* Preload fonts */ -}}

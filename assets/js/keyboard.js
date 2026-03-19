@@ -764,8 +764,10 @@
         break;
       case '+':
       case '=':
-        window.adjustFontSize?.(1);
-        e.preventDefault();
+        if (!ctrl && !meta) {
+          window.adjustFontSize?.(1);
+          e.preventDefault();
+        }
         break;
       case '-':
         if (!ctrl && !meta) {

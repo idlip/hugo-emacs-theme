@@ -428,7 +428,6 @@
 }
 
 .year-label {
-  font-size: 0.8rem;
   font-weight: bold;
   color: var(--magenta);
   letter-spacing: 0.05em;

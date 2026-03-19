@@ -232,6 +232,28 @@
   margin: 0 auto;
 }
 
+.breadcrumbs {
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  margin-bottom: 1.5em;
+  opacity: 0.75;
+}
+.breadcrumbs a {
+  color: var(--fg-dim);
+  text-decoration: none;
+}
+.breadcrumbs a:hover {
+  color: var(--link);
+}
+.breadcrumb-sep {
+  margin: 0 0.3em;
+  opacity: 0.5;
+}
+.breadcrumb-current {
+  color: var(--fg-main);
+  opacity: 0.6;
+}
+
 .post-header {
   margin-bottom: 2em;
   padding-bottom: 1em;

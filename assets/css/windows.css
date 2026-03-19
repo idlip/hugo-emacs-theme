@@ -621,3 +621,109 @@
   font-size: 0.9em;
   color: var(--fg-dim);
 }
+
+/* ============================================
+   ORG-MODE: CHECKBOXES & TODO KEYWORDS
+   ============================================ */
+li.checked,
+li.unchecked,
+li.unchecked {
+  list-style: none;
+  margin-left: -1.2em;
+}
+
+li.checked::before {
+  content: " ";
+  color: var(--green);
+}
+
+li.unchecked::before {
+  content: " ";
+  color: var(--fg-dim);
+}
+
+li.unchecked::before {
+  content: "󱋭 ";
+  color: var(--yellow);
+}
+
+.todo {
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 0.1em 0.45em;
+  margin-right: 0.5em;
+  vertical-align: middle;
+  letter-spacing: 0.05em;
+  border-radius: 2px;
+}
+
+.todo.status-todo {
+  background-color: var(--yellow);
+  color: var(--bg-main);
+}
+
+.todo.status-done {
+  background-color: var(--green);
+  color: var(--bg-main);
+}
+
+/* ============================================
+   SIDENOTES
+   ============================================ */
+.sidenote {
+  float: right;
+  clear: right;
+  width: 11em;
+  margin-right: -13em;
+  margin-top: 0.1em;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--fg-dim);
+  border-left: 2px solid var(--border-dim);
+  padding-left: 0.6em;
+}
+
+.sidenote p { margin: 0; }
+
+@media (max-width: 900px) {
+  .sidenote {
+    float: none;
+    width: auto;
+    margin-right: 0;
+    margin: 0.75em 0;
+    border-left: none;
+    border-top: 1px solid var(--border-dim);
+    padding: 0.4em 0 0;
+  }
+}
+
+/* ============================================
+   CALLOUT BOXES
+   ============================================ */
+.callout {
+  border-left: 3px solid var(--border);
+  padding: 0.5em 1em;
+  margin: 1em 0;
+  background-color: var(--bg-dim);
+  font-size: 0.9rem;
+}
+
+.callout::before {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.3em;
+}
+
+.callout p:last-child { margin-bottom: 0; }
+
+.callout-note { border-left-color: var(--blue); }
+.callout-note::before { content: "Note"; color: var(--blue); }
+
+.callout-tip  { border-left-color: var(--green); }
+.callout-tip::before  { content: "Tip";  color: var(--green); }
+
+.callout-warn { border-left-color: var(--yellow); }
+.callout-warn::before { content: "Warning"; color: var(--yellow); }

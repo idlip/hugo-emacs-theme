@@ -51,6 +51,8 @@
         {{ .Content }}
       </div>
       
+      {{- if not .Params.no_comment }}{{ partial "comment.html" . }}{{ end -}}
+
       {{- /* Post navigation */ -}}
       <nav class="post-navigation" style="margin-top: 3em; padding-top: 1em; border-top: 1px solid var(--border-dim);">
         <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1em;">

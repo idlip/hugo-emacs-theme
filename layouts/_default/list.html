@@ -1,124 +1,180 @@
 {{ define "main" }}
-{{- /* List Page - Full-screen buffer view */ -}}
+{{- $allPages := .RegularPages.ByDate.Reverse -}}
+{{- $grouped  := $allPages.GroupByDate "2006" -}}
 
-{{- /* Buffer: Article List (Dired-style) */ -}}
-<section class="buffer buffer-list active" 
-         id="buffer-list" 
-         role="region" 
+<section class="buffer buffer-list active"
+         id="buffer-list"
+         role="region"
          aria-label="{{ .Title }} list"
          tabindex="0">
   <div class="buffer-body">
+    <div class="list-content">
+
     {{- with .Content }}
-    <div class="list-header" style="padding: 0.75em; border-bottom: 1px solid var(--border-dim);">
-      {{ . }}
+    <div class="list-header">{{ . }}</div>
+    {{- end }}
+
+    {{- /* Term header — shown on /tags/foo/ pages */ -}}
+    {{- if eq .Kind "term" }}
+    <div class="term-header">
+      <span class="term-tag-name">#{{ .Title }}</span>
+      <span class="article-reading-time">&#x2014; {{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</span>
+      <a href="{{ "/tags/" | absLangURL }}" class="term-back">&#x2190; all tags</a>
     </div>
     {{- end }}
-    
-    <ul class="article-list" id="article-list" role="listbox" aria-label="{{ .Title }}">
-      {{- $pages := .Pages -}}
-      {{- if .IsHome -}}
-        {{- $pages = where .Site.RegularPages "Section" "post" -}}
-      {{- end -}}
-      {{- range $index, $page := $pages.ByDate.Reverse -}}
-      <li class="article-item{{ if eq $index 0 }} selected{{ end }}" 
-          role="option"
-          aria-selected="{{ if eq $index 0 }}true{{ else }}false{{ end }}"
-          data-index="{{ $index }}"
-          data-url="{{ $page.RelPermalink }}"
-          data-title="{{ $page.Title }}"
-          data-date="{{ $page.Date.Format "2006-01-02" }}"
-          data-reading-time="{{ $page.ReadingTime }}"
-          data-word-count="{{ $page.WordCount }}">
-        <a href="{{ $page.RelPermalink }}" class="article-link">
-          <span class="article-marker" aria-hidden="true">{{ if eq $index 0 }}>{{ else }} {{ end }}</span>
+
+    {{- /* Tag cloud — shown on section listing pages like /posts/ */ -}}
+    {{- if .IsSection }}
+    <div class="tag-cloud" id="tag-cloud">
+      {{- range .Site.Taxonomies.tags.ByCount }}
+      <button class="tag-cloud-btn" data-tag="{{ .Page.Title | lower }}" type="button">
+        #{{ .Page.Title }}<span class="tag-cloud-count">{{ .Count }}</span>
+      </button>
+      {{- end }}
+    </div>
+    {{- end }}
+
+    <div class="list-search">
+      <span class="list-search-prompt">Search:</span>
+      <input type="text"
+             id="post-search"
+             class="list-search-input"
+             placeholder="search… #emacs  (/ to focus, Esc to clear)"
+             autocomplete="off" autocapitalize="off" spellcheck="false">
+      <span id="search-count" class="list-search-count"></span>
+    </div>
+
+    <ul class="article-list" id="article-list" role="list">
+      {{- $idx := 0 -}}
+      {{- range $grouped }}
+      <li class="year-divider" role="presentation" aria-hidden="true"
+          data-year-sep="{{ .Key }}">
+        <span class="year-label">{{ .Key }}</span>
+      </li>
+      {{- range .Pages }}
+      <li class="article-item"
+          data-index="{{ $idx }}"
+          data-year="{{ .Date.Format "2006" }}"
+          data-url="{{ .RelPermalink }}"
+          data-title="{{ .Title | lower }}"
+          data-tags="{{ range .Params.tags }}{{ . | lower }} {{ end }}">
+        <a href="{{ .RelPermalink }}" class="article-link">
           <span class="article-meta">
-            <span class="article-reading-time" title="Reading time">{{ $page.ReadingTime }}min</span>
-            <span class="article-word-count" title="Word count">{{ $page.WordCount | lang.FormatNumber 0 }}</span>
-            <span class="article-date">{{ $page.Date.Format "2006-01-02" }}</span>
+            <span class="article-reading-time">
+              <span class="nf nf-sm" aria-hidden="true"> </span>{{ .ReadingTime }}m
+            </span>
+            <span class="article-date">
+              <span class="nf nf-sm" aria-hidden="true"> </span>
+              {{- /* Date option 1 – "02 Jan"       e.g. 04 Dec  */ -}}
+              {{ .Date.Format "02 Jan" }}
+              {{- /* Date option 2 – "01-02-2006"   e.g. 12-04-2023
+              {{ .Date.Format "01-02-2006" }} */ -}}
+            </span>
           </span>
-          <span class="article-title">{{ $page.Title }}</span>
-          {{- with $page.Params.tags }}
-          <span class="article-tags">
-            {{- range first 2 . }}#{{ . }} {{ end -}}
-          </span>
-          {{- end }}
+          {{- partial "post-icon.html" . -}}
+          <span class="article-title">{{ .Title }}</span>
         </a>
+        {{- /* Tags as sibling links — valid HTML, no nested <a> */ -}}
+        {{- with .Params.tags }}
+        <span class="post-tags">
+          {{- range first 3 . -}}
+          <a href="{{ (urlize (printf "tags/%s/" .)) | absLangURL }}"
+             class="post-tag">{{ . }}</a>
+          {{- end -}}
+        </span>
+        {{- end }}
       </li>
+      {{- $idx = add $idx 1 -}}
+      {{- end }}
       {{- else }}
-      <li class="article-item" style="color: var(--fg-dim); padding: 1em;">
-        No articles found.
-      </li>
+      <li class="article-item no-articles">No articles found.</li>
       {{- end }}
     </ul>
-    
-    {{- /* Pagination */ -}}
-    {{- $paginator := .Paginator -}}
-    {{- if gt $paginator.TotalPages 1 }}
-    <nav class="pagination" style="padding: 0.75em; border-top: 1px solid var(--border-dim);">
-      {{- if $paginator.HasPrev }}
-      <a href="{{ $paginator.Prev.URL }}" style="margin-right: 1em;">&larr; Newer</a>
-      {{- end }}
-      <span style="color: var(--fg-dim);">Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}</span>
-      {{- if $paginator.HasNext }}
-      <a href="{{ $paginator.Next.URL }}" style="margin-left: 1em;">Older &rarr;</a>
-      {{- end }}
-    </nav>
-    {{- end }}
+
+    <footer class="list-footer">{{ partial "footer" . }}</footer>
+    </div>{{/* .list-content */}}
   </div>
-  
-  {{ partial "modeline.html" (dict 
-    "buffer" (printf "*%s*" (.Title | default "list" | lower))
-    "mode" "Dired"
+
+  {{ partial "modeline.html" (dict
+    "buffer"   (printf "*%s*" (.Title | default "list" | lower))
+    "mode"     "Dired"
     "readonly" true
-    "keyhint" "<kbd>n</kbd>/<kbd>p</kbd> nav  <kbd>RET</kbd> open"
+    "keyhint"  "<kbd>n</kbd>/<kbd>p</kbd> nav  <kbd>RET</kbd> open  <kbd>/</kbd> search"
   ) }}
 </section>
 
-{{- /* Buffer: Article content (shown when article is opened) */ -}}
-<section class="buffer buffer-content" 
-         id="buffer-content" 
-         role="region" 
-         aria-label="Article content"
-         tabindex="0">
-  <div class="buffer-body" id="content-body">
-    <article class="post-content" id="article-content">
-    </article>
-  </div>
-  
-  {{ partial "modeline.html" (dict 
-    "buffer" "*article*" 
-    "mode" "Org"
-    "readonly" true
-    "keyhint" "<kbd>n</kbd>/<kbd>p</kbd> articles  <kbd>q</kbd> back"
-  ) }}
-</section>
+<script>
+(function () {
+  'use strict';
+  var inp   = document.getElementById('post-search');
+  var count = document.getElementById('search-count');
+  if (!inp) return;
 
-{{- /* Hidden container with all page content for JS to use */ -}}
-<div id="posts-data" style="display:none;">
-  {{- $pages := .Pages -}}
-  {{- if .IsHome -}}
-    {{- $pages = where .Site.RegularPages "Section" "post" -}}
-  {{- end -}}
-  {{- range $index, $page := $pages.ByDate.Reverse -}}
-  <template data-post-index="{{ $index }}" data-post-url="{{ $page.RelPermalink }}">
-    <div class="post-header">
-      <h1 class="post-title">{{ $page.Title }}</h1>
-      <div class="post-meta">
-        <span class="post-date">{{ $page.Date.Format "2006-01-02" }}</span>
-        <span class="post-reading-time">{{ $page.ReadingTime }} min read ({{ $page.WordCount }} words)</span>
-        {{- with $page.Params.tags }}
-        <div class="post-tags">
-          {{- range . }}
-          <a href="{{ (urlize (printf "tags/%s/" .)) | absLangURL }}" class="post-tag">{{ . }}</a>
-          {{- end }}
-        </div>
-        {{- end }}
-      </div>
-    </div>
-    <div class="post-body">
-      {{ $page.Content }}
-    </div>
-  </template>
-  {{- end }}
-</div>
+  function run(raw) {
+    var q   = raw.toLowerCase().trim();
+    var tag = q.charAt(0) === '#' ? q.slice(1) : null;
+    var n   = 0;
+
+    document.querySelectorAll('#article-list .article-item[data-title]').forEach(function (el) {
+      var ok;
+      if (!q) {
+        ok = true;
+      } else if (tag !== null) {
+        ok = tag.length > 0 && (el.dataset.tags || '').indexOf(tag) !== -1;
+      } else {
+        ok = (el.dataset.title || '').indexOf(q) !== -1
+          || (el.dataset.tags  || '').indexOf(q) !== -1;
+      }
+      el.style.display = ok ? '' : 'none';
+      if (ok) n++;
+    });
+
+    document.querySelectorAll('#article-list .year-divider[data-year-sep]').forEach(function (d) {
+      var sel = '#article-list .article-item[data-year="'
+        + d.dataset.yearSep + '"]:not([style*="none"])';
+      d.style.display = document.querySelector(sel) ? '' : 'none';
+    });
+
+    count.textContent = q ? (n + ' match' + (n !== 1 ? 'es' : '')) : '';
+  }
+
+  inp.addEventListener('input', function () { run(this.value); });
+
+  // Tag cloud button toggle
+  document.querySelectorAll('.tag-cloud-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var tag = '#' + this.dataset.tag;
+      var active = this.classList.contains('active');
+      document.querySelectorAll('.tag-cloud-btn').forEach(function (b) {
+        b.classList.remove('active');
+      });
+      if (active) {
+        inp.value = '';
+        run('');
+      } else {
+        this.classList.add('active');
+        inp.value = tag;
+        run(tag);
+      }
+      inp.focus();
+    });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === '/'
+        && document.activeElement !== inp
+        && document.activeElement.tagName !== 'INPUT'
+        && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      inp.focus();
+      inp.select();
+    }
+    if (e.key === 'Escape' && document.activeElement === inp) {
+      inp.value = '';
+      run('');
+      inp.blur();
+    }
+  });
+}());
+</script>
 {{ end }}

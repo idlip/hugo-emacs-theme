@@ -104,75 +104,7 @@
     "buffer"   (printf "*%s*" (.Title | default "posts" | lower))
     "mode"     "Dired"
     "readonly" true
-    "keyhint"  "<kbd>n</kbd>/<kbd>p</kbd> nav  <kbd>RET</kbd> open  <kbd>/</kbd> search"
-  ) }}
-</section>
-
-{{- /* Embedded post content for inline dual-buffer loading */ -}}
-<div id="posts-data" hidden>
-  {{- $idx := 0 -}}
-  {{- range $grouped }}
-  {{- range .Pages }}
-  <template data-post-index="{{ $idx }}">
-    <article class="post-content">
-      <nav class="breadcrumbs" aria-label="breadcrumb">
-        <a href="{{ "/" | relLangURL }}">~</a>
-        {{- range .Ancestors.Reverse }}
-        {{- if not .IsHome }}
-        <span class="breadcrumb-sep">/</span>
-        <a href="{{ .RelPermalink }}">{{ .Title | lower }}</a>
-        {{- end }}
-        {{- end }}
-        <span class="breadcrumb-sep">/</span>
-        <span class="breadcrumb-current">{{ .Title | truncate 40 }}</span>
-      </nav>
-      <div class="post-header">
-        <h1 class="post-title">{{ .Title }}</h1>
-        <div class="post-meta">
-          <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
-          <span class="post-reading-time">{{ .ReadingTime }} min read ({{ .WordCount }} words)</span>
-          {{- with .Params.tags }}
-          <div class="post-tags">
-            {{- range . }}<a href="{{ (urlize (printf "tags/%s/" .)) | absLangURL }}" class="post-tag">{{ . }}</a>{{ end -}}
-          </div>
-          {{- end }}
-        </div>
-      </div>
-      <div class="post-body">{{ .Content }}</div>
-      {{- if not .Params.no_comment }}{{ partial "comment.html" . }}{{ end -}}
-      <nav class="post-navigation" style="margin-top: 3em; padding-top: 1em; border-top: 1px solid var(--border-dim);">
-        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1em;">
-          {{- with .PrevInSection }}
-          <a href="{{ .RelPermalink }}" style="color: var(--link);">&larr; {{ .Title | truncate 40 }}</a>
-          {{- end }}
-          <span style="flex: 1;"></span>
-          {{- with .NextInSection }}
-          <a href="{{ .RelPermalink }}" style="color: var(--link);">{{ .Title | truncate 40 }} &rarr;</a>
-          {{- end }}
-        </div>
-      </nav>
-    </article>
-    <footer>{{ partial "footer" . }}</footer>
-  </template>
-  {{- $idx = add $idx 1 -}}
-  {{- end }}
-  {{- end }}
-</div>
-
-{{- /* Content buffer — hidden until an article is opened */ -}}
-<section class="buffer buffer-content"
-         id="buffer-content"
-         role="region"
-         aria-label="Article content"
-         tabindex="0">
-  <div class="buffer-body" id="content-body">
-    <div id="article-content"></div>
-  </div>
-  {{ partial "modeline.html" (dict
-    "buffer"   "*article*"
-    "mode"     "Org"
-    "readonly" true
-    "keyhint"  "<kbd>q</kbd> back  <kbd>n</kbd>/<kbd>p</kbd> next/prev"
+    "keyhint"  "<kbd>n</kbd>/<kbd>p</kbd> nav  <kbd>RET</kbd> open  <kbd>/</kbd> search  <kbd>?</kbd> help"
   ) }}
 </section>
 

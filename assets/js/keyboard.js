@@ -1,572 +1,116 @@
 /**
  * Keyboard Navigation for Emacs Blog Theme
- * Full-screen buffer switching with split view support
  */
 
-(function() {
+(function () {
   'use strict';
 
-  // State
   let selectedIndex = 0;
-  let focusedBuffer = 'list'; // 'list' or 'content'
-  let splitMode = null; // null, 'horizontal', or 'vertical'
   let keySequence = '';
   let sequenceTimeout = null;
-  let isScrollingProgrammatically = false; // Flag to prevent scroll handler during keyboard nav
-  
-  // Store the base URL (list page) for history navigation
-  const baseUrl = window.location.pathname;
-  const baseTitle = document.title;
+  let isScrollingProgrammatically = false;
 
-  // DOM elements
-  const bufferContainer = document.getElementById('buffer-container');
+  // DOM
   const articleList = document.getElementById('article-list');
-  const bufferList = document.getElementById('buffer-list');
-  const bufferContent = document.getElementById('buffer-content');
-  const contentBody = document.getElementById('content-body');
-  const articleContent = document.getElementById('article-content');
-  const postsData = document.getElementById('posts-data');
+  const bufferList  = document.getElementById('buffer-list');
   const echoMessage = document.getElementById('echo-message');
   const helpOverlay = document.getElementById('help-overlay');
 
-  /**
-   * Show message in echo area
-   */
-  function showMessage(msg, type = 'info') {
-    if (echoMessage) {
-      echoMessage.textContent = msg;
-      echoMessage.className = 'echo-message ' + type;
-      
-      // Clear after 3 seconds
-      setTimeout(() => {
-        updateEchoHint();
-        echoMessage.className = 'echo-message';
-      }, 3000);
-    }
+  // Are we on a single post page (no article list)?
+  const isPostPage = !articleList;
+
+  // Scroll target on post pages
+  const contentBody = document.getElementById('content-body');
+
+  // ── Echo area ──────────────────────────────────────────────────────────────
+
+  function showMessage(msg) {
+    if (!echoMessage) return;
+    echoMessage.textContent = msg;
+    setTimeout(updateEchoHint, 3000);
   }
 
-  /**
-   * Update echo area hint based on current state
-   */
   function updateEchoHint() {
     if (!echoMessage) return;
-    
-    if (splitMode) {
-      echoMessage.textContent = 'C-x o switch window, C-x 0 close window, ? for help';
-    } else if (focusedBuffer === 'list') {
-      echoMessage.textContent = 'n/p to navigate, RET to open, C-x 3 split, ? for help';
-    } else {
-      echoMessage.textContent = 'n/p for next/prev article, q to go back, ? for help';
-    }
+    echoMessage.textContent = isPostPage
+      ? 'q back  SPC scroll  ? help'
+      : 'n/p navigate  RET open  / search  ? help';
   }
 
-  /**
-   * Get all article items
-   */
+  // ── List helpers ───────────────────────────────────────────────────────────
+
   function getArticleItems() {
     return articleList ? Array.from(articleList.querySelectorAll('.article-item')) : [];
   }
 
-  /**
-   * Update selection in the article list
-   * @param {number} newIndex - The new index to select
-   * @param {boolean} scroll - Whether to scroll the item into view (default: true)
-   */
-  function updateSelection(newIndex, scroll = true) {
+  function updateSelection(newIndex, scroll) {
+    scroll = scroll !== false;
     const items = getArticleItems();
-    if (items.length === 0) return;
+    if (!items.length) return;
 
-    // Clamp index
     newIndex = Math.max(0, Math.min(newIndex, items.length - 1));
-    
-    // Skip if already selected
-    if (newIndex === selectedIndex && items[selectedIndex]?.classList.contains('selected')) {
-      return;
-    }
-    
-    // Remove old selection
-    items.forEach((item, i) => {
+
+    items.forEach(function (item) {
       item.classList.remove('selected');
       item.setAttribute('aria-selected', 'false');
-      const marker = item.querySelector('.article-marker');
-      if (marker) marker.textContent = ' ';
+      var m = item.querySelector('.article-marker');
+      if (m) m.textContent = ' ';
     });
 
-    // Add new selection
     selectedIndex = newIndex;
-    const selectedItem = items[selectedIndex];
-    selectedItem.classList.add('selected');
-    selectedItem.setAttribute('aria-selected', 'true');
-    const marker = selectedItem.querySelector('.article-marker');
+    var sel = items[selectedIndex];
+    sel.classList.add('selected');
+    sel.setAttribute('aria-selected', 'true');
+    var marker = sel.querySelector('.article-marker');
     if (marker) marker.textContent = '>';
 
-    // Scroll into view (with flag to prevent scroll handler from fighting)
     if (scroll) {
       isScrollingProgrammatically = true;
-      selectedItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      // Reset flag after scroll animation completes
-      setTimeout(() => { isScrollingProgrammatically = false; }, 150);
+      sel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      setTimeout(function () { isScrollingProgrammatically = false; }, 150);
     }
 
-    // Update modeline
     updateListModeline();
-    
-    // If in split mode, auto-preview the article
-    if (splitMode) {
-      previewSelectedArticle();
-    }
   }
 
-  /**
-   * Update list buffer modeline
-   */
   function updateListModeline() {
-    const items = getArticleItems();
-    const modeline = bufferList?.querySelector('.modeline');
-    if (modeline) {
-      const scrollEl = modeline.querySelector('[data-scroll-position]');
-      const lineEl = modeline.querySelector('[data-line-number]');
-      
-      if (scrollEl) {
-        if (items.length === 0) {
-          scrollEl.textContent = 'Empty';
-        } else if (selectedIndex === 0) {
-          scrollEl.textContent = 'Top';
-        } else if (selectedIndex === items.length - 1) {
-          scrollEl.textContent = 'Bot';
-        } else {
-          const pct = Math.round((selectedIndex / (items.length - 1)) * 100);
-          scrollEl.textContent = pct + '%';
-        }
-      }
-      
-      if (lineEl) {
-        lineEl.textContent = selectedIndex + 1;
-      }
+    var items = getArticleItems();
+    var modeline = bufferList && bufferList.querySelector('.modeline');
+    if (!modeline) return;
+    var scrollEl = modeline.querySelector('[data-scroll-position]');
+    var lineEl   = modeline.querySelector('[data-line-number]');
+    if (scrollEl) {
+      if (!items.length)               scrollEl.textContent = 'Empty';
+      else if (selectedIndex === 0)    scrollEl.textContent = 'Top';
+      else if (selectedIndex === items.length - 1) scrollEl.textContent = 'Bot';
+      else scrollEl.textContent = Math.round((selectedIndex / (items.length - 1)) * 100) + '%';
     }
+    if (lineEl) lineEl.textContent = selectedIndex + 1;
   }
 
-  /**
-   * Set focus to a buffer
-   */
-  function focusBuffer(bufferName) {
-    focusedBuffer = bufferName;
-    
-    if (bufferList) {
-      bufferList.classList.toggle('focused', bufferName === 'list');
-    }
-    if (bufferContent) {
-      bufferContent.classList.toggle('focused', bufferName === 'content');
-    }
-    
-    updateEchoHint();
+  function openSelected() {
+    var items = getArticleItems();
+    if (!items.length) return;
+    var url = items[selectedIndex].dataset.url;
+    if (url) window.location.href = url;
   }
 
-  /**
-   * Switch to a buffer (single buffer mode)
-   */
-  function switchBuffer(bufferName) {
-    // If not in split mode, toggle buffer visibility
-    if (!splitMode) {
-      if (bufferList) {
-        bufferList.classList.toggle('active', bufferName === 'list');
-      }
-      if (bufferContent) {
-        bufferContent.classList.toggle('active', bufferName === 'content');
-      }
-    }
-    
-    focusBuffer(bufferName);
-  }
+  // ── Key sequences ──────────────────────────────────────────────────────────
 
-  /**
-   * Set split mode
-   */
-  function setSplitMode(mode) {
-    splitMode = mode;
-    
-    if (!bufferContainer) return;
-    
-    // Remove existing split classes
-    bufferContainer.classList.remove('split-horizontal', 'split-vertical');
-    
-    if (mode === 'horizontal') {
-      // Side by side: list on left, content on right
-      bufferContainer.classList.add('split-horizontal');
-      bufferList?.classList.add('active');
-      bufferContent?.classList.add('active');
-      showMessage('Split horizontally (C-x 3)');
-    } else if (mode === 'vertical') {
-      // Stacked: list on top, content below
-      bufferContainer.classList.add('split-vertical');
-      bufferList?.classList.add('active');
-      bufferContent?.classList.add('active');
-      showMessage('Split vertically (C-x 2)');
-    } else {
-      // Single buffer mode
-      // Keep current focused buffer active, hide the other
-      if (focusedBuffer === 'list') {
-        bufferList?.classList.add('active');
-        bufferContent?.classList.remove('active');
-      } else {
-        bufferList?.classList.remove('active');
-        bufferContent?.classList.add('active');
-      }
-    }
-    
-    // Ensure focused buffer styling
-    focusBuffer(focusedBuffer);
-    
-    // If entering split mode with content visible, preview current article
-    if (mode && bufferContent?.classList.contains('active')) {
-      previewSelectedArticle();
-    }
-    
-    updateEchoHint();
-  }
-
-  /**
-   * Close current window (C-x 0)
-   */
-  function closeCurrentWindow() {
-    if (!splitMode) {
-      showMessage('Only one window');
-      return;
-    }
-    
-    // Close current window, switch to the other
-    const otherBuffer = focusedBuffer === 'list' ? 'content' : 'list';
-    focusBuffer(otherBuffer);
-    setSplitMode(null);
-    showMessage('Deleted window');
-  }
-
-  /**
-   * Split window horizontally (C-x 3) - side by side
-   */
-  function splitHorizontal() {
-    if (splitMode === 'horizontal') {
-      showMessage('Already split horizontally');
-      return;
-    }
-    setSplitMode('horizontal');
-  }
-
-  /**
-   * Split window vertically (C-x 2) - stacked
-   */
-  function splitVertical() {
-    if (splitMode === 'vertical') {
-      showMessage('Already split vertically');
-      return;
-    }
-    setSplitMode('vertical');
-  }
-
-  /**
-   * Switch to other window (C-x o)
-   */
-  function otherWindow() {
-    if (!splitMode) {
-      // In single buffer mode, just toggle
-      const other = focusedBuffer === 'list' ? 'content' : 'list';
-      switchBuffer(other);
-      showMessage('Switched to ' + (other === 'list' ? '*posts*' : 'article'));
-    } else {
-      // In split mode, switch focus
-      const other = focusedBuffer === 'list' ? 'content' : 'list';
-      focusBuffer(other);
-      showMessage('Switched to ' + (other === 'list' ? '*posts*' : 'article'));
-    }
-  }
-
-  /**
-   * Open selected article in split view, keep focus on list (C-o / Ctrl+Enter)
-   */
-  function openInSplit() {
-    const items = getArticleItems();
-    if (items.length === 0) return;
-
-    if (!splitMode) setSplitMode('horizontal');
-
-    const selectedItem = items[selectedIndex];
-    const title = selectedItem.dataset.title;
-    const url = selectedItem.dataset.url;
-
-    if (postsData) {
-      const template = postsData.querySelector(`template[data-post-index="${selectedIndex}"]`);
-      if (template) {
-        if (url && window.location.pathname !== url) {
-          history.pushState({ type: 'article', index: selectedIndex, url }, title, url);
-          document.title = title;
-        }
-        loadArticleContent(template, title, false);
-        focusBuffer('list');
-        showMessage('Opened in other window: ' + title.substring(0, 40));
-        return;
-      }
-    }
-    if (url) window.open(url, '_blank');
-  }
-
-  /**
-   * Preview selected article (without switching focus)
-   */
-  function previewSelectedArticle() {
-    const items = getArticleItems();
-    if (items.length === 0) return;
-
-    const selectedItem = items[selectedIndex];
-    const title = selectedItem.dataset.title;
-
-    // Check if we have embedded content (homepage)
-    if (postsData) {
-      const template = postsData.querySelector(`template[data-post-index="${selectedIndex}"]`);
-      if (template) {
-        loadArticleContent(template, title, false);
-        return;
-      }
-    }
-  }
-
-  /**
-   * Open selected article (switch to content buffer or focus it)
-   */
-  function openSelectedArticle() {
-    const items = getArticleItems();
-    if (items.length === 0) return;
-
-    const selectedItem = items[selectedIndex];
-    const title = selectedItem.dataset.title;
-    const url = selectedItem.dataset.url;
-
-    // Check if we have embedded content (homepage)
-    if (postsData) {
-      const template = postsData.querySelector(`template[data-post-index="${selectedIndex}"]`);
-      if (template) {
-        // Update URL using History API for bookmarkability
-        if (url && window.location.pathname !== url) {
-          history.pushState({ 
-            type: 'article', 
-            index: selectedIndex, 
-            url: url 
-          }, title, url);
-          document.title = title;
-        }
-        loadArticleContent(template, title, true);
-        return;
-      }
-    }
-
-    // Otherwise navigate to the URL (fallback)
-    if (url) {
-      window.location.href = url;
-    }
-  }
-
-  /**
-   * Load article content from template
-   */
-  function loadArticleContent(template, title, switchFocus = true) {
-    if (!articleContent) return;
-
-    // Clone and insert content
-    const content = template.content.cloneNode(true);
-    articleContent.innerHTML = '';
-    articleContent.appendChild(content);
-
-    // Update content buffer modeline
-    const modeline = bufferContent?.querySelector('.modeline');
-    if (modeline) {
-      const bufferName = modeline.querySelector('.modeline-buffer-name');
-      if (bufferName) {
-        bufferName.textContent = title.substring(0, 50);
-        bufferName.title = title;
-      }
-    }
-
-    // Switch to content buffer if requested and not in split mode
-    if (switchFocus) {
-      if (splitMode) {
-        // In split mode, just focus the content buffer
-        focusBuffer('content');
-      } else {
-        // In single buffer mode, switch to content
-        switchBuffer('content');
-      }
-      showMessage('Opened: ' + title);
-    }
-    
-    // Scroll content to top
-    if (contentBody) {
-      contentBody.scrollTop = 0;
-    }
-  }
-
-  /**
-   * Navigate to next/previous article while viewing content
-   */
-  function navigateArticle(direction) {
-    const items = getArticleItems();
-    if (items.length === 0) return;
-
-    const newIndex = selectedIndex + direction;
-    if (newIndex < 0 || newIndex >= items.length) {
-      showMessage(direction > 0 ? 'End of buffer' : 'Beginning of buffer');
-      return;
-    }
-
-    // Update selection
-    updateSelection(newIndex);
-    
-    // Load the new article (in single buffer mode when viewing content)
-    if (!splitMode) {
-      const selectedItem = items[selectedIndex];
-      const title = selectedItem.dataset.title;
-      const url = selectedItem.dataset.url;
-      
-      if (postsData) {
-        const template = postsData.querySelector(`template[data-post-index="${selectedIndex}"]`);
-        if (template) {
-          // Update URL using History API
-          if (url && window.location.pathname !== url) {
-            history.pushState({ 
-              type: 'article', 
-              index: selectedIndex, 
-              url: url 
-            }, title, url);
-            document.title = title;
-          }
-          loadArticleContent(template, title, false);
-        }
-      }
-    }
-  }
-
-  /**
-   * Go back to list buffer
-   */
-  function goBack() {
-    // On single.html pages, navigate back
-    if (!postsData) {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = '/';
-      }
-      return;
-    }
-
-    // If in split mode, just focus list
-    if (splitMode) {
-      focusBuffer('list');
-      showMessage('Switched to *posts*');
-      return;
-    }
-
-    // In single buffer mode, switch to list buffer
-    // Update URL back to list page
-    if (window.location.pathname !== baseUrl) {
-      history.pushState({ type: 'list' }, baseTitle, baseUrl);
-      document.title = baseTitle;
-    }
-    switchBuffer('list');
-    showMessage('Switched to buffer: *posts*');
-  }
-
-  /**
-   * Scroll content
-   */
-  function scrollContent(direction) {
-    if (!contentBody) return;
-    
-    const scrollAmount = contentBody.clientHeight * 0.8;
-    contentBody.scrollBy({
-      top: direction === 'down' ? scrollAmount : -scrollAmount,
-      behavior: 'smooth'
-    });
-  }
-
-  /**
-   * Toggle help overlay
-   */
-  function toggleHelp() {
-    if (!helpOverlay) return;
-    
-    const isVisible = helpOverlay.classList.contains('visible');
-    helpOverlay.classList.toggle('visible', !isVisible);
-    helpOverlay.setAttribute('aria-hidden', isVisible);
-    
-    if (!isVisible) {
-      document.getElementById('help-close')?.focus();
-    }
-  }
-
-  /**
-   * Handle key sequence (C-x prefix)
-   */
   function handleKeySequence(key) {
-    if (keySequence === 'C-x') {
-      switch (key) {
-        case 'o':
-          // C-x o - other window
-          otherWindow();
-          keySequence = '';
-          return true;
-        case '0':
-          // C-x 0 - close current window
-          closeCurrentWindow();
-          keySequence = '';
-          return true;
-        case '2':
-          // C-x 2 - split vertically (stacked)
-          splitVertical();
-          keySequence = '';
-          return true;
-        case '3':
-          // C-x 3 - split horizontally (side by side)
-          splitHorizontal();
-          keySequence = '';
-          return true;
-        case 'b':
-          // C-x b - switch to list buffer
-          switchBuffer('list');
-          keySequence = '';
-          showMessage('Switched to *posts*');
-          return true;
-        case '1':
-          // C-x 1 - delete other windows (go to single buffer)
-          if (splitMode) {
-            setSplitMode(null);
-            showMessage('Deleted other windows');
-          } else {
-            showMessage('Only one window');
-          }
-          keySequence = '';
-          return true;
-        default:
-          keySequence = '';
-          showMessage('C-x ' + key + ' is undefined');
-          return false;
-      }
-    }
-    
-    // g prefix sequences
     keySequence += key;
-    
-    if (sequenceTimeout) {
-      clearTimeout(sequenceTimeout);
-    }
+    if (sequenceTimeout) clearTimeout(sequenceTimeout);
 
-    const sequences = {
-      'gh': () => { window.location.href = '/'; },
-      'gp': () => { window.location.href = '/posts/'; },
-      'gg': () => { 
-        if (focusedBuffer === 'list') {
-          updateSelection(0);
-        } else if (contentBody) {
-          contentBody.scrollTop = 0;
-        }
+    var sequences = {
+      'gh': function () { window.location.href = '/'; },
+      'gp': function () { window.location.href = '/posts/'; },
+      'gg': function () {
+        if (isPostPage) { if (contentBody) contentBody.scrollTop = 0; }
+        else updateSelection(0);
+      },
+      'gG': function () {
+        if (isPostPage) { if (contentBody) contentBody.scrollTop = contentBody.scrollHeight; }
+        else updateSelection(getArticleItems().length - 1);
       }
     };
 
@@ -576,87 +120,80 @@
       return true;
     }
 
-    sequenceTimeout = setTimeout(() => {
-      keySequence = '';
-    }, 1000);
+    // Prefix still valid?
+    var isPrefixOf = Object.keys(sequences).some(function (k) {
+      return k.startsWith(keySequence) && k !== keySequence;
+    });
 
-    showMessage(keySequence + '-');
+    if (isPrefixOf) {
+      showMessage(keySequence + '-');
+      sequenceTimeout = setTimeout(function () { keySequence = ''; }, 1000);
+      return true; // consumed, waiting for more
+    }
+
+    keySequence = '';
     return false;
   }
 
-  /**
-   * Main keyboard handler
-   */
+  // ── Main keyboard handler ──────────────────────────────────────────────────
+
   function handleKeydown(e) {
-    const key = e.key;
-    const ctrl = e.ctrlKey;
-    const meta = e.metaKey;
-    const shift = e.shiftKey;
+    var key   = e.key;
+    var ctrl  = e.ctrlKey;
+    var meta  = e.metaKey;
+    var shift = e.shiftKey;
 
-    // Ignore if typing in input
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-      return;
-    }
+    // Ignore when typing
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-    // Close help on Escape
-    if (key === 'Escape' || ctrl && key === 'g') {
-      if (helpOverlay?.classList.contains('visible')) {
-        toggleHelp();
-        e.preventDefault();
-        return;
+    // Escape / C-g — close help or clear sequence
+    if (key === 'Escape' || (ctrl && key === 'g')) {
+      if (helpOverlay && helpOverlay.classList.contains('visible')) {
+        toggleHelp(); e.preventDefault(); return;
       }
+      keySequence = '';
+      return;
     }
 
     // Help
-    if (key === '?') {
-      toggleHelp();
-      e.preventDefault();
-      return;
-    }
+    if (key === '?') { toggleHelp(); e.preventDefault(); return; }
+    if (helpOverlay && helpOverlay.classList.contains('visible')) return;
 
-    // If help is open, ignore other keys
-    if (helpOverlay?.classList.contains('visible')) {
-      return;
-    }
-
-    // Handle C-x prefix sequences
-    if (keySequence === 'C-x') {
-      if (handleKeySequence(key)) {
-        e.preventDefault();
-        return;
-      }
-    }
-
-    // Key sequences (g prefix)
+    // g-prefix sequences
     if (keySequence || key === 'g') {
-      if (handleKeySequence(key.toLowerCase())) {
-        e.preventDefault();
-        return;
+      if (handleKeySequence(key)) { e.preventDefault(); return; }
+    }
+
+    // ── Post page shortcuts ────────────────────────────────────────────────
+    if (isPostPage) {
+      switch (key) {
+        case 'q':
+          if (window.history.length > 1) window.history.back();
+          else window.location.href = '/posts/';
+          e.preventDefault();
+          break;
+        case ' ':
+          if (contentBody) {
+            contentBody.scrollBy({ top: shift ? -contentBody.clientHeight * 0.8 : contentBody.clientHeight * 0.8, behavior: 'smooth' });
+            e.preventDefault();
+          }
+          break;
+        case 'ArrowDown':
+          if (contentBody) { contentBody.scrollBy({ top: 150, behavior: 'smooth' }); e.preventDefault(); }
+          break;
+        case 'ArrowUp':
+          if (contentBody) { contentBody.scrollBy({ top: -150, behavior: 'smooth' }); e.preventDefault(); }
+          break;
+        case 'v':
+          if (ctrl && contentBody)  { contentBody.scrollBy({ top: contentBody.clientHeight * 0.8, behavior: 'smooth' }); e.preventDefault(); }
+          else if (e.altKey && contentBody) { contentBody.scrollBy({ top: -contentBody.clientHeight * 0.8, behavior: 'smooth' }); e.preventDefault(); }
+          break;
       }
-      if (keySequence) return;
+      // fall through to global shortcuts
     }
 
-    // C-x prefix
-    if (ctrl && key === 'x') {
-      keySequence = 'C-x';
-      showMessage('C-x-');
-      e.preventDefault();
-      return;
-    }
-
-    // C-g - keyboard quit
-    if (ctrl && key === 'g') {
-      if (helpOverlay?.classList.contains('visible')) {
-        toggleHelp();
-      }
-      keySequence = '';
-      showMessage('Quit');
-      e.preventDefault();
-      return;
-    }
-
-    // === LIST BUFFER ===
-    if (focusedBuffer === 'list') {
+    // ── List page shortcuts ────────────────────────────────────────────────
+    if (!isPostPage) {
       switch (key) {
         case 'n':
         case 'ArrowDown':
@@ -669,29 +206,12 @@
           e.preventDefault();
           break;
         case 'Enter':
-          if (ctrl || shift) {
-            openInSplit();
-          } else {
-            openSelectedArticle();
-          }
-          e.preventDefault();
-          break;
         case 'o':
-          if (ctrl) {
-            openInSplit();
-          } else {
-            openSelectedArticle();
-          }
+          openSelected();
           e.preventDefault();
           break;
         case ' ':
-          // Space in list - open article
-          if (!splitMode) {
-            openSelectedArticle();
-          } else {
-            // In split mode, space scrolls the content pane
-            scrollContent('down');
-          }
+          openSelected();
           e.preventDefault();
           break;
         case '<':
@@ -702,274 +222,77 @@
           updateSelection(getArticleItems().length - 1);
           e.preventDefault();
           break;
-      }
-    }
-
-    // === CONTENT BUFFER ===
-    if (focusedBuffer === 'content') {
-      switch (key) {
-        case 'n':
-          // n - scroll down or next article (single buffer mode without split)
-          if (!ctrl) {
-            if (splitMode) {
-              // In split mode, n scrolls content
-              contentBody?.scrollBy({ top: 150, behavior: 'smooth' });
-            } else {
-              // In single buffer mode, n goes to next article
-              navigateArticle(1);
-            }
-            e.preventDefault();
-          }
-          break;
-        case 'p':
-          // p - scroll up or previous article (single buffer mode without split)
-          if (!ctrl) {
-            if (splitMode) {
-              // In split mode, p scrolls content
-              contentBody?.scrollBy({ top: -150, behavior: 'smooth' });
-            } else {
-              // In single buffer mode, p goes to previous article
-              navigateArticle(-1);
-            }
-            e.preventDefault();
-          }
-          break;
-        case 'ArrowDown':
-          // Arrow down - scroll
-          contentBody?.scrollBy({ top: 150, behavior: 'smooth' });
-          e.preventDefault();
-          break;
-        case 'ArrowUp':
-          // Arrow up - scroll
-          contentBody?.scrollBy({ top: -150, behavior: 'smooth' });
-          e.preventDefault();
-          break;
-        case 'PageDown':
-          // Page Down - scroll page
-          scrollContent('down');
-          e.preventDefault();
-          break;
-        case 'PageUp':
-          // Page Up - scroll page
-          scrollContent('up');
-          e.preventDefault();
-          break;
-        case ' ':
-          // Space - page down, Shift+Space - page up
-          scrollContent(shift ? 'up' : 'down');
-          e.preventDefault();
-          break;
-        case 'v':
-          // C-v page down, M-v page up
-          if (ctrl) {
-            scrollContent('down');
-            e.preventDefault();
-          } else if (meta || e.altKey) {
-            scrollContent('up');
-            e.preventDefault();
-          }
-          break;
-        case '<':
-          // Beginning of buffer
-          if (contentBody) contentBody.scrollTop = 0;
-          e.preventDefault();
-          break;
-        case '>':
-          // End of buffer
-          if (contentBody) contentBody.scrollTop = contentBody.scrollHeight;
-          e.preventDefault();
-          break;
-        case 'q':
-          // q - go back to list
-          goBack();
+        case '/':
+          document.getElementById('post-search')?.focus();
           e.preventDefault();
           break;
       }
     }
 
-    // === GLOBAL ===
+    // ── Global shortcuts ───────────────────────────────────────────────────
     switch (key) {
-      case 'Tab':
-        // Tab switches focus in split mode
-        if (splitMode) {
-          otherWindow();
-          e.preventDefault();
-        }
-        break;
       case 't':
-        if (!ctrl && !meta) {
-          window.toggleTheme?.();
-          e.preventDefault();
-        }
+        if (!ctrl && !meta) { window.toggleTheme && window.toggleTheme(); e.preventDefault(); }
         break;
       case '+':
       case '=':
-        if (!ctrl && !meta) {
-          window.adjustFontSize?.(1);
-          e.preventDefault();
-        }
+        if (!ctrl && !meta) { window.adjustFontSize && window.adjustFontSize(1); e.preventDefault(); }
         break;
       case '-':
-        if (!ctrl && !meta) {
-          window.adjustFontSize?.(-1);
-          e.preventDefault();
-        }
+        if (!ctrl && !meta) { window.adjustFontSize && window.adjustFontSize(-1); e.preventDefault(); }
         break;
     }
   }
 
-  /**
-   * Handle click on article item - single click opens
-   */
-  function handleArticleClick(e) {
-    // Let modifier clicks (new tab, new window) work natively
-    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+  // ── Help overlay ───────────────────────────────────────────────────────────
 
-    // If click is inside any <a> that isn't the main article-link, navigate natively
-    // (covers post-tag, term-back, or any future links in a row)
-    const clickedLink = e.target.closest('a');
-    if (clickedLink && !clickedLink.classList.contains('article-link')) return;
-
-    const item = e.target.closest('.article-item');
-    if (!item) return;
-
-    const index = parseInt(item.dataset.index, 10);
-    // Items without data-index (e.g. terms.html) — let the native <a> navigate
-    if (isNaN(index)) return;
-
-    // Prevent default link navigation — JS will handle it
-    e.preventDefault();
-    focusBuffer('list');
-    updateSelection(index);
-    openSelectedArticle();
+  function toggleHelp() {
+    if (!helpOverlay) return;
+    var v = helpOverlay.classList.toggle('visible');
+    helpOverlay.setAttribute('aria-hidden', !v);
+    if (v) document.getElementById('help-close') && document.getElementById('help-close').focus();
   }
 
-  /**
-   * Handle browser back/forward navigation
-   */
-  function handlePopState(e) {
-    // Only handle if we have embedded posts data
-    if (!postsData) return;
+  // ── Scroll sync (list page) ────────────────────────────────────────────────
 
-    const state = e.state;
-    
-    if (state && state.type === 'article' && state.index !== undefined) {
-      // Navigate to specific article
-      const items = getArticleItems();
-      if (items[state.index]) {
-        updateSelection(state.index);
-        const template = postsData.querySelector(`template[data-post-index="${state.index}"]`);
-        if (template) {
-          const title = items[state.index].dataset.title;
-          document.title = title;
-          loadArticleContent(template, title, true);
-        }
-      }
-    } else {
-      // Go back to list view
-      document.title = baseTitle;
-      switchBuffer('list');
-    }
-  }
-
-  /**
-   * Handle click on content buffer
-   */
-  function handleContentClick() {
-    focusBuffer('content');
-  }
-
-  /**
-   * Handle scroll on article list - update selection based on visible item
-   */
   function handleListScroll(e) {
-    // Skip if this scroll was triggered by keyboard navigation
     if (isScrollingProgrammatically) return;
-    
-    const scrollContainer = e.target;
-    const items = getArticleItems();
-    if (items.length === 0) return;
-    
-    const containerRect = scrollContainer.getBoundingClientRect();
-    const containerTop = containerRect.top;
-    
-    // Find the item closest to the top of the visible area
-    let closestIndex = 0;
-    let closestDistance = Infinity;
-    
-    items.forEach((item, index) => {
-      const itemRect = item.getBoundingClientRect();
-      const itemTop = itemRect.top - containerTop;
-      
-      // We want the item that's closest to the top of the container
-      // but still visible (itemTop >= 0 or item is partially visible)
-      if (itemTop >= -itemRect.height / 2) {
-        const distance = Math.abs(itemTop);
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
-        }
+    var items = getArticleItems();
+    if (!items.length) return;
+    var containerTop = e.target.getBoundingClientRect().top;
+    var closest = 0, closestDist = Infinity;
+    items.forEach(function (item, i) {
+      var top = item.getBoundingClientRect().top - containerTop;
+      if (top >= -item.offsetHeight / 2) {
+        var d = Math.abs(top);
+        if (d < closestDist) { closestDist = d; closest = i; }
       }
     });
-    
-    // Update selection without scrolling (to avoid fighting with user scroll)
-    if (closestIndex !== selectedIndex) {
-      updateSelection(closestIndex, false);
-    }
+    if (closest !== selectedIndex) updateSelection(closest, false);
   }
 
-  /**
-   * Initialize
-   */
+  // ── Init ───────────────────────────────────────────────────────────────────
+
   function init() {
-    // Keyboard events
     document.addEventListener('keydown', handleKeydown);
+    document.getElementById('help-close') && document.getElementById('help-close').addEventListener('click', toggleHelp);
 
-    // Click events
-    articleList?.addEventListener('click', handleArticleClick);
-    bufferContent?.addEventListener('click', handleContentClick);
-
-    // Scroll events for list buffer - update selection as user scrolls
-    const listBufferBody = bufferList?.querySelector('.buffer-body');
-    if (listBufferBody) {
-      listBufferBody.addEventListener('scroll', handleListScroll, { passive: true });
+    if (!isPostPage) {
+      updateSelection(0, false);
+      updateListModeline();
+      var listBody = bufferList && bufferList.querySelector('.buffer-body');
+      if (listBody) listBody.addEventListener('scroll', handleListScroll, { passive: true });
     }
 
-    // Browser back/forward navigation
-    window.addEventListener('popstate', handlePopState);
-
-    // Help close button
-    document.getElementById('help-close')?.addEventListener('click', toggleHelp);
-
-    // Initialize selection and modeline
-    updateListModeline();
-    
-    // Set initial focus
-    focusBuffer('list');
-
-    // Set initial echo area message
     updateEchoHint();
-    
-    // Set initial history state for the list page
-    if (postsData && !history.state) {
-      history.replaceState({ type: 'list' }, baseTitle, baseUrl);
-    }
   }
 
-  // Initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
 
-  // Expose for other modules
   window.emacsBlog = window.emacsBlog || {};
-  window.emacsBlog.keyboard = {
-    switchBuffer,
-    focusBuffer,
-    setSplitMode,
-    updateSelection,
-    showMessage
-  };
+  window.emacsBlog.keyboard = { showMessage: showMessage };
 })();

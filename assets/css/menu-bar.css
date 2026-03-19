@@ -178,6 +178,11 @@
   color: var(--fg-dim);
   font-size: 0.85rem;
   padding: 0 1em;
+  text-decoration: none;
+}
+
+.menu-bar-title:hover {
+  color: var(--fg-main);
 }
 
 /* ============================================

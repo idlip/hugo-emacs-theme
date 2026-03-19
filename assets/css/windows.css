@@ -347,29 +347,277 @@
   .buffer-container.split-vertical {
     flex-direction: column;
   }
-  
+
   .buffer-container.split-horizontal .buffer.active,
   .buffer-container.split-vertical .buffer.active {
     max-width: none;
     max-height: none;
     border: none;
   }
-  
+
   /* Only show focused buffer on mobile */
   .buffer-container.split-horizontal .buffer.active:not(.focused),
   .buffer-container.split-vertical .buffer.active:not(.focused) {
     display: none;
   }
-  
+
   .article-meta {
     display: none;
   }
-  
+
   .article-item .article-link {
     padding: 0.5em 0.75em;
   }
-  
+
   .post-content {
     padding: 1em;
   }
+}
+
+/* ============================================
+   LIST CONTENT – centered fixed-width wrapper
+   ============================================ */
+.list-content {
+  max-width: 840px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ============================================
+   ARTICLE LIST – type icon and extras
+   ============================================ */
+.article-type-icon {
+  width: 1.4em;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--fg-dim);
+  font-size: 0.85em;
+  margin-right: 0.5em;
+}
+
+.article-item.selected .article-type-icon {
+  color: var(--cyan-cooler);
+}
+
+.nf-sm {
+  font-size: 0.85em;
+  opacity: 0.7;
+  margin-right: 0.2em;
+}
+
+.article-item.no-articles {
+  color: var(--fg-dim);
+  padding: 1em;
+}
+
+/* ============================================
+   YEAR DIVIDERS
+   ============================================ */
+.year-divider {
+  display: flex;
+  align-items: center;
+  padding: 0.5em 0.75em 0.25em;
+  pointer-events: none;
+  user-select: none;
+  border-bottom: 1px solid var(--border-dim);
+  margin-top: 0.5em;
+}
+
+.year-divider:first-child {
+  margin-top: 0;
+}
+
+.year-label {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--magenta);
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+/* ============================================
+   TERM HEADER (shown on /tags/foo/ pages)
+   ============================================ */
+.term-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--border-dim);
+  background-color: var(--bg-dim);
+}
+
+.term-tag-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--cyan-cooler);
+}
+
+.term-back {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--yellow-cooler);
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.term-back:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* ============================================
+   TAG CLOUD (shown on /posts/ and home page)
+   ============================================ */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em;
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--border-dim);
+  background-color: var(--bg-dim);
+}
+
+.tag-cloud-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  padding: 0.15em 0.5em;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--cyan-cooler);
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.1s, border-color 0.1s, background-color 0.1s;
+}
+
+.tag-cloud-btn:hover {
+  opacity: 1;
+  border-color: var(--cyan-cooler);
+  background-color: var(--bg-active);
+}
+
+.tag-cloud-btn.active {
+  opacity: 1;
+  border-color: var(--cursor);
+  background-color: var(--bg-hl-line);
+  color: var(--cursor);
+}
+
+.tag-cloud-count {
+  font-size: 0.7em;
+  color: var(--fg-dim);
+  opacity: 0.85;
+}
+
+/* ============================================
+   SEARCH BAR
+   ============================================ */
+.list-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.75em;
+  border-bottom: 1px solid var(--border-dim);
+  background-color: var(--bg-dim);
+  font-size: 0.85rem;
+}
+
+.list-search-prompt {
+  color: var(--cyan-cooler);
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.list-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--fg-main);
+  font-family: inherit;
+  font-size: inherit;
+  caret-color: var(--cursor);
+}
+
+.list-search-input::placeholder {
+  color: var(--fg-dim);
+  opacity: 0.7;
+}
+
+.list-search-count {
+  color: var(--yellow-cooler);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   LIST FOOTER
+   ============================================ */
+.list-footer {
+  border-top: 1px solid var(--border-dim);
+  padding: 0.75em 1em;
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  text-align: center;
+}
+
+.list-footer a {
+  color: var(--cyan-cooler);
+  text-decoration: none;
+}
+
+.list-footer a:hover {
+  text-decoration: underline;
+}
+
+.list-footer .craftering {
+  margin: 0.25em 0;
+}
+
+/* ============================================
+   SOCIAL LINKS
+   ============================================ */
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  margin: 1em 0;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  color: var(--fg-main);
+  text-decoration: none;
+  padding: 0.25em 0.5em;
+  border-left: 2px solid transparent;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.social-link:hover {
+  border-left-color: var(--cursor);
+  background-color: var(--bg-active);
+  text-decoration: none;
+  color: var(--fg-main);
+}
+
+/* Nerd font glyph cell */
+.nf {
+  font-family: 'Symbols Nerd Font Mono', 'Nerd Font', 'FiraCode Nerd Font',
+               'Fira Code', monospace;
+  font-size: 1.1em;
+  width: 1.4em;
+  text-align: center;
+  color: var(--cyan-cooler);
+  flex-shrink: 0;
+}
+
+.social-label {
+  font-size: 0.9em;
+  color: var(--fg-dim);
 }

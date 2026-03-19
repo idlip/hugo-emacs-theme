@@ -281,6 +281,35 @@
   }
 
   /**
+   * Open selected article in split view, keep focus on list (C-o / Ctrl+Enter)
+   */
+  function openInSplit() {
+    const items = getArticleItems();
+    if (items.length === 0) return;
+
+    if (!splitMode) setSplitMode('horizontal');
+
+    const selectedItem = items[selectedIndex];
+    const title = selectedItem.dataset.title;
+    const url = selectedItem.dataset.url;
+
+    if (postsData) {
+      const template = postsData.querySelector(`template[data-post-index="${selectedIndex}"]`);
+      if (template) {
+        if (url && window.location.pathname !== url) {
+          history.pushState({ type: 'article', index: selectedIndex, url }, title, url);
+          document.title = title;
+        }
+        loadArticleContent(template, title, false);
+        focusBuffer('list');
+        showMessage('Opened in other window: ' + title.substring(0, 40));
+        return;
+      }
+    }
+    if (url) window.open(url, '_blank');
+  }
+
+  /**
    * Preview selected article (without switching focus)
    */
   function previewSelectedArticle() {
@@ -640,8 +669,19 @@
           e.preventDefault();
           break;
         case 'Enter':
+          if (ctrl || shift) {
+            openInSplit();
+          } else {
+            openSelectedArticle();
+          }
+          e.preventDefault();
+          break;
         case 'o':
-          openSelectedArticle();
+          if (ctrl) {
+            openInSplit();
+          } else {
+            openSelectedArticle();
+          }
           e.preventDefault();
           break;
         case ' ':

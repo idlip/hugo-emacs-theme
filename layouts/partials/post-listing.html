@@ -40,7 +40,7 @@
     </div>
     {{- end }}
 
-    <div class="list-search">
+    <div class="list-search" role="search">
       <span class="list-search-prompt">Search:</span>
       <input type="text"
              id="post-search"
@@ -107,4 +107,49 @@
     "keyhint"  "<kbd>n</kbd>/<kbd>p</kbd> nav  <kbd>RET</kbd> open  <kbd>/</kbd> search"
   ) }}
 </section>
+
+{{- /* Embedded post content for inline dual-buffer loading */ -}}
+<div id="posts-data" hidden>
+  {{- $idx := 0 -}}
+  {{- range $grouped }}
+  {{- range .Pages }}
+  <template data-post-index="{{ $idx }}">
+    <article class="post-content">
+      <header class="post-header">
+        <h1 class="post-title">{{ .Title }}</h1>
+        <div class="post-meta">
+          <span class="post-date">{{ .Date.Format "02 January 2006" }}</span>
+          <span class="post-reading-time">{{ .ReadingTime }} min read</span>
+          {{- with .Params.tags }}
+          <span class="post-tags">
+            {{- range . }}<a href="{{ (urlize (printf "tags/%s/" .)) | absLangURL }}" class="post-tag">{{ . }}</a>{{ end -}}
+          </span>
+          {{- end }}
+        </div>
+      </header>
+      <div class="post-body">{{ .Content }}</div>
+    </article>
+  </template>
+  {{- $idx = add $idx 1 -}}
+  {{- end }}
+  {{- end }}
+</div>
+
+{{- /* Content buffer — hidden until an article is opened */ -}}
+<section class="buffer buffer-content"
+         id="buffer-content"
+         role="region"
+         aria-label="Article content"
+         tabindex="0">
+  <div class="buffer-body" id="content-body">
+    <div id="article-content"></div>
+  </div>
+  {{ partial "modeline.html" (dict
+    "buffer"   "*article*"
+    "mode"     "Org"
+    "readonly" true
+    "keyhint"  "<kbd>q</kbd> back  <kbd>n</kbd>/<kbd>p</kbd> next/prev"
+  ) }}
+</section>
+
 {{ partial "list-search-js.html" . }}

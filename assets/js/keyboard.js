@@ -531,7 +531,7 @@
 
     const sequences = {
       'gh': () => { window.location.href = '/'; },
-      'gp': () => { window.location.href = '/post/'; },
+      'gp': () => { window.location.href = '/posts/'; },
       'gg': () => { 
         if (focusedBuffer === 'list') {
           updateSelection(0);
@@ -559,13 +559,18 @@
    * Main keyboard handler
    */
   function handleKeydown(e) {
+    const key = e.key;
+    const ctrl = e.ctrlKey;
+    const meta = e.metaKey;
+    const shift = e.shiftKey;
+
     // Ignore if typing in input
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
       return;
     }
 
     // Close help on Escape
-    if (e.key === 'Escape') {
+    if (key === 'Escape' || ctrl && key === 'g') {
       if (helpOverlay?.classList.contains('visible')) {
         toggleHelp();
         e.preventDefault();
@@ -574,7 +579,7 @@
     }
 
     // Help
-    if (e.key === '?') {
+    if (key === '?') {
       toggleHelp();
       e.preventDefault();
       return;
@@ -584,11 +589,6 @@
     if (helpOverlay?.classList.contains('visible')) {
       return;
     }
-
-    const key = e.key;
-    const ctrl = e.ctrlKey;
-    const meta = e.metaKey;
-    const shift = e.shiftKey;
 
     // Handle C-x prefix sequences
     if (keySequence === 'C-x') {
@@ -780,18 +780,26 @@
    * Handle click on article item - single click opens
    */
   function handleArticleClick(e) {
+    // Let modifier clicks (new tab, new window) work natively
+    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+
+    // If click is inside any <a> that isn't the main article-link, navigate natively
+    // (covers post-tag, term-back, or any future links in a row)
+    const clickedLink = e.target.closest('a');
+    if (clickedLink && !clickedLink.classList.contains('article-link')) return;
+
     const item = e.target.closest('.article-item');
     if (!item) return;
 
-    // Prevent default link navigation - JS will handle it
-    e.preventDefault();
-
     const index = parseInt(item.dataset.index, 10);
-    if (!isNaN(index)) {
-      focusBuffer('list');
-      updateSelection(index);
-      openSelectedArticle();
-    }
+    // Items without data-index (e.g. terms.html) — let the native <a> navigate
+    if (isNaN(index)) return;
+
+    // Prevent default link navigation — JS will handle it
+    e.preventDefault();
+    focusBuffer('list');
+    updateSelection(index);
+    openSelectedArticle();
   }
 
   /**

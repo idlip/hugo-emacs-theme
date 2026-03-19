@@ -157,8 +157,6 @@
 }
 
 .article-reading-time {
-  width: 4em;
-  text-align: right;
   color: var(--cyan-faint);
 }
 

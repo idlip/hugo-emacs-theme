@@ -115,20 +115,44 @@
   {{- range .Pages }}
   <template data-post-index="{{ $idx }}">
     <article class="post-content">
-      <header class="post-header">
+      <nav class="breadcrumbs" aria-label="breadcrumb">
+        <a href="{{ "/" | relLangURL }}">~</a>
+        {{- range .Ancestors.Reverse }}
+        {{- if not .IsHome }}
+        <span class="breadcrumb-sep">/</span>
+        <a href="{{ .RelPermalink }}">{{ .Title | lower }}</a>
+        {{- end }}
+        {{- end }}
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">{{ .Title | truncate 40 }}</span>
+      </nav>
+      <div class="post-header">
         <h1 class="post-title">{{ .Title }}</h1>
         <div class="post-meta">
-          <span class="post-date">{{ .Date.Format "02 January 2006" }}</span>
-          <span class="post-reading-time">{{ .ReadingTime }} min read</span>
+          <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+          <span class="post-reading-time">{{ .ReadingTime }} min read ({{ .WordCount }} words)</span>
           {{- with .Params.tags }}
-          <span class="post-tags">
+          <div class="post-tags">
             {{- range . }}<a href="{{ (urlize (printf "tags/%s/" .)) | absLangURL }}" class="post-tag">{{ . }}</a>{{ end -}}
-          </span>
+          </div>
           {{- end }}
         </div>
-      </header>
+      </div>
       <div class="post-body">{{ .Content }}</div>
+      {{- if not .Params.no_comment }}{{ partial "comment.html" . }}{{ end -}}
+      <nav class="post-navigation" style="margin-top: 3em; padding-top: 1em; border-top: 1px solid var(--border-dim);">
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1em;">
+          {{- with .PrevInSection }}
+          <a href="{{ .RelPermalink }}" style="color: var(--link);">&larr; {{ .Title | truncate 40 }}</a>
+          {{- end }}
+          <span style="flex: 1;"></span>
+          {{- with .NextInSection }}
+          <a href="{{ .RelPermalink }}" style="color: var(--link);">{{ .Title | truncate 40 }} &rarr;</a>
+          {{- end }}
+        </div>
+      </nav>
     </article>
+    <footer>{{ partial "footer" . }}</footer>
   </template>
   {{- $idx = add $idx 1 -}}
   {{- end }}

@@ -754,7 +754,7 @@ li.unchecked::before {
 .post-comment {
   margin-top: 3em;
   padding-top: 1.5em;
-  border-top: 1px solid var(--border-dim);
+  border-top: 2px solid var(--border-dim);
 }
 .comment-label {
   font-size: 0.85rem;

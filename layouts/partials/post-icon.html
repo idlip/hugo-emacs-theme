@@ -1,0 +1,21 @@
+{{- /*
+  post-icon: renders the type icon for a list row.
+  Reads [[params.tagIcons]] from config.toml in order — first matching tag wins.
+  Each entry has tags = ["a", "b", ...] and icon = "glyph".
+  An entry with no tags (or tags = []) is the fallback default.
+  Usage: {{ partial "post-icon.html" . }}  (pass the page as context)
+*/ -}}
+{{- $icon := "" -}}
+{{- $matched := false -}}
+{{- range .Site.Params.tagIcons -}}
+  {{- $entry := . -}}
+  {{- if not $entry.tags -}}
+    {{- if not $matched -}}{{- $icon = $entry.icon -}}{{- end -}}
+  {{- else -}}
+    {{- range $entry.tags -}}
+      {{- if and (not $matched) (in (apply $.Params.tags "lower" ".") (. | lower)) -}}
+        {{- $icon = $entry.icon -}}{{- $matched = true -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}<span class="article-type-icon nf" aria-hidden="true">{{ $icon }}</span>

@@ -255,3 +255,22 @@ a:focus-visible,
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.25rem; }
+  h2 { font-size: 1.15rem; }
+  h3 { font-size: 1.05rem; }
+  h4, h5, h6 { font-size: 1rem; }
+
+  ul, ol { padding-left: 1.25em; }
+
+  pre { font-size: 0.82rem; }
+
+  table { font-size: 0.85rem; }
+  /* Make wide tables scroll rather than overflow */
+  .post-body table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+

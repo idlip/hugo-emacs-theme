@@ -387,12 +387,93 @@
     display: none;
   }
 
+  /* Each item wraps: title on full row, tags below */
+  .article-item {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
   .article-item .article-link {
-    padding: 0.5em 0.75em;
+    flex: 0 0 100%;   /* force link to occupy the full row */
+    padding: 0.5em 0.75em 0.2em;
+  }
+
+  /* Tags get their own row below the title */
+  .article-item .post-tags {
+    flex: 0 0 100%;   /* force tags to next row */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+    padding: 0 0.75em 0.4em 2.25em;
   }
 
   .post-content {
     padding: 1em;
+  }
+}
+
+/* ============================================
+   MOBILE — narrow screens (≤480px)
+   ============================================ */
+@media (max-width: 480px) {
+  /* Tag cloud — smaller buttons, easier to wrap */
+  .tag-cloud {
+    gap: 0.25em;
+    padding: 0.4em 0.5em;
+  }
+  .tag-cloud-btn {
+    font-size: 0.75rem;
+    padding: 0.25em 0.5em;
+  }
+
+  /* Search bar — full bleed, no side margin */
+  .list-search {
+    margin: 0.4em 0;
+  }
+
+  /* Term header — stack on tiny screens */
+  .term-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3em;
+  }
+
+  /* Breadcrumbs — allow wrapping, slightly smaller */
+  .breadcrumbs {
+    font-size: 0.75rem;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* Post header */
+  .post-title {
+    font-size: 1.25rem;
+  }
+  .post-meta {
+    gap: 0.5em;
+    font-size: 0.8rem;
+  }
+
+  /* Post navigation — stack prev/next */
+  .post-navigation > div {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+
+  /* Comment — bigger tap target for submit button */
+  .comment-submit {
+    padding: 0.6em 1.2em;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  .comment-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Social links — more breathing room */
+  .social-links {
+    font-size: 1rem;
   }
 }
 

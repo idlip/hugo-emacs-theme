@@ -44,6 +44,7 @@
   function adjustFontSize(delta) {
     fontSize = Math.max(80, Math.min(150, fontSize + delta * 10));
     document.documentElement.style.fontSize = fontSize + '%';
+    localStorage.setItem('emacs-font-size', fontSize);
 
     window.emacsBlog?.keyboard?.showMessage?.('Font size: ' + fontSize + '%');
   }
@@ -258,8 +259,8 @@
       });
     });
     
-    // Clear any stale saved font size; initialize theme
-    localStorage.removeItem('emacs-font-size');
+    // Restore saved font size; initialize theme
+    restoreFontSize();
     initTheme();
   }
 

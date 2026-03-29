@@ -53,23 +53,30 @@
 {{- $syntax := resources.Get "css/syntax.css" -}}
 {{- $mobile := resources.Get "css/mobile.css" -}}
 {{- $custom := resources.Get "css/custom.css" -}}
+{{- $schemes := resources.Get "css/schemes.css" -}}
 
-{{- $allCSS := slice $themes $main $menuBar $windows $modeline $echoArea $syntax $mobile $custom | resources.Concat "css/bundle.css" | minify | fingerprint -}}
+{{- $allCSS := slice $themes $main $menuBar $windows $modeline $echoArea $syntax $mobile $custom $schemes | resources.Concat "css/bundle.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $allCSS.RelPermalink }}" integrity="{{ $allCSS.Data.Integrity }}">
 
-{{- /* Preload fonts */ -}}
-<link rel="preload" href="/fonts/FiraCode-Regular.woff" as="font" type="font/woff" crossorigin>
-<link rel="preload" href="/fonts/FiraCode-Bold.woff" as="font" type="font/woff" crossorigin>
+{{- /* Preload critical font only (headings, 32 KiB) */ -}}
+<link rel="preload" href="/fonts/impress.woff2" as="font" type="font/woff2" crossorigin>
 
-{{- /* Theme script - run early to prevent flash */ -}}
+{{- /* Theme + scheme restore — runs before paint to prevent flash */ -}}
 <script>
   (function() {
-    const savedTheme = localStorage.getItem('emacs-theme');
-    if (savedTheme) {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
+    var t = localStorage.getItem('emacs-theme');
+    var s = localStorage.getItem('emacs-scheme');
+    if (t) document.documentElement.setAttribute('data-theme', t);
+    if (s) document.documentElement.setAttribute('data-scheme', s);
   })();
 </script>
+
+{{- /* JS bundle — defer so it doesn't block first paint */ -}}
+{{- $keyboard := resources.Get "js/keyboard.js" -}}
+{{- $windows2 := resources.Get "js/windows.js" -}}
+{{- $menu := resources.Get "js/menu.js" -}}
+{{- $jsBundle := slice $keyboard $windows2 $menu | resources.Concat "js/app.js" | minify | fingerprint -}}
+<script src="{{ $jsBundle.RelPermalink }}" defer></script>
 
 {{- /* Google Analytics */ -}}
 {{ if hugo.IsProduction -}}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.Language.Lang }}" data-theme="dark">
+<html lang="{{ .Site.Language.Lang }}" data-theme="dark" data-scheme="haki">
 <head>
   {{- partial "head.html" . -}}
 </head>
@@ -16,12 +16,5 @@
   </div>
 
   {{- partial "help-overlay.html" . -}}
-  
-  {{- $keyboard := resources.Get "js/keyboard.js" | minify -}}
-  {{- $windows := resources.Get "js/windows.js" | minify -}}
-  {{- $menu := resources.Get "js/menu.js" | minify -}}
-  <script src="{{ $keyboard.RelPermalink }}"></script>
-  <script src="{{ $windows.RelPermalink }}"></script>
-  <script src="{{ $menu.RelPermalink }}"></script>
 </body>
 </html>

@@ -1,350 +1,122 @@
-/* Menu Bar CSS - Emacs Menu Bar Styling
- * Emacs Blog Theme
- */
-
-/* ============================================
-   MENU BAR
-   ============================================ */
+/* ── Menu bar ────────────────────────────────────────────── */
 .menu-bar {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: var(--menu-bg);
+  display: flex; flex-direction: row; align-items: center;
+  background: var(--menu-bg);
   border-bottom: 1px solid var(--menu-border);
-  padding: 0;
-  font-size: 0.9rem;
-  user-select: none;
-  position: relative;
-  z-index: 100;
-  flex-wrap: nowrap;
+  padding: 0; font-size: 0.9rem;
+  user-select: none; position: relative;
+  z-index: 100; flex-wrap: nowrap;
 }
 
-/* Menu items container */
-.menu-items {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-wrap: nowrap;
-}
+.menu-items { display: flex; flex-direction: row; align-items: center; flex-wrap: nowrap; }
 
-/* ============================================
-   MENU ITEMS
-   ============================================ */
-.menu-item {
-  position: relative;
-  display: inline-block;
-}
+/* ── Menu items ──────────────────────────────────────────── */
+.menu-item { position: relative; display: inline-block; }
 
 .menu-item > button {
-  display: flex;
-  align-items: center;
+  display: flex; align-items: center;
   padding: 0.4em 0.8em;
-  background: none;
-  border: none;
   color: var(--menu-fg);
-  font-family: inherit;
-  font-size: inherit;
-  cursor: pointer;
-  transition: background-color 0.1s ease;
+  transition: background-color 0.1s;
 }
+:is(.menu-item > button:hover, .menu-item.open > button) { background: var(--menu-hover-bg); }
+.menu-item.open > button { background: var(--menu-active-bg); }
+.menu-item > button .underline { text-decoration: underline; }
 
-.menu-item > button:hover,
-.menu-item.open > button {
-  background-color: var(--menu-hover-bg);
-}
-
-.menu-item.open > button {
-  background-color: var(--menu-active-bg);
-}
-
-/* Underline for keyboard shortcut hint */
-.menu-item > button .underline {
-  text-decoration: underline;
-}
-
-/* ============================================
-   DROPDOWN MENUS
-   ============================================ */
+/* ── Dropdowns ───────────────────────────────────────────── */
 .menu-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
+  position: absolute; top: 100%; left: 0;
   min-width: 200px;
-  background-color: var(--menu-bg);
-  border: 1px solid var(--menu-border);
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-  display: none;
-  z-index: 1000;
+  background: var(--menu-bg); border: 1px solid var(--menu-border);
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  display: none; z-index: 1000;
 }
+.menu-item.open .menu-dropdown { display: block; }
 
-.menu-item.open .menu-dropdown {
-  display: block;
-}
-
-/* Dropdown items */
 .menu-dropdown-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   padding: 0.4em 1em;
   color: var(--menu-fg);
-  cursor: pointer;
-  transition: background-color 0.1s ease;
-  background: transparent;
+  transition: background-color 0.1s;
+  width: 100%;
 }
+.menu-dropdown-item:hover { background: var(--menu-hover-bg); }
+.menu-dropdown-item.disabled { color: var(--fg-dim); pointer-events: none; }
 
-.menu-dropdown-item:hover {
-  background-color: var(--menu-hover-bg);
-}
+.menu-shortcut { color: var(--fg-dim); font-size: 0.85em; margin-left: 2em; }
 
-.menu-dropdown-item.disabled {
-  color: var(--fg-dim);
-  cursor: not-allowed;
-}
+.menu-separator { height: 1px; background: var(--menu-border); margin: 0.25em 0; }
 
-.menu-dropdown-item.disabled:hover {
-  background-color: transparent;
-}
+.menu-dropdown-item.checked::before      { content: "✓"; margin-right: 0.5em; color: var(--green); }
+.menu-dropdown-item.has-submenu::after   { content: "▸"; margin-left: auto; padding-left: 1em; }
 
-/* Keyboard shortcut display */
-.menu-shortcut {
-  color: var(--fg-dim);
-  font-size: 0.85em;
-  margin-left: 2em;
-}
+/* ── Right side ──────────────────────────────────────────── */
+.menu-bar-right { margin-left: auto; display: flex; align-items: center; padding-right: 0.5em; }
 
-/* Separator */
-.menu-separator {
-  height: 1px;
-  background-color: var(--menu-border);
-  margin: 0.25em 0;
-}
+/* Scheme option — preview colours from inline CSS vars */
+.scheme-option { background: var(--p-bg, var(--menu-bg)); color: var(--p-fg, var(--menu-fg)); gap: 0.5em; }
+.scheme-option:hover { filter: brightness(1.15); }
 
-/* Checkbox/Radio items */
-.menu-dropdown-item.checked::before {
-  content: "✓";
-  margin-right: 0.5em;
-  color: var(--green);
-}
-
-.menu-dropdown-item.radio.checked::before {
-  content: "●";
-}
-
-/* Submenu indicator */
-.menu-dropdown-item.has-submenu::after {
-  content: "▸";
-  margin-left: auto;
-  padding-left: 1em;
-}
-
-/* ============================================
-   RIGHT SIDE OF MENU BAR
-   ============================================ */
-.menu-bar-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  padding-right: 0.5em;
-}
-
-/* Scheme option item — preview bg/fg colours from inline CSS vars */
-.scheme-option {
-  background: var(--p-bg, var(--menu-bg));
-  color: var(--p-fg, var(--menu-fg));
-  gap: 0.5em;
-}
-.scheme-option:hover {
-  filter: brightness(1.15);
-}
-
-/* Accent dot: always shown, filled only for active/current */
 .scheme-dot {
-  width: 0.55em;
-  height: 0.55em;
-  border-radius: 50%;
+  width: 0.55em; height: 0.55em; border-radius: 50%;
   border: 1.5px solid var(--p-accent, currentColor);
-  background: transparent;
-  flex-shrink: 0;
+  background: transparent; flex-shrink: 0;
   transition: background 0.1s;
 }
-.scheme-option.active .scheme-dot {
-  background: var(--p-accent, currentColor);
-}
+.scheme-option.active .scheme-dot { background: var(--p-accent, currentColor); }
 
-/* Pin/shuffle action row at bottom of scheme popup */
-.scheme-popup-actions {
-  display: flex;
-  gap: 0;
-  border-top: 1px solid var(--menu-border);
-}
+/* Pin action row */
+.scheme-popup-actions { display: flex; border-top: 1px solid var(--menu-border); }
 .scheme-action-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3em;
-  padding: 0.4em 0.6em;
-  background: none;
-  border: none;
-  color: var(--fg-dim);
-  font-family: inherit;
-  font-size: 0.82rem;
-  cursor: pointer;
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 0.3em; padding: 0.4em 0.6em;
+  color: var(--fg-dim); font-size: 0.82rem;
   transition: background 0.1s, color 0.1s;
 }
-.scheme-action-btn:hover {
-  background: var(--menu-hover-bg);
-  color: var(--fg-main);
-}
-.scheme-action-btn + .scheme-action-btn {
-  border-left: 1px solid var(--menu-border);
-}
+.scheme-action-btn:hover { background: var(--menu-hover-bg); color: var(--fg-main); }
+.scheme-action-btn + .scheme-action-btn { border-left: 1px solid var(--menu-border); }
 
-/* ============================================
-   SCHEME POPUP (right-side palette button)
-   ============================================ */
-.scheme-popup-container {
-  position: relative;
-}
+/* ── Scheme popup ────────────────────────────────────────── */
+.scheme-popup-container { position: relative; }
 
-/* Unified right-side icon button */
 .menu-bar-btn,
 .scheme-popup-btn {
-  display: flex;
-  align-items: center;
+  display: flex; align-items: center;
   padding: 0.3em 0.55em;
-  background: none;
-  border: 1px solid var(--border-dim);
-  border-radius: 3px;
+  border: 1px solid var(--border-dim); border-radius: 3px;
   color: var(--fg-dim);
-  font-family: 'Symbols Nerd Font Mono', inherit;
-  font-size: 0.9rem;
-  cursor: pointer;
+  font-family: 'Symbols Nerd Font Mono', inherit; font-size: 0.9rem;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   margin-left: 0.3em;
 }
-.menu-bar-btn:hover,
-.menu-bar-btn[aria-expanded="true"],
-.scheme-popup-btn:hover,
-.scheme-popup-btn[aria-expanded="true"] {
-  background-color: var(--menu-hover-bg);
-  color: var(--fg-main);
-  border-color: var(--border);
+:is(.menu-bar-btn:hover, .menu-bar-btn[aria-expanded="true"],
+    .scheme-popup-btn:hover, .scheme-popup-btn[aria-expanded="true"]) {
+  background: var(--menu-hover-bg); color: var(--fg-main); border-color: var(--border);
 }
 
 .scheme-popup {
-  position: absolute;
-  top: calc(100% + 2px);
-  right: 0;
+  position: absolute; top: calc(100% + 2px); right: 0;
   min-width: 180px;
-  background-color: var(--menu-bg);
-  border: 1px solid var(--menu-border);
+  background: var(--menu-bg); border: 1px solid var(--menu-border);
   box-shadow: 2px 4px 12px rgba(0,0,0,0.4);
-  display: none;
-  z-index: 1001;
-  overflow: hidden;
+  display: none; z-index: 1001; overflow: hidden;
 }
+.scheme-popup.open { display: block; }
 
-.scheme-popup.open {
-  display: block;
-}
+/* Backdrop */
+.menu-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 198; }
+.menu-backdrop.visible { display: block; }
 
-/* Backdrop — covers page behind mobile drawer / scheme popup */
-.menu-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 198;
-}
-
-.menu-backdrop.visible {
-  display: block;
-}
-
-/* Theme toggle icons — CSS-driven, no JS display toggle needed */
+/* Theme toggle icons — CSS-driven */
 :root .theme-icon-light,
 [data-theme="dark"] .theme-icon-light { display: none; }
-[data-theme="light"] .theme-icon-dark { display: none; }
+[data-theme="light"] .theme-icon-dark  { display: none; }
 [data-theme="light"] .theme-icon-light { display: inline; }
 
-/* Site title in menu bar */
-.menu-bar-title {
-  color: var(--fg-dim);
-  font-size: 0.85rem;
-  padding: 0 1em;
-  text-decoration: none;
-}
+/* Site title */
+.menu-bar-title { color: var(--fg-dim); font-size: 0.85rem; padding: 0 1em; text-decoration: none; }
+.menu-bar-title:hover { color: var(--fg-main); }
 
-.menu-bar-title:hover {
-  color: var(--fg-main);
-}
-
-/* ============================================
-   MOBILE HAMBURGER
-   ============================================ */
-.menu-hamburger {
-  display: none;
-  padding: 0.5em;
-  background: none;
-  border: none;
-  color: var(--menu-fg);
-  cursor: pointer;
-  font-size: 1.2rem;
-}
-
-.menu-hamburger:hover {
-  background-color: var(--menu-hover-bg);
-}
-
-/* ============================================
-   LINK ITEMS (Direct navigation)
-   ============================================ */
-.menu-link {
-  display: flex;
-  align-items: center;
-  padding: 0.4em 0.8em;
-  color: var(--menu-fg);
-  text-decoration: none;
-  transition: background-color 0.1s ease;
-}
-
-.menu-link:hover {
-  background-color: var(--menu-hover-bg);
-  text-decoration: none;
-}
-
-.menu-link:visited {
-  color: var(--menu-fg);
-}
-
-/* ============================================
-   SEARCH IN MENU BAR
-   ============================================ */
-.menu-search {
-  display: flex;
-  align-items: center;
-  margin-right: 0.5em;
-}
-
-.menu-search input {
-  padding: 0.25em 0.5em;
-  background-color: var(--bg-main);
-  border: 1px solid var(--border-dim);
-  color: var(--fg-main);
-  font-family: inherit;
-  font-size: 0.85rem;
-  width: 150px;
-  transition: all 0.15s ease;
-}
-
-.menu-search input:focus {
-  outline: none;
-  border-color: var(--blue);
-  width: 200px;
-}
-
-.menu-search input::placeholder {
-  color: var(--fg-dim);
-}
+/* ── Hamburger ───────────────────────────────────────────── */
+.menu-hamburger { display: none; padding: 0.5em; color: var(--menu-fg); font-size: 1.2rem; }
+.menu-hamburger:hover { background: var(--menu-hover-bg); }

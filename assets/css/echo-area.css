@@ -1,263 +1,84 @@
-/* Echo Area CSS - Emacs Minibuffer/Echo Area Styling
- * Emacs Blog Theme
- */
-
-/* ============================================
-   ECHO AREA
-   ============================================ */
-.echo-area {
-  display: flex;
-  align-items: center;
-  min-height: 1.6em;
-  padding: 0.2em 0.75em;
-  background-color: var(--echo-bg);
-  color: var(--echo-fg);
-  font-size: 0.85rem;
-  border-top: 1px solid var(--border-dim);
+/* ── Command Palette ─────────────────────────────────────── */
+.palette-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9000;
+  display: none; align-items: flex-start; justify-content: center;
+  padding-top: 8vh;
 }
+.palette-overlay.open { display: flex; }
 
-/* ============================================
-   MESSAGE DISPLAY
-   ============================================ */
-.echo-message {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Different message types */
-.echo-message.info {
-  color: var(--fg-main);
-}
-
-.echo-message.success {
-  color: var(--green);
-}
-
-.echo-message.warning {
-  color: var(--yellow);
-}
-
-.echo-message.error {
-  color: var(--red);
-}
-
-/* ============================================
-   KEYBOARD HINTS
-   ============================================ */
-.keyboard-hints {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  color: var(--fg-dim);
-  font-size: 0.8rem;
-}
-
-.keyboard-hint {
-  display: flex;
-  align-items: center;
-  gap: 0.3em;
-}
-
-.keyboard-hint kbd {
-  display: inline-block;
-  padding: 0.1em 0.4em;
-  background-color: var(--bg-dim);
+.palette-dialog {
+  width: min(640px, 92vw);
+  background: var(--bg-main);
   border: 1px solid var(--border);
-  border-radius: 3px;
-  font-family: inherit;
-  font-size: 0.85em;
-  min-width: 1.5em;
-  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  display: flex; flex-direction: column;
+  max-height: 70vh;
 }
 
-.keyboard-hint .hint-desc {
+.palette-input-wrap {
+  display: flex; align-items: center;
+  padding: 0.6em 1em; gap: 0.6em;
+  border-bottom: 1px solid var(--border-dim);
+  flex-shrink: 0;
+}
+
+.palette-prefix {
   color: var(--fg-dim);
+  font-family: var(--code-font), monospace; font-size: 0.9rem;
+  user-select: none;
 }
 
-/* ============================================
-   TOUCH HINTS (Mobile)
-   ============================================ */
-.touch-hints {
-  display: none;
-  color: var(--fg-dim);
-  font-size: 0.8rem;
-}
-
-/* ============================================
-   MINIBUFFER INPUT (for search, etc.)
-   ============================================ */
-.echo-area.minibuffer-active {
-  background-color: var(--bg-dim);
-}
-
-.minibuffer-prompt {
-  color: var(--cyan);
-  margin-right: 0.5em;
-  white-space: nowrap;
-}
-
-.minibuffer-input {
-  flex: 1;
-  background: none;
-  border: none;
+.palette-input {
+  flex: 1; background: none; border: none; outline: none;
   color: var(--fg-main);
-  font-family: inherit;
-  font-size: inherit;
-  outline: none;
+  font-family: var(--code-font), monospace; font-size: 1rem;
 }
+.palette-input::placeholder { color: var(--fg-dim); }
 
-.minibuffer-input::placeholder {
-  color: var(--fg-dim);
+.palette-results { overflow-y: auto; flex: 1; }
+
+.palette-item {
+  display: flex; flex-direction: column;
+  padding: 0.45em 1em; cursor: pointer;
+  border-bottom: 1px solid var(--border-dim); gap: 0.1em;
 }
+.palette-item:last-child { border-bottom: none; }
+:is(.palette-item.selected, .palette-item:hover) { background: var(--list-selected-bg, var(--bg-active)); color: var(--list-selected-fg, var(--fg-main)); }
 
-/* ============================================
-   COMPLETIONS POPUP
-   ============================================ */
-.completions-popup {
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  right: 0;
-  max-height: 200px;
-  overflow-y: auto;
-  background-color: var(--bg-dim);
-  border: 1px solid var(--border);
-  border-bottom: none;
-  display: none;
-}
+.palette-item-title { font-size: 0.92rem; color: var(--fg-main); }
+.palette-item-meta  { font-size: 0.78rem; color: var(--fg-dim); }
+.palette-item mark  { background: none; color: var(--yellow, #e5c890); font-weight: 600; }
+.palette-empty { padding: 1em; color: var(--fg-dim); text-align: center; font-size: 0.9rem; }
 
-.completions-popup.visible {
-  display: block;
-}
+/* Scheme colour swatch (used in "t " mode) */
+.pi-swatch { display: inline-flex; align-items: center; gap: 0.3em; padding: 0.1em 0.4em; border-radius: 2px; margin-right: 0.5em; font-size: 0.75em; flex-shrink: 0; font-family: var(--code-font), monospace; }
+.pi-dot    { width: 0.5em; height: 0.5em; border-radius: 50%; flex-shrink: 0; }
 
-.completion-item {
-  padding: 0.3em 0.75em;
-  cursor: pointer;
-}
-
-.completion-item:hover,
-.completion-item.selected {
-  background-color: var(--list-selected-bg);
-  color: var(--list-selected-fg);
-}
-
-.completion-item .match {
-  color: var(--magenta);
-  font-weight: bold;
-}
-
-/* ============================================
-   LOADING INDICATOR
-   ============================================ */
-.echo-loading {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-}
-
-.echo-loading .spinner {
-  width: 1em;
-  height: 1em;
-  border: 2px solid var(--border);
-  border-top-color: var(--blue);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ============================================
-   HELP OVERLAY (? key)
-   ============================================ */
+/* ── Help Overlay ────────────────────────────────────────── */
 .help-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center;
   z-index: 9999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
 }
-
-.help-overlay.visible {
-  opacity: 1;
-  visibility: visible;
-}
+.help-overlay.visible { opacity: 1; visibility: visible; }
 
 .help-content {
-  background-color: var(--bg-main);
-  border: 1px solid var(--border);
-  padding: 2em;
-  max-width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
+  background: var(--bg-main); border: 1px solid var(--border);
+  padding: 2em; max-width: 600px; max-height: 80vh; overflow-y: auto;
 }
+.help-content h2 { margin-top: 0; color: var(--magenta); border-bottom: 1px solid var(--border); padding-bottom: 0.5em; }
+.help-section { margin: 1.5em 0; }
+.help-section h3 { color: var(--blue); margin-bottom: 0.5em; }
 
-.help-content h2 {
-  margin-top: 0;
-  color: var(--magenta);
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0.5em;
-}
+.help-keybinding { display: flex; justify-content: space-between; padding: 0.3em 0; border-bottom: 1px dotted var(--border-dim); }
+.help-keybinding:last-child { border-bottom: none; }
+.help-keybinding kbd { background: var(--bg-dim); padding: 0.1em 0.5em; border: 1px solid var(--border); border-radius: 3px; font-family: inherit; min-width: 3em; text-align: center; }
+.help-keybinding .desc { color: var(--fg-dim); }
 
-.help-section {
-  margin: 1.5em 0;
-}
-
-.help-section h3 {
-  color: var(--blue);
-  margin-bottom: 0.5em;
-}
-
-.help-keybinding {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.3em 0;
-  border-bottom: 1px dotted var(--border-dim);
-}
-
-.help-keybinding:last-child {
-  border-bottom: none;
-}
-
-.help-keybinding kbd {
-  background-color: var(--bg-dim);
-  padding: 0.1em 0.5em;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  font-family: inherit;
-  min-width: 3em;
-  text-align: center;
-}
-
-.help-keybinding .desc {
-  color: var(--fg-dim);
-}
-
-.help-close {
-  display: block;
-  margin-top: 1.5em;
-  padding: 0.5em 1em;
-  background-color: var(--bg-dim);
-  border: 1px solid var(--border);
-  color: var(--fg-main);
-  font-family: inherit;
-  cursor: pointer;
-  text-align: center;
-}
-
-.help-close:hover {
-  background-color: var(--bg-hover);
-}
+.help-close { display: block; margin-top: 1.5em; padding: 0.5em 1em; background: var(--bg-dim); border: 1px solid var(--border); color: var(--fg-main); text-align: center; }
+.help-close:hover { background: var(--bg-hover); }

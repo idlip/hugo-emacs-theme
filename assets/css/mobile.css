@@ -1,268 +1,75 @@
-/* Mobile CSS - Responsive Design
- * Emacs Blog Theme
- */
-
-/* ============================================
-   TABLET (< 1024px)
-   ============================================ */
+/* ── Tablet (≤1024px) ──────────────────────────────────────── */
 @media screen and (max-width: 1024px) {
-  .article-meta {
-    gap: 0.5em;
-  }
-  
-  .article-word-count {
-    display: none;
-  }
+  .article-meta { gap: 0.5em; }
+  .article-word-count { display: none; }
 }
 
-/* ============================================
-   MOBILE (< 768px)
-   ============================================ */
+/* ── Mobile (≤768px) ──────────────────────────────────────── */
 @media screen and (max-width: 768px) {
-  /* Hide menu items by default; show when menu-open */
+  /* Menu: hidden by default, revealed via hamburger */
   .menu-bar .menu-items {
     display: none;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: var(--menu-bg);
+    flex-direction: row; flex-wrap: wrap; align-items: center;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--menu-bg);
     border-bottom: 1px solid var(--menu-border);
     z-index: 200;
   }
+  .menu-bar.menu-open .menu-items { display: flex; }
+  .menu-hamburger   { display: block; }
+  .menu-bar-title   { display: none; }
+  .menu-bar-right   { margin-left: auto; }
 
-  .menu-bar.menu-open .menu-items {
-    display: flex;
-  }
+  /* Article list */
+  .article-meta  { display: none; }
+  .article-item  { flex-wrap: wrap; padding: 0.5em 0.75em; }
+  .article-title { width: 100%; }
+  .article-item .article-link  { flex: 0 0 100%; padding: 0.5em 0.75em 0.2em; }
+  .article-item .post-tags     { flex: 0 0 100%; display: flex; flex-wrap: wrap; gap: 0.3em; padding: 0 0.75em 0.4em 2.25em; }
 
-  /* Show hamburger */
-  .menu-hamburger {
-    display: block;
-  }
-
-  /* Dropdowns work same as desktop */
-  .menu-bar .menu-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    min-width: 200px;
-    background-color: var(--menu-bg);
-    border: 1px solid var(--menu-border);
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-    z-index: 300;
-  }
-
-  /* Simpler article list on mobile */
-  .article-item {
-    flex-wrap: wrap;
-    padding: 0.5em 0.75em;
-  }
-
-  .article-meta {
-    display: none;
-  }
-
-  .article-title {
-    width: 100%;
-    white-space: normal;
-  }
-
-  /* Modeline: handled in modeline.css @media block */
-
-  /* Post content padding */
-  .post-content {
-    padding: 0.75em;
-  }
-
-  /* Search in menu */
-  .menu-search {
-    display: none;
-  }
-
-  /* Menu bar right */
-  .menu-bar-right {
-    margin-left: auto;
-  }
-
-  .menu-bar-title {
-    display: none;
-  }
+  /* Content */
+  .post-content { padding: 0.75em; }
+  .term-header  { flex-direction: column; align-items: flex-start; gap: 0.3em; }
 }
 
-/* ============================================
-   SMALL MOBILE (< 480px)
-   ============================================ */
+/* ── Small mobile (≤480px) ─────────────────────────────────── */
 @media screen and (max-width: 480px) {
-  body {
-    font-size: 0.9rem;
-  }
-  
-  .article-item {
-    padding: 0.5em;
-  }
-  
-  .article-marker {
-    width: 1em;
-  }
-  
-  h1 { font-size: 1.3rem; }
-  h2 { font-size: 1.15rem; }
-  h3 { font-size: 1.05rem; }
-  
-  /* Smaller modeline */
-  .modeline {
-    font-size: 0.75rem;
-    padding: 0.1em 0.25em;
-  }
-  
-  /* Code blocks */
-  pre code {
-    font-size: 0.8rem;
-    padding: 0.75em;
-  }
-  
-  /* Theme toggle */
-  .theme-toggle span:not(.icon) {
-    display: none;
-  }
+  body { font-size: 0.9rem; }
+  .article-item  { padding: 0.5em; }
+  .article-marker { width: 1em; }
+  .tag-cloud     { gap: 0.25em; padding: 0.4em 0.5em; }
+  .tag-cloud-btn { font-size: 0.75rem; padding: 0.25em 0.5em; }
+  .list-search   { margin: 0.4em 0; }
+  .breadcrumbs   { font-size: 0.75rem; white-space: normal; word-break: break-word; }
+  .post-title    { font-size: 1.25rem; }
+  .post-meta     { gap: 0.5em; font-size: 0.8rem; }
+  pre code       { font-size: 0.8rem; }
+  .social-links  { font-size: 1rem; }
 }
 
-/* ============================================
-   TOUCH-SPECIFIC ADJUSTMENTS
-   ============================================ */
+/* ── Touch devices ─────────────────────────────────────────── */
 @media (hover: none) and (pointer: coarse) {
-  /* Larger touch targets */
-  .article-item {
-    min-height: 44px;
-    padding: 0.75em;
-  }
-  
-  .menu-dropdown-item {
-    min-height: 44px;
-    padding: 0.75em 1em;
-  }
-  
-  /* Disable hover effects on touch */
-  .article-item:hover {
-    background-color: transparent;
-  }
-  
-  .article-item:active {
-    background-color: var(--list-hover-bg);
-  }
-  
-  /* Hide keyboard hints */
-  .keyhint,
-  .menu-shortcut,
-  .modeline-keyhint {
-    display: none;
-  }
-  
-  /* Echo area shows tap hints instead */
-  .echo-area .keyboard-hints {
-    display: none;
-  }
-  
-  .echo-area .touch-hints {
-    display: block;
-  }
+  .article-item        { min-height: 44px; padding: 0.75em; }
+  .menu-dropdown-item  { min-height: 44px; padding: 0.75em 1em; }
+  .article-item:hover  { background: transparent; }
+  .article-item:active { background: var(--list-hover-bg); }
+  .menu-shortcut       { display: none; }
 }
 
-/* ============================================
-   PRINT STYLES
-   ============================================ */
+/* ── Print ─────────────────────────────────────────────────── */
 @media print {
-  .menu-bar,
-  .modeline,
-  .echo-area,
-  .buffer.buffer-list {
-    display: none !important;
-  }
-  
-  .emacs-frame {
-    height: auto;
-    overflow: visible;
-  }
-  
-  .buffer-container {
-    display: block;
-  }
-  
-  .buffer.buffer-content {
-    display: block;
-    border: none;
-  }
-  
-  .buffer-body {
-    overflow: visible;
-  }
-  
-  body {
-    background: white;
-    color: black;
-    font-size: 12pt;
-  }
-  
-  a {
-    color: black;
-    text-decoration: underline;
-  }
-  
-  pre, code {
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-  }
+  :is(.menu-bar, .modeline) { display: none !important; }
+  .emacs-frame   { height: auto; overflow: visible; }
+  .buffer-container { display: block; }
+  .buffer-body   { overflow: visible; }
+  body           { background: white; color: black; font-size: 12pt; }
+  a              { color: black; text-decoration: underline; }
+  :is(pre, code) { background: #f5f5f5; border: 1px solid #ddd; }
 }
 
-/* ============================================
-   LANDSCAPE MOBILE
-   ============================================ */
-@media screen and (max-width: 896px) and (orientation: landscape) {
-  .menu-bar {
-    padding: 0;
-  }
-  
-  .menu-item > button,
-  .menu-link {
-    padding: 0.25em 0.5em;
-  }
-  
-  .modeline {
-    min-height: 1.5em;
-    font-size: 0.75rem;
-  }
-  
-  .echo-area {
-    min-height: 1.3em;
-    padding: 0.15em 0.5em;
-  }
-}
-
-/* ============================================
-   HIGH DPI DISPLAYS
-   ============================================ */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  /* Ensure crisp borders */
-  .buffer,
-  .modeline,
-  .menu-bar,
-  .echo-area,
-  pre,
-  .highlight pre {
-    border-width: 0.5px;
-  }
-}
-
-/* ============================================
-   PREFERS REDUCED MOTION
-   ============================================ */
+/* ── Reduced motion ────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

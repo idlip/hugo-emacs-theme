@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   padding: 0.8em 1.5em 0.8em 0.4em;
-  background-color: var(--modeline-bg);
+  background-color: var(--bg-dim);
   color: var(--modeline-fg);
   font-family: var(--code-font), monospace;
   font-size: 0.82rem;
@@ -71,8 +71,7 @@
   background: var(--bg-hover);
 }
 
-/* Desktop shows filename, mobile shows title (controlled by .ml-show-mobile / .ml-hide-mobile) */
-.ml-show-mobile { display: none; }
+/* Items hidden on mobile via .ml-hide-mobile */
 .ml-hide-mobile { display: inline-flex; }
 
 /* Separator */
@@ -138,29 +137,9 @@
   padding: 0 0.5ch;
 }
 
-/* Width toggle button */
-.ml-width-btn {
-  background: none;
-  border: 1px solid var(--modeline-border);
-  color: var(--modeline-fg);
-  font-family: inherit;
-  font-size: 0.85rem;
-  padding: 0 0.4em;
-  cursor: pointer;
-  border-radius: 2px;
-  opacity: 0.7;
-  line-height: 1.4;
-  transition: opacity 0.15s;
-}
-.ml-width-btn:hover {
-  opacity: 1;
-  background-color: var(--bg-active);
-}
-
 /* Mobile: compact, only filename/title + words + position */
 @media (max-width: 768px) {
   .modeline { padding: 0.2em 0.5em; font-size: 0.78rem; }
   .ml-sep   { padding: 0 0.3ch; }
   .ml-hide-mobile { display: none !important; }
-  .ml-show-mobile { display: inline-flex; }
 }

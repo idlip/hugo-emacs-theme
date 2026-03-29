@@ -111,12 +111,12 @@
   </nav>
 
   <div class="menu-bar-right">
-    <a href="{{ "/" | relURL }}" class="menu-bar-title">{{ .Site.Title }}</a>
+    <a href="{{ "/now/" | relURL }}" class="menu-bar-title">{{ .Site.Title }}</a>
 
     {{- if .Site.Params.colorSchemes }}
     <div class="scheme-popup-container" id="scheme-popup-container">
       <button class="scheme-popup-btn" id="scheme-popup-btn"
-              aria-label="Color scheme" title="Color scheme"
+              aria-label="Color scheme" title="Color scheme (c)"
               aria-expanded="false" aria-haspopup="true">
         <span class="nf" aria-hidden="true">󰏘</span>
       </button>
@@ -132,7 +132,7 @@
 
     <button class="scheme-popup-btn" aria-label="Toggle dark/light" data-action="toggle-theme" title="Toggle dark/light (t)">
       <span class="nf theme-icon-dark" aria-hidden="true"> </span>
-      <span class="nf theme-icon-light" aria-hidden="true" style="display:none;"> </span>
+      <span class="nf theme-icon-light" aria-hidden="true" style="display:none;"> </span>
     </button>
   </div>
 </header>

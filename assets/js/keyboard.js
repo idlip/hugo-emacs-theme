@@ -232,14 +232,21 @@
     // ── Global shortcuts ───────────────────────────────────────────────────
     switch (key) {
       case 't':
-        if (!ctrl && !meta) { window.toggleTheme && window.toggleTheme(); e.preventDefault(); }
+      case 'i':
+        if (!ctrl && !meta) { toggleTheme(); e.preventDefault(); }
+        break;
+      case 'w':
+        if (!ctrl && !meta) { cycleWidth(); e.preventDefault(); }
+        break;
+      case 'c':
+        if (!ctrl && !meta) { toggleSchemePopup(); e.stopPropagation(); }
         break;
       case '+':
       case '=':
-        if (!ctrl && !meta) { window.adjustFontSize && window.adjustFontSize(1); e.preventDefault(); }
+        if (!ctrl && !meta) { adjustFontSize(1); e.preventDefault(); }
         break;
       case '-':
-        if (!ctrl && !meta) { window.adjustFontSize && window.adjustFontSize(-1); e.preventDefault(); }
+        if (!ctrl && !meta) { adjustFontSize(-1); e.preventDefault(); }
         break;
     }
   }

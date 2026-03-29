@@ -299,6 +299,8 @@
   window.toggleTheme = toggleTheme;
   window.adjustFontSize = adjustFontSize;
   window.resetFontSize = resetFontSize;
+  window.cycleWidth = cycleWidth;
+  window.toggleSchemePopup = toggleSchemePopup
 
   window.emacsBlog = window.emacsBlog || {};
   window.emacsBlog.menu = { toggleTheme, adjustFontSize, resetFontSize, closeAllMenus, applyScheme, cycleWidth };

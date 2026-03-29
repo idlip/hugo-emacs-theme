@@ -227,7 +227,7 @@
    CONTENT BUFFER
    ============================================ */
 .post-content {
-  max-width: 80ch;
+  max-width: var(--content-max-width, 80ch);
   padding: 1em 2em;
   margin: 0 auto;
 }
@@ -277,6 +277,11 @@
 
 .post-date {
   color: var(--yellow);
+}
+
+.post-date-updated {
+  color: var(--fg-dim);
+  font-size: 0.9em;
 }
 
 .post-reading-time {

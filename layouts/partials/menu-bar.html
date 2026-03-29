@@ -113,6 +113,11 @@
   <div class="menu-bar-right">
     <a href="{{ "/now/" | relURL }}" class="menu-bar-title">{{ .Site.Title }}</a>
 
+    <button class="scheme-popup-btn" id="ml-width-btn"
+      title="Cycle content width [100% → 80ch → 60ch → 840px] (w)"
+      aria-label="Cycle content width"
+      data-action="cycle-width"><span class="nf" aria-hidden="true">󰭣</span></button>
+
     {{- if .Site.Params.colorSchemes }}
     <div class="scheme-popup-container" id="scheme-popup-container">
       <button class="scheme-popup-btn" id="scheme-popup-btn"

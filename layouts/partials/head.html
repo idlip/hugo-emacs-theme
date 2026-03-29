@@ -60,6 +60,29 @@
 {{- /* Preload critical font only (headings, 32 KiB) */ -}}
 <link rel="preload" href="/fonts/impress.woff2" as="font" type="font/woff2" crossorigin>
 
+{{- /* Schemes JSON for command palette "t " mode — fingerprinted, lazy-loaded */ -}}
+{{- $sl := slice -}}
+{{- range $k, $d := .Site.Data.schemes.base16 -}}
+  {{- $p := $d.palette -}}
+  {{- if $p -}}
+    {{- $c := slice
+      ($p.base00 | default "") ($p.base01 | default "")
+      ($p.base02 | default "") ($p.base03 | default "")
+      ($p.base04 | default "") ($p.base05 | default "")
+      ($p.base06 | default "") ($p.base07 | default "")
+      ($p.base08 | default "") ($p.base09 | default "")
+      (or (index $p "base0A") (index $p "base0a") | default "")
+      (or (index $p "base0B") (index $p "base0b") | default "")
+      (or (index $p "base0C") (index $p "base0c") | default "")
+      (or (index $p "base0D") (index $p "base0d") | default "")
+      (or (index $p "base0E") (index $p "base0e") | default "")
+      (or (index $p "base0F") (index $p "base0f") | default "")
+    -}}
+    {{- $sl = $sl | append (dict "key" $k "name" ($d.name | default $k) "colors" $c) -}}
+  {{- end -}}
+{{- end -}}
+{{- $sr := resources.FromString "js/schemes-data.json" ($sl | jsonify) | fingerprint -}}
+
 {{- /* Theme + scheme restore — runs before paint to prevent flash */ -}}
 <script>
   (function() {
@@ -67,7 +90,15 @@
     var s = localStorage.getItem('emacs-scheme');
     if (t) document.documentElement.setAttribute('data-theme', t);
     if (s) document.documentElement.setAttribute('data-scheme', s);
+    // Restore custom palette from "t " mode (inline vars override preset CSS)
+    var cp = localStorage.getItem('emacs-custom-palette');
+    if (cp) { try {
+      var d = JSON.parse(cp), r = document.documentElement;
+      var ks = ['base00','base01','base02','base03','base04','base05','base06','base07','base08','base09','base0A','base0B','base0C','base0D','base0E','base0F'];
+      d.colors.forEach(function(c,i){ if(c) r.style.setProperty('--'+ks[i],c); });
+    } catch(e){} }
   })();
+  window.__schemesUrl = "{{ $sr.RelPermalink }}";
 </script>
 
 {{- /* JS bundle — defer so it doesn't block first paint */ -}}

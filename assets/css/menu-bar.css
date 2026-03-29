@@ -148,8 +148,25 @@
   padding-right: 0.5em;
 }
 
-/* Theme toggle button */
-.theme-toggle {
+/* Active scheme indicator */
+.scheme-option.active::before {
+  content: "●";
+  margin-right: 0.5em;
+  color: var(--cyan);
+}
+.scheme-option:not(.active)::before {
+  content: " ";
+  margin-right: 0.5em;
+}
+
+/* ============================================
+   SCHEME POPUP (right-side palette button)
+   ============================================ */
+.scheme-popup-container {
+  position: relative;
+}
+
+.scheme-popup-btn {
   display: flex;
   align-items: center;
   padding: 0.3em 0.6em;
@@ -157,20 +174,48 @@
   border: 1px solid var(--border-dim);
   border-radius: 3px;
   color: var(--fg-dim);
-  font-family: inherit;
-  font-size: 0.85rem;
+  font-family: 'Symbols Nerd Font Mono', inherit;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.15s ease;
+  margin-right: 0.4em;
 }
 
-.theme-toggle:hover {
+.scheme-popup-btn:hover,
+.scheme-popup-btn[aria-expanded="true"] {
   background-color: var(--menu-hover-bg);
   color: var(--fg-main);
   border-color: var(--border);
 }
 
-.theme-toggle .icon {
-  margin-right: 0.3em;
+.scheme-popup {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 0;
+  min-width: 180px;
+  background-color: var(--menu-bg);
+  border: 1px solid var(--menu-border);
+  box-shadow: 2px 4px 12px rgba(0,0,0,0.4);
+  display: none;
+  z-index: 1001;
+  overflow: hidden;
+}
+
+.scheme-popup.open {
+  display: block;
+}
+
+/* Backdrop — covers page behind mobile drawer / scheme popup */
+.menu-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 198;
+}
+
+.menu-backdrop.visible {
+  display: block;
 }
 
 /* Site title in menu bar */

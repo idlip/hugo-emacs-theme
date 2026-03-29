@@ -1,10 +1,10 @@
-<header class="menu-bar" role="menubar">
+<header class="menu-bar">
   {{- /* Hamburger menu for mobile */ -}}
   <button class="menu-hamburger" aria-label="Toggle menu" aria-expanded="false">
     <span aria-hidden="true">&#9776;</span>
   </button>
-  
-  <nav class="menu-items">
+
+  <nav class="menu-items" role="menubar" aria-label="Site navigation">
     {{- /* File Menu */ -}}
     <div class="menu-item" role="none">
       <button role="menuitem" aria-haspopup="true" aria-expanded="false">
@@ -27,7 +27,7 @@
         {{- end }}
       </div>
     </div>
-    
+
     {{- /* View Menu */ -}}
     <div class="menu-item" role="none">
       <button role="menuitem" aria-haspopup="true" aria-expanded="false">
@@ -35,10 +35,18 @@
       </button>
       <div class="menu-dropdown" role="menu">
         <button class="menu-dropdown-item" role="menuitem" data-action="toggle-theme">
-          <span>Toggle Theme</span>
+          <span>Toggle Dark/Light</span>
           <span class="menu-shortcut">t</span>
         </button>
         <div class="menu-separator" role="separator"></div>
+        {{- if .Site.Params.colorSchemes }}
+        {{- range .Site.Params.colorSchemes }}
+        <button class="menu-dropdown-item scheme-option" role="menuitem" data-scheme="{{ .name }}">
+          <span>{{ .label }}</span>
+        </button>
+        {{- end }}
+        <div class="menu-separator" role="separator"></div>
+        {{- end }}
         <button class="menu-dropdown-item" role="menuitem" data-action="increase-font">
           <span>Increase Font Size</span>
           <span class="menu-shortcut">+</span>
@@ -53,7 +61,7 @@
         </button>
       </div>
     </div>
-    
+
     {{- /* Buffers Menu */ -}}
     <div class="menu-item" role="none">
       <button role="menuitem" aria-haspopup="true" aria-expanded="false">
@@ -71,7 +79,7 @@
         </a>
       </div>
     </div>
-    
+
     {{- /* Help Menu */ -}}
     <div class="menu-item" role="none">
       <button role="menuitem" aria-haspopup="true" aria-expanded="false">
@@ -85,9 +93,6 @@
         <div class="menu-separator" role="separator"></div>
         <a href="{{ "/about/" | relURL }}" class="menu-dropdown-item" role="menuitem">
           <span>About</span>
-        </a>
-        <a href="{{ "/contact/" | relURL }}" class="menu-dropdown-item" role="menuitem">
-          <span>Contact</span>
         </a>
         {{- with .Site.Params.socialLinks }}
         <div class="menu-separator" role="separator"></div>
@@ -104,16 +109,31 @@
       </div>
     </div>
   </nav>
-  
+
   <div class="menu-bar-right">
-    <a href="{{ "/now/" | relURL }}" class="menu-bar-title">{{ .Site.Title }}</a>
-    
-    <button class="theme-toggle" aria-label="Toggle color theme" data-action="toggle-theme">
-      <span class="icon" aria-hidden="true">
-        <span class="theme-icon-dark"> </span>
-        <span class="theme-icon-light" style="display:none;"> </span>
-      </span>
-      <span class="theme-label">Theme</span>
+    <a href="{{ "/" | relURL }}" class="menu-bar-title">{{ .Site.Title }}</a>
+
+    {{- if .Site.Params.colorSchemes }}
+    <div class="scheme-popup-container" id="scheme-popup-container">
+      <button class="scheme-popup-btn" id="scheme-popup-btn"
+              aria-label="Color scheme" title="Color scheme"
+              aria-expanded="false" aria-haspopup="true">
+        <span class="nf" aria-hidden="true">󰏘</span>
+      </button>
+      <div class="scheme-popup" id="scheme-popup" role="menu" aria-label="Color schemes">
+        {{- range .Site.Params.colorSchemes }}
+        <button class="menu-dropdown-item scheme-option" role="menuitem" data-scheme="{{ .name }}">
+          <span class="ml-line">{{ .label }}</span>
+        </button>
+        {{- end }}
+      </div>
+    </div>
+    {{- end }}
+
+    <button class="scheme-popup-btn" aria-label="Toggle dark/light" data-action="toggle-theme" title="Toggle dark/light (t)">
+      <span class="nf theme-icon-dark" aria-hidden="true"> </span>
+      <span class="nf theme-icon-light" aria-hidden="true" style="display:none;"> </span>
     </button>
   </div>
 </header>
+<div class="menu-backdrop" id="menu-backdrop" aria-hidden="true"></div>

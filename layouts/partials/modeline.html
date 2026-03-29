@@ -1,72 +1,57 @@
 {{- /*
-  Modeline partial - Emacs-style modeline
-  
+  Modeline partial — Emacs-inspired status bar
   Parameters:
-  - .buffer: Buffer name to display
-  - .mode: Major mode name (e.g., "Org", "Text")
-  - .readonly: Boolean, whether buffer is read-only
-  - .position: Optional position info
-  - .keyhint: Optional keyboard hint to show
+  - .buffer      : buffer name (filename or *buffer*)
+  - .mode        : major mode (Org, Dired, …)
+  - .wordcount   : optional word count integer
+  - .date        : optional publication date string (YYYY-MM-DD)
+  - .widthtoggle : true to show the width-cycle button (post pages only)
 */ -}}
 
 {{- $buffer := .buffer | default "*scratch*" -}}
 {{- $mode := .mode | default "Fundamental" -}}
-{{- $readonly := .readonly | default true -}}
-{{- $keyhint := .keyhint | default "" -}}
+{{- $wc := .wordcount | default 0 -}}
+{{- $date := .date | default "" -}}
+{{- $widthtoggle := .widthtoggle | default false -}}
 
-<div class="modeline modeline-emacs-style" role="status" aria-live="polite">
+<div class="modeline" role="status" aria-live="polite">
   <div class="ml-left">
-    {{- /* Leading dash */ -}}
-    <span class="ml-dash">-</span>
-    
-    {{- /* Encoding indicator (U = UTF-8) */ -}}
-    <span class="ml-encoding-triplet" title="UTF-8 encoding">U</span>
-    <span class="ml-encoding-triplet">U</span>
-    <span class="ml-encoding-triplet">U</span>
-    
-    {{- /* Colon separator */ -}}
-    <span class="ml-colon">:</span>
-    
-    {{- /* Status indicator */ -}}
-    {{- if $readonly -}}
-    <span class="ml-status readonly" title="Read-only">%%</span>
-    {{- else -}}
-    <span class="ml-status" title="Unmodified">--</span>
-    {{- end -}}
-    
-    {{- /* Frame indicator */ -}}
-    <span class="ml-frame">-F1</span>
-    
-    {{- /* Space */ -}}
-    <span class="ml-space"></span>
-    <span class="ml-space"></span>
-    
-    {{- /* Buffer name */ -}}
-    <span class="modeline-buffer-name" title="{{ $buffer }}">{{ $buffer }}</span>
+
+    {{- if $date -}}
+    <span class="ml-group">
+      <span class="nf ml-date-icon" aria-hidden="true"> </span><span class="ml-date">{{ $date }}</span>
+    </span>
+    <span class="ml-sep" aria-hidden="true"></span>
+    {{- end }}
+
+    <span class="ml-group">
+      <span class="ml-buffer" title="{{ $buffer }}">{{ $buffer }}</span>
+    </span>
+
+    {{- if $wc }}
+    <span class="ml-sep" aria-hidden="true"></span>
+    <span class="ml-group">
+      <span class="ml-wc">{{ $wc }}w</span>
+      <span class="ml-pos"> <span data-scroll-position>All</span></span>
+    </span>
+    {{- else }}
+    <span class="ml-sep" aria-hidden="true"></span>
+    <span class="ml-group">
+      <span class="ml-pos"><span data-scroll-position>All</span></span>
+    </span>
+    {{- end }}
+
   </div>
-  
-  {{- /* Spacer with dashes */ -}}
-  <span class="modeline-fill" aria-hidden="true"></span>
-  
+
+  <span class="ml-fill" aria-hidden="true"></span>
+
   <div class="ml-right">
-    {{- /* Position indicator */ -}}
-    <span class="ml-percentage" data-scroll-position>All</span>
-    
-    {{- /* Line number */ -}}
-    <span class="ml-space"></span>
-    <span class="ml-line">L<span data-line-number>1</span></span>
-    
-    {{- /* Mode */ -}}
-    <span class="ml-space"></span>
-    <span class="ml-space"></span>
-    <span class="modeline-mode">{{ $mode }}</span>
-    
-    {{- /* Trailing dashes */ -}}
-    <span class="modeline-fill" aria-hidden="true"></span>
+    <span class="ml-mode">({{ $mode }})</span>
+    {{- if $widthtoggle }}
+    <button class="ml-width-btn" id="ml-width-btn"
+            title="Cycle content width (100% → 80ch → 60ch → 840px)"
+            aria-label="Cycle content width"
+            data-action="cycle-width"><span class="nf" aria-hidden="true">󰮫</span></button>
+    {{- end }}
   </div>
-  
-  {{- /* Keyboard hint (optional) */ -}}
-  {{- if $keyhint }}
-  <span class="modeline-keyhint">{{ $keyhint | safeHTML }}</span>
-  {{- end }}
 </div>

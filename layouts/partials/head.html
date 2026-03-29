@@ -28,8 +28,7 @@
 {{ end -}}
 
 {{- /* Favicon */ -}}
-<link rel="icon" type="image/png" href="{{ "favicon.png" | relURL }}">
-<link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | relURL }}">
+<link rel="icon" type="image/png" href="{{ .Site.Params.favicon | relURL }}">
 
 {{- /* Open Graph / Twitter */ -}}
 <meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
@@ -75,7 +74,8 @@
 {{- $keyboard := resources.Get "js/keyboard.js" -}}
 {{- $windows2 := resources.Get "js/windows.js" -}}
 {{- $menu := resources.Get "js/menu.js" -}}
-{{- $jsBundle := slice $keyboard $windows2 $menu | resources.Concat "js/app.js" | minify | fingerprint -}}
+{{- $palette := resources.Get "js/palette.js" -}}
+{{- $jsBundle := slice $keyboard $windows2 $menu $palette | resources.Concat "js/app.js" | minify | fingerprint -}}
 <script src="{{ $jsBundle.RelPermalink }}" defer></script>
 
 {{- /* Google Analytics */ -}}

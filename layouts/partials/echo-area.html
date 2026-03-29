@@ -1,43 +1,11 @@
-<footer class="echo-area" role="status" aria-live="polite" id="echo-area">
-  <div class="echo-message" id="echo-message">
-    {{- /* Default message shown on load */ -}}
-    For keyboard shortcuts press <kbd>?</kbd>
+{{- /* Command palette overlay */ -}}
+<div class="palette-overlay" id="palette-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Command palette">
+  <div class="palette-dialog">
+    <div class="palette-input-wrap">
+      <span class="palette-prefix" aria-hidden="true">></span>
+      <input type="text" class="palette-input" id="palette-input"
+             autocomplete="off" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="palette-results" id="palette-results" role="listbox"></div>
   </div>
-  
-  <div class="keyboard-hints">
-    <span class="keyboard-hint">
-      <kbd>n</kbd>/<kbd>p</kbd>
-      <span class="hint-desc">navigate</span>
-    </span>
-    <span class="keyboard-hint">
-      <kbd>RET</kbd>
-      <span class="hint-desc">open</span>
-    </span>
-    <span class="keyboard-hint">
-      <kbd>q</kbd>
-      <span class="hint-desc">back</span>
-    </span>
-    <span class="keyboard-hint">
-      <kbd>C-x o</kbd>
-      <span class="hint-desc">other window</span>
-    </span>
-  </div>
-  
-  <div class="touch-hints">
-    Tap to select, tap again to open
-  </div>
-</footer>
-
-{{- /* Minibuffer overlay for search etc */ -}}
-<div class="minibuffer-overlay hidden" id="minibuffer-overlay">
-  <div class="echo-area minibuffer-active">
-    <span class="minibuffer-prompt" id="minibuffer-prompt">M-x:</span>
-    <input type="text" 
-           class="minibuffer-input" 
-           id="minibuffer-input" 
-           autocomplete="off"
-           autocapitalize="off"
-           spellcheck="false">
-  </div>
-  <div class="completions-popup" id="completions-popup"></div>
 </div>

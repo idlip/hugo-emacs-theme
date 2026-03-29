@@ -1,5 +1,5 @@
 <header class="menu-bar">
-  {{- /* Hamburger menu for mobile */ -}}
+  {{- /* Hamburger — mobile only */ -}}
   <button class="menu-hamburger" aria-label="Toggle menu" aria-expanded="false">
     <span aria-hidden="true">&#9776;</span>
   </button>
@@ -41,7 +41,10 @@
         <div class="menu-separator" role="separator"></div>
         {{- if .Site.Params.colorSchemes }}
         {{- range .Site.Params.colorSchemes }}
-        <button class="menu-dropdown-item scheme-option" role="menuitem" data-scheme="{{ .name }}">
+        <button class="menu-dropdown-item scheme-option" role="menuitem"
+                data-scheme="{{ .name }}"
+                style="--p-bg:{{ .bg }};--p-fg:{{ .fg }};--p-accent:{{ .accent }}">
+          <span class="scheme-dot" aria-hidden="true"></span>
           <span>{{ .label }}</span>
         </button>
         {{- end }}
@@ -113,31 +116,54 @@
   <div class="menu-bar-right">
     <a href="{{ "/now/" | relURL }}" class="menu-bar-title">{{ .Site.Title }}</a>
 
-    <button class="scheme-popup-btn" id="ml-width-btn"
-      title="Cycle content width [100% → 80ch → 60ch → 840px] (w)"
-      aria-label="Cycle content width"
-      data-action="cycle-width"><span class="nf" aria-hidden="true">󰭣</span></button>
+    {{- /* Font cycle button */ -}}
+    <button class="menu-bar-btn" id="font-cycle-btn"
+            title="Cycle font: mono → sans → mixed"
+            aria-label="Cycle font mode"
+            data-action="cycle-font">
+      <span class="nf" aria-hidden="true"> </span>
+    </button>
 
+    {{- /* Width cycle button */ -}}
+    <button class="menu-bar-btn" id="ml-width-btn"
+            title="Cycle content width [100% → 80ch → 60ch → 840px] (w)"
+            aria-label="Cycle content width"
+            data-action="cycle-width">
+      <span class="nf" aria-hidden="true">󰭣 </span>
+    </button>
+
+    {{- /* Scheme popup */ -}}
     {{- if .Site.Params.colorSchemes }}
     <div class="scheme-popup-container" id="scheme-popup-container">
-      <button class="scheme-popup-btn" id="scheme-popup-btn"
-              aria-label="Color scheme" title="Color scheme (c)"
+      <button class="menu-bar-btn scheme-popup-btn" id="scheme-popup-btn"
+              aria-label="Color scheme (c)" title="Color scheme (c)"
               aria-expanded="false" aria-haspopup="true">
         <span class="nf" aria-hidden="true">󰏘</span>
       </button>
       <div class="scheme-popup" id="scheme-popup" role="menu" aria-label="Color schemes">
         {{- range .Site.Params.colorSchemes }}
-        <button class="menu-dropdown-item scheme-option" role="menuitem" data-scheme="{{ .name }}">
-          <span class="ml-line">{{ .label }}</span>
+        <button class="menu-dropdown-item scheme-option" role="menuitem"
+                data-scheme="{{ .name }}"
+                style="--p-bg:{{ .bg }};--p-fg:{{ .fg }};--p-accent:{{ .accent }}">
+          <span class="scheme-dot" aria-hidden="true"></span>
+          <span>{{ .label }}</span>
         </button>
         {{- end }}
+        <div class="menu-separator" role="separator"></div>
+        <div class="scheme-popup-actions">
+          <button class="scheme-action-btn" id="pin-scheme-btn" data-action="fix-scheme"
+                  title="Pin: lock current scheme, or unpin to go random each session">
+            <span class="nf" aria-hidden="true">󰐅</span> <span id="pin-scheme-label">Pin</span>
+          </button>
+        </div>
       </div>
     </div>
     {{- end }}
 
-    <button class="scheme-popup-btn" aria-label="Toggle dark/light" data-action="toggle-theme" title="Toggle dark/light (t)">
-      <span class="nf theme-icon-dark" aria-hidden="true"> </span>
-      <span class="nf theme-icon-light" aria-hidden="true" style="display:none;"> </span>
+    {{- /* Theme toggle */ -}}
+    <button class="menu-bar-btn" aria-label="Toggle dark/light" data-action="toggle-theme" title="Toggle dark/light (t)">
+      <span class="nf theme-icon-dark" aria-hidden="true"></span>
+      <span class="nf theme-icon-light" aria-hidden="true"> </span>
     </button>
   </div>
 </header>

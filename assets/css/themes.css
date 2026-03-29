@@ -129,7 +129,15 @@
 
   /* Content width — cycled by the width-toggle button */
   --content-max-width: 80ch;
+
+  /* Body font — cycled by font-mode button */
+  --body-font-family: var(--code-font);
 }
+
+/* ── Font mode cycling ──────────────────────────────────────────────── */
+[data-font="sans"]  { --body-font-family: var(--sans-font); }
+[data-font="mixed"] { --body-font-family: var(--sans-font); }
+/* In "mixed": body→sans, code/pre keep --code-font (set explicitly elsewhere) */
 
 /* ============================================================
    MODUS VIVENDI — dark default

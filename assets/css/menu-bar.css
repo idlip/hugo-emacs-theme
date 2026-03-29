@@ -148,15 +148,57 @@
   padding-right: 0.5em;
 }
 
-/* Active scheme indicator */
-.scheme-option.active::before {
-  content: "●";
-  margin-right: 0.5em;
-  color: var(--cyan);
+/* Scheme option item — preview bg/fg colours from inline CSS vars */
+.scheme-option {
+  background: var(--p-bg, var(--menu-bg));
+  color: var(--p-fg, var(--menu-fg));
+  gap: 0.5em;
 }
-.scheme-option:not(.active)::before {
-  content: " ";
-  margin-right: 0.5em;
+.scheme-option:hover {
+  filter: brightness(1.15);
+}
+
+/* Accent dot: always shown, filled only for active/current */
+.scheme-dot {
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  border: 1.5px solid var(--p-accent, currentColor);
+  background: transparent;
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+.scheme-option.active .scheme-dot {
+  background: var(--p-accent, currentColor);
+}
+
+/* Pin/shuffle action row at bottom of scheme popup */
+.scheme-popup-actions {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--menu-border);
+}
+.scheme-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3em;
+  padding: 0.4em 0.6em;
+  background: none;
+  border: none;
+  color: var(--fg-dim);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.scheme-action-btn:hover {
+  background: var(--menu-hover-bg);
+  color: var(--fg-main);
+}
+.scheme-action-btn + .scheme-action-btn {
+  border-left: 1px solid var(--menu-border);
 }
 
 /* ============================================
@@ -166,21 +208,24 @@
   position: relative;
 }
 
+/* Unified right-side icon button */
+.menu-bar-btn,
 .scheme-popup-btn {
   display: flex;
   align-items: center;
-  padding: 0.3em 0.6em;
+  padding: 0.3em 0.55em;
   background: none;
   border: 1px solid var(--border-dim);
   border-radius: 3px;
   color: var(--fg-dim);
   font-family: 'Symbols Nerd Font Mono', inherit;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.15s ease;
-  margin-right: 0.4em;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  margin-left: 0.3em;
 }
-
+.menu-bar-btn:hover,
+.menu-bar-btn[aria-expanded="true"],
 .scheme-popup-btn:hover,
 .scheme-popup-btn[aria-expanded="true"] {
   background-color: var(--menu-hover-bg);
@@ -217,6 +262,12 @@
 .menu-backdrop.visible {
   display: block;
 }
+
+/* Theme toggle icons — CSS-driven, no JS display toggle needed */
+:root .theme-icon-light,
+[data-theme="dark"] .theme-icon-light { display: none; }
+[data-theme="light"] .theme-icon-dark { display: none; }
+[data-theme="light"] .theme-icon-light { display: inline; }
 
 /* Site title in menu bar */
 .menu-bar-title {

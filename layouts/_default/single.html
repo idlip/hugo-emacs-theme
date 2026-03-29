@@ -60,13 +60,13 @@
       <nav class="post-navigation" style="margin-top: 3em; padding-top: 1em; border-top: 1px solid var(--border-dim);">
         <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1em;">
           {{- with .PrevInSection }}
-          <a href="{{ .RelPermalink }}" style="color: var(--link);">
+          <a id="post-prev" href="{{ .RelPermalink }}" style="color: var(--link);">
             &larr; {{ .Title | truncate 40 }}
           </a>
           {{- end }}
           <span style="flex: 1;"></span>
           {{- with .NextInSection }}
-          <a href="{{ .RelPermalink }}" style="color: var(--link);">
+          <a id="post-next" href="{{ .RelPermalink }}" style="color: var(--link);">
             {{ .Title | truncate 40 }} &rarr;
           </a>
           {{- end }}
@@ -80,8 +80,9 @@
   
   {{ partial "modeline.html" (dict
     "buffer"      (printf "%s.org" .File.BaseFileName)
-    "mode"        "Org"
+    "title"       .Title
     "wordcount"   .WordCount
+    "readingtime" .ReadingTime
     "date"        (.Date.Format "2006-01-02")
     "widthtoggle" true
   ) }}

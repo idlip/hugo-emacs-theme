@@ -1,44 +1,48 @@
 {{- /*
   Modeline partial — Emacs-inspired status bar
   Parameters:
-  - .buffer      : buffer name (filename or *buffer*)
-  - .mode        : major mode (Org, Dired, …)
+  - .buffer      : buffer name (filename.org or *buffer*)
+  - .title       : page title (shown on mobile instead of filename)
   - .wordcount   : optional word count integer
+  - .readingtime : optional reading time in minutes
   - .date        : optional publication date string (YYYY-MM-DD)
   - .widthtoggle : true to show the width-cycle button (post pages only)
 */ -}}
 
 {{- $buffer := .buffer | default "*scratch*" -}}
-{{- $mode := .mode | default "Fundamental" -}}
+{{- $title := .title | default "" -}}
 {{- $wc := .wordcount | default 0 -}}
+{{- $rt := .readingtime | default 0 -}}
 {{- $date := .date | default "" -}}
 {{- $widthtoggle := .widthtoggle | default false -}}
 
-<div class="modeline" role="status" aria-live="polite">
+<div class="modeline" role="status">
   <div class="ml-left">
 
     {{- if $date -}}
-    <span class="ml-group">
-      <span class="nf ml-date-icon" aria-hidden="true"> </span><span class="ml-date">{{ $date }}</span>
+    <span class="ml-group ml-hide-mobile">
+      <span class="nf ml-date-icon" aria-hidden="true"> </span><span class="ml-date"> {{ $date }}</span>
     </span>
-    <span class="ml-sep" aria-hidden="true"></span>
+    <span class="ml-sep ml-hide-mobile" aria-hidden="true">·</span>
     {{- end }}
 
     <span class="ml-group">
-      <span class="ml-buffer" title="{{ $buffer }}">{{ $buffer }}</span>
+      <button class="ml-buffer" data-action="open-palette" title="Open command palette (x)">  {{ ($title | default $buffer) | truncate 40 }}</button>
     </span>
 
+    {{- if $rt }}
+    <span class="ml-sep" aria-hidden="true">·</span>
+    <span class="ml-readtime ml-hide-mobile"> {{ $rt }} min</span>
+    {{- end }}
+
     {{- if $wc }}
-    <span class="ml-sep" aria-hidden="true"></span>
-    <span class="ml-group">
-      <span class="ml-wc">{{ $wc }}w</span>
-      <span class="ml-pos"> <span data-scroll-position>All</span></span>
-    </span>
+    <span class="ml-sep" aria-hidden="true">·</span>
+    <span class="ml-wc">{{ $wc }}w</span>
+    <span class="ml-sep" aria-hidden="true">·</span>
+    <span class="ml-pos"><span data-scroll-position>All</span></span>
     {{- else }}
-    <span class="ml-sep" aria-hidden="true"></span>
-    <span class="ml-group">
-      <span class="ml-pos"><span data-scroll-position>All</span></span>
-    </span>
+    <span class="ml-sep" aria-hidden="true">·</span>
+    <span class="ml-pos"><span data-scroll-position>All</span></span>
     {{- end }}
 
   </div>
@@ -46,12 +50,8 @@
   <span class="ml-fill" aria-hidden="true"></span>
 
   <div class="ml-right">
-    <span class="ml-mode">({{ $mode }})</span>
-    {{- if $widthtoggle }}
-    <button class="ml-width-btn" id="ml-width-btn"
-            title="Cycle content width [100% → 80ch → 60ch → 840px] (w)"
-            aria-label="Cycle content width"
-            data-action="cycle-width"><span class="nf" aria-hidden="true">󰭣</span></button>
-    {{- end }}
+    <button class="ml-echo-msg" id="echo-message"
+            data-action="show-help"
+            title="Keyboard shortcuts — click or press ?">? help</button>
   </div>
 </div>

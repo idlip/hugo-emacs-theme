@@ -19,88 +19,74 @@
    MOBILE (< 768px)
    ============================================ */
 @media screen and (max-width: 768px) {
-  /* Hide menu items, show hamburger */
-  .menu-bar .menu-item {
+  /* Hide menu items by default; show when menu-open */
+  .menu-bar .menu-items {
     display: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--menu-bg);
+    border-bottom: 1px solid var(--menu-border);
+    z-index: 200;
   }
-  
+
+  .menu-bar.menu-open .menu-items {
+    display: flex;
+  }
+
+  /* Show hamburger */
   .menu-hamburger {
     display: block;
   }
-  
-  /* Mobile menu (shown when hamburger clicked) */
-  .menu-bar.menu-open .menu-item {
-    display: block;
+
+  /* Dropdowns work same as desktop */
+  .menu-bar .menu-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background-color: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 300;
   }
-  
-  .menu-bar.menu-open {
-    flex-wrap: wrap;
-  }
-  
-  .menu-bar.menu-open .menu-items {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    order: 10;
-  }
-  
-  .menu-bar.menu-open .menu-dropdown {
-    position: static;
-    box-shadow: none;
-    border: none;
-    border-top: 1px solid var(--menu-border);
-    padding-left: 1em;
-  }
-  
+
   /* Simpler article list on mobile */
   .article-item {
     flex-wrap: wrap;
     padding: 0.5em 0.75em;
   }
-  
+
   .article-meta {
     display: none;
   }
-  
+
   .article-title {
     width: 100%;
     white-space: normal;
   }
-  
-  /* Modeline simplified */
-  .modeline {
-    font-size: 0.8rem;
-  }
-  
-  .modeline-fill {
-    display: none;
-  }
-  
-  .modeline-minor-modes {
-    display: none;
-  }
-  
-  /* Echo area */
-  .echo-area {
-    font-size: 0.8rem;
-    padding: 0.25em 0.5em;
-  }
-  
+
+  /* Modeline: handled in modeline.css @media block */
+
   /* Post content padding */
   .post-content {
     padding: 0.75em;
   }
-  
+
   /* Search in menu */
   .menu-search {
     display: none;
   }
-  
+
   /* Menu bar right */
   .menu-bar-right {
     margin-left: auto;
   }
-  
+
   .menu-bar-title {
     display: none;
   }

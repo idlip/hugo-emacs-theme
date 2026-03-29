@@ -1,253 +1,139 @@
-/* Modeline CSS - Emacs Modeline Styling
- * Emacs Blog Theme
- */
+/* Modeline — clean Emacs-inspired mode-line */
 
-/* ============================================
-   MODELINE BASE
-   ============================================ */
 .modeline {
   display: flex;
   align-items: center;
-  padding: 0.15em 0.5em;
+  padding: 0.8em 0.4em;
   background-color: var(--modeline-bg);
   color: var(--modeline-fg);
-  font-size: 0.85rem;
+  font-family: var(--code-font), monospace;
+  font-size: 0.82rem;
   border-top: 1px solid var(--modeline-border);
   white-space: nowrap;
   overflow: hidden;
-  min-height: 1.8em;
+  min-height: 1.9em;
   user-select: none;
-  flex-shrink: 0; /* Don't shrink - stay visible */
+  flex-shrink: 0;
+  gap: 0;
 }
 
-/* Inactive modeline (for split view if ever used) */
-.window:not(.focused) .modeline,
+/* Inactive modeline */
 .buffer:not(.active) .modeline {
   background-color: var(--modeline-bg-inactive);
   color: var(--modeline-fg-inactive);
 }
 
-/* ============================================
-   MODELINE SEGMENTS
-   ============================================ */
-.modeline-segment {
+/* Left cluster */
+.ml-left {
   display: flex;
   align-items: center;
-  margin-right: 0.75em;
+  overflow: hidden;
+  flex-shrink: 1;
+  min-width: 0;
+  gap: 0.5ch;
 }
 
-.modeline-segment:last-child {
-  margin-right: 0;
+/* Grouped items within left cluster */
+.ml-group {
+  display: flex;
+  align-items: center;
+  gap: 0.3ch;
+  white-space: nowrap;
 }
 
-/* Spacer pushes right-aligned content */
-.modeline-spacer {
+/* Fill */
+.ml-fill {
   flex: 1;
+  min-width: 0.5em;
 }
 
-/* ============================================
-   SPECIFIC SEGMENTS
-   ============================================ */
-
-/* Encoding indicator (U for UTF-8) */
-.modeline-encoding {
-  color: var(--fg-dim);
-}
-
-/* Line ending indicator */
-.modeline-eol {
-  color: var(--fg-dim);
-}
-
-/* Read-only indicator */
-.modeline-readonly {
-  color: var(--yellow);
-}
-
-.modeline-readonly::before {
-  content: "%%";
-}
-
-/* Modified indicator */
-.modeline-modified {
-  color: var(--red);
-}
-
-.modeline-modified::before {
-  content: "**";
-}
-
-/* Saved indicator */
-.modeline-saved::before {
-  content: "--";
-  color: var(--fg-dim);
+/* Right cluster */
+.ml-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.5ch;
 }
 
 /* Buffer name */
-.modeline-buffer-name {
-  font-weight: bold;
+.ml-buffer {
+  font-weight: 600;
   color: var(--modeline-fg);
-  max-width: 200px;
+  max-width: 28ch;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.window:not(.focused) .modeline-buffer-name {
-  color: var(--modeline-fg-inactive);
+/* Separator — · dot between groups */
+.ml-sep {
+  color: var(--modeline-border);
+  padding: 0 2ch;
+  flex-shrink: 0;
 }
 
-/* Position indicator */
-.modeline-position {
+/* Date calendar icon */
+.ml-date-icon {
   color: var(--fg-dim);
+  font-size: 0.9em;
 }
 
-.modeline-position .current {
-  color: var(--modeline-fg);
-}
-
-/* Scroll position (All, Top, Bot, or percentage) */
-.modeline-scroll {
-  min-width: 3em;
-  text-align: center;
-}
-
-/* Line/Column */
-.modeline-line-col {
+/* Position: scroll% + line */
+.ml-pos {
+  color: var(--fg-dim);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-/* Major mode */
-.modeline-mode {
-  color: var(--cyan);
-}
-
-.modeline-mode::before {
-  content: "(";
-  color: var(--fg-dim);
-}
-
-.modeline-mode::after {
-  content: ")";
-  color: var(--fg-dim);
-}
-
-/* Minor modes */
-.modeline-minor-modes {
-  color: var(--fg-dim);
-  font-size: 0.8rem;
-}
-
-/* Keyboard hint in modeline */
-.modeline-keyhint {
-  color: var(--fg-dim);
-  font-size: 0.8rem;
-}
-
-.modeline-keyhint kbd {
-  background-color: var(--bg-dim);
-  padding: 0 0.3em;
-  border-radius: 2px;
-  margin: 0 0.15em;
-}
-
-/* ============================================
-   MODELINE DECORATIONS
-   ============================================ */
-
-/* The classic dashes */
-.modeline-fill {
-  flex: 1;
-  overflow: hidden;
-  color: var(--fg-dim);
-  letter-spacing: -1px;
-}
-
-.modeline-fill::after {
-  content: "────────────────────────────────────────────────────────────────────────────────────────────────────";
-}
-
-/* Column indicator line */
-.modeline-col-indicator {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 2px;
-  background-color: var(--blue);
-  transition: width 0.1s ease;
-}
-
-/* ============================================
-   EMACS-STYLE DETAILED MODELINE
-   ============================================ */
-.modeline-emacs-style {
-  font-family: inherit;
-  letter-spacing: 0;
-}
-
-/* Format: -UUU:**--F1  buffername    All L1    (Mode)---------- */
-.modeline-emacs-style .ml-left {
-  display: flex;
-  align-items: center;
-}
-
-.modeline-emacs-style .ml-center {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.modeline-emacs-style .ml-right {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-}
-
-/* The classic leading dash */
-.ml-dash {
-  color: var(--fg-dim);
-}
-
-/* Encoding triplet like UUU or U-- */
-.ml-encoding-triplet {
-  color: var(--fg-dim);
-}
-
-/* Colon separator */
-.ml-colon {
-  color: var(--fg-dim);
-}
-
-/* Status indicators (**, %%, --) */
-.ml-status {
-  min-width: 2ch;
-}
-
-.ml-status.modified {
-  color: var(--red);
-}
-
-.ml-status.readonly {
-  color: var(--yellow);
-}
-
-/* Frame indicator F1 */
-.ml-frame {
-  color: var(--fg-dim);
-}
-
-/* Extra space */
-.ml-space {
-  width: 1em;
-}
-
-/* Percentage or All/Top/Bot */
-.ml-percentage {
+.ml-pos [data-scroll-position] {
   min-width: 3ch;
+  display: inline-block;
   text-align: right;
 }
 
-/* Line number with L prefix */
 .ml-line {
-  font-variant-numeric: tabular-nums;
+  color: var(--fg-dim);
+}
+
+/* Word count */
+.ml-wc {
+  color: var(--fg-dim);
+  padding-right: 4ch;
+}
+
+/* Major mode — (Org) */
+.ml-mode {
+  color: var(--cyan);
+}
+
+/* Publication date */
+.ml-date {
+  color: var(--fg-dim);
+  opacity: 0.8;
+}
+
+/* Width toggle button */
+.ml-width-btn {
+  background: none;
+  border: 1px solid var(--modeline-border);
+  color: var(--modeline-fg);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0 0.4em;
+  cursor: pointer;
+  border-radius: 2px;
+  opacity: 0.7;
+  line-height: 1.4;
+  transition: opacity 0.15s;
+  margin-left: 0.5em;
+}
+
+.ml-width-btn:hover {
+  opacity: 1;
+  background-color: var(--bg-active);
+}
+
+/* Hide width button on mobile */
+@media (max-width: 768px) {
+  .ml-width-btn { display: none; }
 }

@@ -9,6 +9,7 @@
   let keySequence = '';
   let sequenceTimeout = null;
   let isScrollingProgrammatically = false;
+  let msgTimeout = null;
 
   // DOM
   const articleList = document.getElementById('article-list');
@@ -26,15 +27,18 @@
 
   function showMessage(msg) {
     if (!echoMessage) return;
+    clearTimeout(msgTimeout);
     echoMessage.textContent = msg;
-    setTimeout(updateEchoHint, 3000);
+    echoMessage.classList.add('flash');
+    msgTimeout = setTimeout(() => {
+      echoMessage.classList.remove('flash');
+      updateEchoHint();
+    }, 2500);
   }
 
   function updateEchoHint() {
     if (!echoMessage) return;
-    echoMessage.textContent = isPostPage
-      ? 'q back  SPC scroll  ? help'
-      : 'n/p navigate  RET open  / search  ? help';
+    echoMessage.textContent = '? help';
   }
 
   // ── List helpers ───────────────────────────────────────────────────────────
@@ -146,8 +150,11 @@
     // Ignore when typing
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-    // Escape / C-g — close help or clear sequence
+    // Escape / C-g — close palette, help, or clear sequence
     if (key === 'Escape' || (ctrl && key === 'g')) {
+      if (window.emacsBlog?.palette?.isOpen?.()) {
+        window.emacsBlog.palette.close(); e.preventDefault(); return;
+      }
       if (helpOverlay && helpOverlay.classList.contains('visible')) {
         toggleHelp(); e.preventDefault(); return;
       }
@@ -167,6 +174,16 @@
     // ── Post page shortcuts ────────────────────────────────────────────────
     if (isPostPage) {
       switch (key) {
+        case 'n': {
+          var next = document.getElementById('post-next');
+          if (next) { window.location.href = next.href; e.preventDefault(); }
+          break;
+        }
+        case 'p': {
+          var prev = document.getElementById('post-prev');
+          if (prev) { window.location.href = prev.href; e.preventDefault(); }
+          break;
+        }
         case 'q':
           if (window.history.length > 1) window.history.back();
           else window.location.href = '/posts/';
@@ -231,6 +248,12 @@
 
     // ── Global shortcuts ───────────────────────────────────────────────────
     switch (key) {
+      case 'x':
+        if (!ctrl && !meta) {
+          window.emacsBlog?.palette?.open();
+          e.preventDefault();
+        }
+        break;
       case 't':
       case 'i':
         if (!ctrl && !meta) { toggleTheme(); e.preventDefault(); }
@@ -282,7 +305,9 @@
 
   function init() {
     document.addEventListener('keydown', handleKeydown);
-    document.getElementById('help-close') && document.getElementById('help-close').addEventListener('click', toggleHelp);
+    document.getElementById('help-close')?.addEventListener('click', toggleHelp);
+    // Clicking the echo message opens help
+    echoMessage?.addEventListener('click', toggleHelp);
 
     if (!isPostPage) {
       updateSelection(0, false);

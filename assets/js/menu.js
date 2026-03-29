@@ -32,6 +32,8 @@
   // ── Color Scheme ──────────────────────────────────────────────────────────
 
   function applyScheme(name) {
+    // Clear any custom palette from palette.js "t " mode
+    window.emacsBlog?.palette?.clearCustomPalette?.();
     const html = document.documentElement;
     if (name) html.setAttribute('data-scheme', name);
     else      html.removeAttribute('data-scheme');
@@ -47,6 +49,8 @@
 
   // Random scheme — picks a new random on every page load unless pinned
   function initRandomScheme() {
+    // Don't clobber a custom palette chosen via command palette
+    if (localStorage.getItem('emacs-custom-palette')) return;
     const fixed = localStorage.getItem('emacs-scheme-fixed');
     if (fixed !== null) {
       applyScheme(fixed);
@@ -131,10 +135,10 @@
   }
 
   // ── Font Mode Cycling ─────────────────────────────────────────────────────
-  // Mono → Sans → Mixed (body sans + code mono)
+  // Mono → Sans → Serif → Mixed (body sans + code mono)
 
-  const FONT_STEPS = ['mono', 'sans', 'mixed'];
-  const FONT_LABELS = { mono: 'Mono', sans: 'Sans', mixed: 'Mixed' };
+  const FONT_STEPS = ['mono', 'sans', 'serif', 'mixed'];
+  const FONT_LABELS = { mono: 'Mono', sans: 'Sans', serif: 'Serif', mixed: 'Mixed' };
   let fontIdx = 0;
 
   function cycleFontMode() {

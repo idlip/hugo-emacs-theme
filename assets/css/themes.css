@@ -8,7 +8,6 @@
  *      automatically to all convenience names.
  *
  * To add a new scheme: set --base00..--base0F in a [data-scheme="X"] rule.
- * Use parse-scheme.sh to convert a base16/24 YAML file automatically.
  */
 
 :root {
@@ -135,8 +134,9 @@
 }
 
 /* ── Font mode cycling ──────────────────────────────────────────────── */
-[data-font="sans"]  { --body-font-family: var(--sans-font); }
-[data-font="mixed"] { --body-font-family: var(--sans-font); }
+[data-font="sans"]   { --body-font-family: var(--sans-font); }
+[data-font="serif"]  { --body-font-family: var(--serif-font); }
+[data-font="mixed"]  { --body-font-family: var(--sans-font); }
 /* In "mixed": body→sans, code/pre keep --code-font (set explicitly elsewhere) */
 
 /* ============================================================

@@ -1,37 +1,6 @@
-/* Main CSS - Core Layout & Frame
- * Emacs Blog Theme
- */
-
-/* ============================================
-   FONTS
-   ============================================ */
-@font-face {
-  font-family: 'Fira Code';
-  src: url('/fonts/FiraCode-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Fira Code';
-  src: url('/fonts/FiraCode-Bold.woff') format('woff');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* ============================================
-   CSS RESET & BASE
-   ============================================ */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-}
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
 
 html {
   font-size: 100%;
@@ -40,28 +9,35 @@ html {
 }
 
 body {
-  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-family: var(--body-font-family, monospace);
   font-size: 1rem;
   line-height: 1.6;
-  background-color: var(--bg-main);
+  background: var(--bg-main);
   color: var(--fg-main);
   min-height: 100vh;
   overflow: hidden;
 }
 
-/* ============================================
-   EMACS FRAME
-   ============================================ */
+/* Global button reset — components add only what differs */
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* ── Frame ──────────────────────────────────────────────────── */
 .emacs-frame {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh; /* Dynamic viewport height for mobile */
+  height: 100dvh;
   width: 100vw;
   overflow: hidden;
 }
 
-/* Buffer container fills remaining space */
 .buffer-container {
   flex: 1;
   display: flex;
@@ -70,83 +46,35 @@ body {
   overflow: hidden;
 }
 
-/* ============================================
-   SCROLLBAR STYLING
-   ============================================ */
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg); }
 
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-bg);
-}
+/* ── Selection / Links ──────────────────────────────────────── */
+::selection { background: var(--selection-bg); color: var(--selection-fg); }
 
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 0;
-}
+a         { color: var(--link); text-decoration: none; }
+a:visited { color: var(--link-visited); }
+a:hover   { color: var(--link-hover); text-decoration: underline; }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
-}
-
-/* ============================================
-   SELECTION
-   ============================================ */
-::selection {
-  background-color: var(--selection-bg);
-  color: var(--selection-fg);
-}
-
-/* ============================================
-   LINKS
-   ============================================ */
-a {
-  color: var(--link);
-  text-decoration: none;
-}
-
-a:visited {
-  color: var(--link-visited);
-}
-
-a:hover {
-  color: var(--link-hover);
-  text-decoration: underline;
-}
-
-/* ============================================
-   TYPOGRAPHY
-   ============================================ */
-h1, h2, h3, h4, h5, h6 {
+/* ── Typography ─────────────────────────────────────────────── */
+:is(h1, h2, h3, h4, h5, h6) {
   font-weight: bold;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
   line-height: 1.3;
 }
 
-h1 { font-size: 1.5rem; color: var(--magenta); }
-h2 { font-size: 1.3rem; color: var(--blue); }
-h3 { font-size: 1.15rem; color: var(--cyan); }
-h4 { font-size: 1.05rem; color: var(--green); }
-h5, h6 { font-size: 1rem; color: var(--yellow); }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1.05rem; }
+h5, h6 { font-size: 1rem; }
 
-/* Emacs-style org headers with * prefix */
-.org-h1::before { content: "* "; color: var(--fg-dim); }
-.org-h2::before { content: "** "; color: var(--fg-dim); }
-.org-h3::before { content: "*** "; color: var(--fg-dim); }
-.org-h4::before { content: "**** "; color: var(--fg-dim); }
-
-p {
-  margin-bottom: 1em;
-}
+p { margin-bottom: 1em; }
 
 blockquote {
   border-left: 3px solid var(--border);
@@ -156,121 +84,126 @@ blockquote {
   font-style: italic;
 }
 
-ul, ol {
-  margin: 1em 0;
-  padding-left: 2em;
-}
-
-li {
-  margin-bottom: 0.25em;
-}
+:is(ul, ol) { margin: 1em 0; padding-left: 2em; }
+li { margin-bottom: 0.25em; }
 
 code {
-  font-family: 'Fira Code', monospace;
-  background-color: var(--code-bg);
-  padding: 0.1em 0.3em;
-  border-radius: 2px;
+  font-family: var(--code-font, monospace);
+  background: var(--code-bg);
+  padding: 0.15em 0.35em;
   font-size: 0.9em;
 }
 
 pre {
-  background-color: var(--code-bg);
+  background: var(--code-bg);
   border: 1px solid var(--code-border);
   padding: 1em;
   overflow-x: auto;
   margin: 1em 0;
   line-height: 1.4;
 }
+pre code { background: none; padding: 0; }
 
-pre code {
-  background: none;
-  padding: 0;
-}
+:is(img, video) { max-width: 100%; height: auto; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
 
-img {
-  max-width: 100%;
-  height: auto;
-}
+table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+:is(th, td) { border: 1px solid var(--border); padding: 0.5em 1em; text-align: left; }
+th { background: var(--bg-dim); }
 
-video {
-  max-width: 100%;
-  height: auto;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 2em 0;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 1em 0;
-}
-
-th, td {
-  border: 1px solid var(--border);
-  padding: 0.5em 1em;
-  text-align: left;
-}
-
-th {
-  background-color: var(--bg-dim);
-}
-
-/* ============================================
-   UTILITY CLASSES
-   ============================================ */
-.hidden {
-  display: none !important;
-}
-
+/* ── Utilities ──────────────────────────────────────────────── */
+.hidden { display: none !important; }
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); border: 0;
 }
 
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Focus styles for keyboard navigation */
-.focus-visible {
+:is(button, a, [tabindex]):focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
 
-button:focus-visible,
-a:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: 2px;
+/* Nerd Font glyph — font-family only; sizing/color set per context */
+.nf { font-family: 'Symbols Nerd Font Mono', 'FiraCode Nerd Font', var(--code-font), monospace; }
+
+/* ── Org-mode checkboxes & TODO ─────────────────────────────── */
+:is(li.checked, li.unchecked) { list-style: none; margin-left: -1.2em; }
+li.checked::before   { content: " "; color: var(--green); }
+li.unchecked::before { content: "󱋭 "; color: var(--yellow); }
+
+.todo {
+  font-size: 0.9rem; font-weight: bold;
+  padding: 0.1em 0.45em; margin-right: 0.5em;
+  vertical-align: middle; letter-spacing: 0.05em;
 }
+.todo.status-todo { background: var(--yellow); color: var(--bg-main); }
+.todo.status-done { background: var(--green);  color: var(--bg-main); }
 
-@media (max-width: 480px) {
-  h1 { font-size: 1.25rem; }
-  h2 { font-size: 1.15rem; }
-  h3 { font-size: 1.05rem; }
-  h4, h5, h6 { font-size: 1rem; }
+/* ── Sidenotes ──────────────────────────────────────────────── */
+.sidenote {
+  float: right; clear: right;
+  width: 11em; margin-right: -13em; margin-top: 0.1em;
+  font-size: 0.78rem; line-height: 1.5;
+  color: var(--fg-dim);
+  border-left: 2px solid var(--border-dim);
+  padding-left: 0.6em;
+}
+.sidenote p { margin: 0; }
 
-  ul, ol { padding-left: 1.25em; }
-
-  pre { font-size: 0.82rem; }
-
-  table { font-size: 0.85rem; }
-  /* Make wide tables scroll rather than overflow */
-  .post-body table {
-    display: block;
-    overflow-x: auto;
+@media (max-width: 900px) {
+  .sidenote {
+    float: none; width: auto; margin: 0.75em 0;
+    border-left: none; border-top: 1px solid var(--border-dim); padding: 0.4em 0 0;
   }
 }
 
+/* ── Callouts ───────────────────────────────────────────────── */
+.callout {
+  border-left: 3px solid var(--border);
+  padding: 0.5em 1em; margin: 1em 0;
+  background: var(--bg-dim); font-size: 0.9rem;
+}
+.callout::before {
+  display: block; font-size: 0.75rem; font-weight: bold;
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.3em;
+}
+.callout p:last-child { margin-bottom: 0; }
+.callout-note { border-left-color: var(--blue); }
+.callout-note::before { content: "Note"; color: var(--blue); }
+.callout-tip  { border-left-color: var(--green); }
+.callout-tip::before  { content: "Tip";  color: var(--green); }
+.callout-warn { border-left-color: var(--yellow); }
+.callout-warn::before { content: "Warning"; color: var(--yellow); }
+
+/* ── Comments ───────────────────────────────────────────────── */
+.post-comment { margin-top: 3em; padding-top: 1.5em; border-top: 2px solid var(--border-dim); }
+.comment-label {
+  font-size: 0.85rem; color: var(--fg-dim);
+  margin-bottom: 0.75em; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.comment-textarea {
+  width: 100%; min-height: 7em; resize: vertical;
+  background: var(--bg-dim); color: var(--fg-main);
+  border: 1px solid var(--border-dim);
+  padding: 0.6em 0.75em; font-family: inherit; font-size: 0.9rem;
+}
+.comment-textarea:focus { outline: none; border-color: var(--border-highlight); }
+.comment-actions { display: flex; align-items: center; gap: 1em; margin-top: 0.5em; }
+.comment-submit {
+  background: var(--bg-active); border: 1px solid var(--border-highlight);
+  padding: 0.4em 1em; font-size: 0.85rem;
+}
+.comment-submit:hover { background: var(--border-highlight); color: var(--bg-main); }
+.comment-hint { font-size: 0.75rem; color: var(--fg-dim); opacity: 0.6; }
+
+/* ── Small screens ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  h1 { font-size: 1.25rem; }
+  h2 { font-size: 1.15rem; }
+  pre { font-size: 0.82rem; }
+  table { font-size: 0.85rem; }
+  .post-body table { display: block; overflow-x: auto; }
+  .comment-submit { width: 100%; }
+  .comment-actions { flex-direction: column; align-items: flex-start; }
+}

@@ -1,0 +1,499 @@
+/* schemes.css — Color scheme palette library
+ *
+ * Each scheme sets --base00..--base0F (base16 standard). default: dark
+ * Dark variant:  [data-scheme="X"]  or  [data-scheme="X"][data-theme="dark"]
+ * Light variant: [data-scheme="X"][data-theme="light"]
+ *
+ * Add new schemes with parse-scheme.sh:
+ *   ./parse-scheme.sh scheme.yaml >> schemes.css
+ */
+
+/* ================================================================
+   HAKI — personal theme (https://github.com/idlip/haki)
+   ================================================================ */
+[data-scheme="haki"] {
+  --base00: #000000;  /* pure black bg        */
+  --base01: #0a0f0a;  /* dark green-tint dim  */
+  --base02: #111c17;  /* active/hover bg      */
+  --base03: #b4aeae;  /* dim fg / comments    */
+  --base04: #888888;  /* dark fg              */
+  --base05: #ffffff;  /* main fg              */
+  --base06: #ffffff;
+  --base07: #ffffff;
+  --base08: #ffa9bf;  /* red/pink  — h4       */
+  --base09: #fab387;  /* orange    — h2       */
+  --base0A: #d0bc00;  /* yellow               */
+  --base0B: #6ae4b9;  /* green/teal — h3      */
+  --base0C: #5fd7af;  /* cyan/cursor          */
+  --base0D: #2fafff;  /* blue                 */
+  --base0E: #ab82ff;  /* violet    — h1       */
+  --base0F: #248f6c;  /* teal accent/border   */
+
+  /* Haki-specific semantic overrides */
+  --modeline-bg:           #0a0f0a;
+  --modeline-border:       #248f6c;
+  --menu-bg:               #0a0f0a;
+  --code-bg:               #0a0f0a;
+  --echo-bg:               #000000;
+  --cursor:                #5fd7af;
+  --selection-bg:          #248f6c;
+  --bg-region:             #248f6c;
+  --scrollbar-thumb:       #248f6c;
+  --scrollbar-thumb-hover: #5fd7af;
+  --border:                #1b2a24;
+  --border-dim:            #0a0f0a;
+  --code-border:           #1b2a24;
+  --menu-border:           #1b2a24;
+  --menu-hover-bg:         #111c17;
+}
+
+/* Haki light — modus operandi palette with haki structural overrides */
+[data-scheme="haki"][data-theme="light"] {
+  --base00: #ffffff;
+  --base01: #f2f2f2;
+  --base02: #d7d7d7;
+  --base03: #595959;
+  --base04: #193668;
+  --base05: #000000;
+  --base06: #000000;
+  --base07: #ffffff;
+  --base08: #a60000;
+  --base09: #884900;
+  --base0A: #6f5500;
+  --base0B: #006800;
+  --base0C: #005e8b;
+  --base0D: #0031a9;
+  --base0E: #531ab6;
+  --base0F: #a0132f;
+
+  --modeline-bg:           #c8c8c8;
+  --modeline-border:       #a3a3a3;
+  --menu-bg:               #f2f2f2;
+  --code-bg:               #f5f5f5;
+  --echo-bg:               #ffffff;
+  --cursor:                #005f5f;
+  --selection-bg:          #c4e3ff;
+  --bg-region:             #c4e3ff;
+  --scrollbar-thumb:       #a3a3a3;
+  --scrollbar-thumb-hover: #595959;
+  --border:                #d7d7d7;
+  --border-dim:            #e4e4e4;
+  --code-border:           #d7d7d7;
+  --menu-border:           #d7d7d7;
+  --menu-hover-bg:         #e4e4e4;
+}
+
+/* ================================================================
+   DRACULA — dracula.github.io
+   ================================================================ */
+[data-scheme="dracula"] {
+  --base00: #282a36;
+  --base01: #21222c;
+  --base02: #44475a;
+  --base03: #6272a4;
+  --base04: #cfd4e3;
+  --base05: #f8f8f2;
+  --base06: #f8f8f2;
+  --base07: #ffffff;
+  --base08: #ff5555;
+  --base09: #ffb86c;
+  --base0A: #f1fa8c;
+  --base0B: #50fa7b;
+  --base0C: #8be9fd;
+  --base0D: #6272a4;
+  --base0E: #bd93f9;
+  --base0F: #ff79c6;
+}
+/* Dracula has no official light theme; approximate */
+[data-scheme="dracula"][data-theme="light"] {
+  --base00: #f8f8f2;
+  --base01: #e8e8e8;
+  --base02: #d8d8d8;
+  --base03: #6272a4;
+  --base04: #44475a;
+  --base05: #282a36;
+  --base06: #282a36;
+  --base07: #ffffff;
+  --base08: #cc3333;
+  --base09: #b87630;
+  --base0A: #8b8b00;
+  --base0B: #1a8a30;
+  --base0C: #1a8a8a;
+  --base0D: #4444aa;
+  --base0E: #7733cc;
+  --base0F: #cc3388;
+}
+
+/* ================================================================
+   GRUVBOX — github.com/morhetz/gruvbox
+   ================================================================ */
+[data-scheme="gruvbox"][data-theme="dark"],
+[data-scheme="gruvbox"]:not([data-theme="light"]) {
+  --base00: #282828;
+  --base01: #1d2021;
+  --base02: #3c3836;
+  --base03: #928374;
+  --base04: #a89984;
+  --base05: #ebdbb2;
+  --base06: #fbf1c7;
+  --base07: #fbf1c7;
+  --base08: #fb4934;
+  --base09: #fe8019;
+  --base0A: #fabd2f;
+  --base0B: #b8bb26;
+  --base0C: #8ec07c;
+  --base0D: #83a598;
+  --base0E: #d3869b;
+  --base0F: #d65d0e;
+}
+[data-scheme="gruvbox"][data-theme="light"] {
+  --base00: #fbf1c7;
+  --base01: #ebdbb2;
+  --base02: #d5c4a1;
+  --base03: #928374;
+  --base04: #7c6f64;
+  --base05: #3c3836;
+  --base06: #282828;
+  --base07: #1d2021;
+  --base08: #9d0006;
+  --base09: #af3a03;
+  --base0A: #b57614;
+  --base0B: #79740e;
+  --base0C: #427b58;
+  --base0D: #076678;
+  --base0E: #8f3f71;
+  --base0F: #d65d0e;
+}
+
+/* ================================================================
+   NORD — nordtheme.com
+   ================================================================ */
+[data-scheme="nord"][data-theme="dark"],
+[data-scheme="nord"]:not([data-theme="light"]) {
+  --base00: #2e3440;
+  --base01: #3b4252;
+  --base02: #434c5e;
+  --base03: #4c566a;
+  --base04: #d8dee9;
+  --base05: #e5e9f0;
+  --base06: #eceff4;
+  --base07: #eceff4;
+  --base08: #bf616a;
+  --base09: #d08770;
+  --base0A: #ebcb8b;
+  --base0B: #a3be8c;
+  --base0C: #88c0d0;
+  --base0D: #81a1c1;
+  --base0E: #b48ead;
+  --base0F: #5e81ac;
+}
+[data-scheme="nord"][data-theme="light"] {
+  --base00: #eceff4;
+  --base01: #e5e9f0;
+  --base02: #d8dee9;
+  --base03: #4c566a;
+  --base04: #434c5e;
+  --base05: #3b4252;
+  --base06: #2e3440;
+  --base07: #2e3440;
+  --base08: #bf616a;
+  --base09: #d08770;
+  --base0A: #ebcb8b;
+  --base0B: #a3be8c;
+  --base0C: #88c0d0;
+  --base0D: #81a1c1;
+  --base0E: #b48ead;
+  --base0F: #5e81ac;
+}
+
+/* ================================================================
+   SOLARIZED — ethanschoonover.com/solarized
+   ================================================================ */
+[data-scheme="solarized"][data-theme="dark"],
+[data-scheme="solarized"]:not([data-theme="light"]) {
+  --base00: #002b36;
+  --base01: #073642;
+  --base02: #586e75;
+  --base03: #657b83;
+  --base04: #839496;
+  --base05: #93a1a1;
+  --base06: #eee8d5;
+  --base07: #fdf6e3;
+  --base08: #dc322f;
+  --base09: #cb4b16;
+  --base0A: #b58900;
+  --base0B: #859900;
+  --base0C: #2aa198;
+  --base0D: #268bd2;
+  --base0E: #6c71c4;
+  --base0F: #d33682;
+}
+[data-scheme="solarized"][data-theme="light"] {
+  --base00: #fdf6e3;
+  --base01: #eee8d5;
+  --base02: #93a1a1;
+  --base03: #839496;
+  --base04: #657b83;
+  --base05: #586e75;
+  --base06: #073642;
+  --base07: #002b36;
+  --base08: #dc322f;
+  --base09: #cb4b16;
+  --base0A: #b58900;
+  --base0B: #859900;
+  --base0C: #2aa198;
+  --base0D: #268bd2;
+  --base0E: #6c71c4;
+  --base0F: #d33682;
+}
+
+/* ================================================================
+   TOKYO NIGHT — github.com/folke/tokyonight.nvim
+   ================================================================ */
+[data-scheme="tokyo-night"][data-theme="dark"],
+[data-scheme="tokyo-night"]:not([data-theme="light"]) {
+  --base00: #1a1b26;
+  --base01: #16161e;
+  --base02: #292e42;
+  --base03: #565f89;
+  --base04: #737aa2;
+  --base05: #c0caf5;
+  --base06: #cdd6f4;
+  --base07: #d5d6db;
+  --base08: #f7768e;
+  --base09: #ff9e64;
+  --base0A: #e0af68;
+  --base0B: #9ece6a;
+  --base0C: #7dcfff;
+  --base0D: #7aa2f7;
+  --base0E: #bb9af7;
+  --base0F: #73daca;
+}
+[data-scheme="tokyo-night"][data-theme="light"] {
+  --base00: #d5d6db;
+  --base01: #cbccd1;
+  --base02: #b0b1b8;
+  --base03: #737aa2;
+  --base04: #565f89;
+  --base05: #343b58;
+  --base06: #1a1b26;
+  --base07: #1a1b26;
+  --base08: #8c4351;
+  --base09: #965027;
+  --base0A: #8f5e15;
+  --base0B: #485e30;
+  --base0C: #0f4b6e;
+  --base0D: #34548a;
+  --base0E: #5a4a78;
+  --base0F: #166775;
+}
+
+/* ================================================================
+   CATPPUCCIN MOCHA — dark — github.com/catppuccin
+   ================================================================ */
+[data-scheme="catppuccin-mocha"][data-theme="dark"],
+[data-scheme="catppuccin-mocha"]:not([data-theme="light"]) {
+  --base00: #1e1e2e;
+  --base01: #181825;
+  --base02: #313244;
+  --base03: #6c7086;
+  --base04: #9399b2;
+  --base05: #cdd6f4;
+  --base06: #e6e9ef;
+  --base07: #eff1f5;
+  --base08: #f38ba8;
+  --base09: #fab387;
+  --base0A: #f9e2af;
+  --base0B: #a6e3a1;
+  --base0C: #89dceb;
+  --base0D: #89b4fa;
+  --base0E: #cba6f7;
+  --base0F: #f5c2e7;
+}
+[data-scheme="catppuccin-mocha"][data-theme="light"] {
+  /* Mocha → Latte for light toggle */
+  --base00: #eff1f5;
+  --base01: #e6e9ef;
+  --base02: #ccd0da;
+  --base03: #9ca0b0;
+  --base04: #6c6f85;
+  --base05: #4c4f69;
+  --base06: #303446;
+  --base07: #303446;
+  --base08: #d20f39;
+  --base09: #fe640b;
+  --base0A: #df8e1d;
+  --base0B: #40a02b;
+  --base0C: #04a5e5;
+  --base0D: #1e66f5;
+  --base0E: #8839ef;
+  --base0F: #ea76cb;
+}
+
+/* ================================================================
+   CATPPUCCIN LATTE — light — github.com/catppuccin
+   ================================================================ */
+[data-scheme="catppuccin-latte"][data-theme="light"],
+[data-scheme="catppuccin-latte"]:not([data-theme="dark"]) {
+  --base00: #eff1f5;
+  --base01: #e6e9ef;
+  --base02: #ccd0da;
+  --base03: #9ca0b0;
+  --base04: #6c6f85;
+  --base05: #4c4f69;
+  --base06: #303446;
+  --base07: #303446;
+  --base08: #d20f39;
+  --base09: #fe640b;
+  --base0A: #df8e1d;
+  --base0B: #40a02b;
+  --base0C: #04a5e5;
+  --base0D: #1e66f5;
+  --base0E: #8839ef;
+  --base0F: #ea76cb;
+}
+[data-scheme="catppuccin-latte"][data-theme="dark"] {
+  /* Latte → Mocha for dark toggle */
+  --base00: #1e1e2e;
+  --base01: #181825;
+  --base02: #313244;
+  --base03: #6c7086;
+  --base04: #9399b2;
+  --base05: #cdd6f4;
+  --base06: #e6e9ef;
+  --base07: #eff1f5;
+  --base08: #f38ba8;
+  --base09: #fab387;
+  --base0A: #f9e2af;
+  --base0B: #a6e3a1;
+  --base0C: #89dceb;
+  --base0D: #89b4fa;
+  --base0E: #cba6f7;
+  --base0F: #f5c2e7;
+}
+
+/* ================================================================
+   ONE DARK — atom.io one dark
+   ================================================================ */
+[data-scheme="one-dark"][data-theme="dark"],
+[data-scheme="one-dark"]:not([data-theme="light"]) {
+  --base00: #282c34;
+  --base01: #21252b;
+  --base02: #3e4451;
+  --base03: #5c6370;
+  --base04: #9da5b4;
+  --base05: #abb2bf;
+  --base06: #b6bdca;
+  --base07: #c8ccd4;
+  --base08: #e06c75;
+  --base09: #d19a66;
+  --base0A: #e5c07b;
+  --base0B: #98c379;
+  --base0C: #56b6c2;
+  --base0D: #61afef;
+  --base0E: #c678dd;
+  --base0F: #be5046;
+}
+[data-scheme="one-dark"][data-theme="light"] {
+  /* One Light */
+  --base00: #fafafa;
+  --base01: #f0f0f0;
+  --base02: #d0d0d0;
+  --base03: #a0a1a7;
+  --base04: #696c77;
+  --base05: #383a42;
+  --base06: #202227;
+  --base07: #090a0b;
+  --base08: #e45649;
+  --base09: #986801;
+  --base0A: #c18401;
+  --base0B: #50a14f;
+  --base0C: #0184bc;
+  --base0D: #4078f2;
+  --base0E: #a626a4;
+  --base0F: #ca1243;
+}
+
+/* ================================================================
+   ROSÉ PINE — rosepinetheme.com
+   ================================================================ */
+[data-scheme="rose-pine"][data-theme="dark"],
+[data-scheme="rose-pine"]:not([data-theme="light"]) {
+  --base00: #191724;
+  --base01: #1f1d2e;
+  --base02: #26233a;
+  --base03: #6e6a86;
+  --base04: #908caa;
+  --base05: #e0def4;
+  --base06: #e0def4;
+  --base07: #fffaf3;
+  --base08: #eb6f92;
+  --base09: #f6c177;
+  --base0A: #f6c177;
+  --base0B: #31748f;
+  --base0C: #9ccfd8;
+  --base0D: #9ccfd8;
+  --base0E: #c4a7e7;
+  --base0F: #ebbcba;
+}
+[data-scheme="rose-pine"][data-theme="light"] {
+  /* Rosé Pine Dawn */
+  --base00: #faf4ed;
+  --base01: #fffaf3;
+  --base02: #f2e9e1;
+  --base03: #9893a5;
+  --base04: #797593;
+  --base05: #575279;
+  --base06: #575279;
+  --base07: #191724;
+  --base08: #b4637a;
+  --base09: #ea9d34;
+  --base0A: #ea9d34;
+  --base0B: #286983;
+  --base0C: #56949f;
+  --base0D: #56949f;
+  --base0E: #907aa9;
+  --base0F: #d7827e;
+}
+
+/* ================================================================
+   KANAGAWA — github.com/rebelot/kanagawa.nvim
+   ================================================================ */
+[data-scheme="kanagawa"][data-theme="dark"],
+[data-scheme="kanagawa"]:not([data-theme="light"]) {
+  --base00: #1f1f28;
+  --base01: #16161d;
+  --base02: #2a2a37;
+  --base03: #727169;
+  --base04: #938aa9;
+  --base05: #dcd7ba;
+  --base06: #c8c093;
+  --base07: #f2ecbc;
+  --base08: #c34043;
+  --base09: #ffa066;
+  --base0A: #c0a36e;
+  --base0B: #76946a;
+  --base0C: #6a9589;
+  --base0D: #7e9cd8;
+  --base0E: #957fb8;
+  --base0F: #d27e99;
+}
+[data-scheme="kanagawa"][data-theme="light"] {
+  /* Kanagawa Lotus (light) */
+  --base00: #f2ecbc;
+  --base01: #e7ddb0;
+  --base02: #c8bda0;
+  --base03: #8a8980;
+  --base04: #625d5a;
+  --base05: #545464;
+  --base06: #43436c;
+  --base07: #1f1f28;
+  --base08: #c84053;
+  --base09: #b6927b;
+  --base0A: #77713f;
+  --base0B: #4e8b6f;
+  --base0C: #4e8b8b;
+  --base0D: #4d699b;
+  --base0E: #624c83;
+  --base0F: #b35b79;
+}

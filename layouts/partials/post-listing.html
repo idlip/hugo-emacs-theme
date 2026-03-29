@@ -63,7 +63,9 @@
           data-year="{{ .Date.Format "2006" }}"
           data-url="{{ .RelPermalink }}"
           data-title="{{ .Title | lower }}"
-          data-tags="{{ range .Params.tags }}{{ . | lower }} {{ end }}">
+          data-tags="{{ range .Params.tags }}{{ . | lower }} {{ end }}"
+          aria-selected="false">
+        <span class="article-marker" aria-hidden="true"> </span>
         <a href="{{ .RelPermalink }}" class="article-link">
           <span class="article-meta">
             <span class="article-reading-time">
@@ -101,10 +103,8 @@
   </div>
 
   {{ partial "modeline.html" (dict
-    "buffer"   (printf "*%s*" (.Title | default "posts" | lower))
-    "mode"     "Dired"
-    "readonly" true
-    "keyhint"  "<kbd>n</kbd>/<kbd>p</kbd> nav  <kbd>RET</kbd> open  <kbd>/</kbd> search  <kbd>?</kbd> help"
+    "buffer" (printf "*%s*" (.Title | default "posts" | lower))
+    "mode"   "Dired"
   ) }}
 </section>
 

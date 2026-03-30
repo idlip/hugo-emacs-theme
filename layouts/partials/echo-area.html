@@ -1,11 +1,9 @@
-{{- /* Command palette overlay */ -}}
-<div class="palette-overlay" id="palette-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Command palette">
-  <div class="palette-dialog">
-    <div class="palette-input-wrap">
-      <span class="palette-prefix" aria-hidden="true">></span>
-      <input type="text" class="palette-input" id="palette-input"
-             autocomplete="off" autocapitalize="off" spellcheck="false">
-    </div>
-    <div class="palette-results" id="palette-results" role="listbox"></div>
+{{- /* Command palette — native <dialog> element */ -}}
+<dialog id="palette-dialog" aria-label="Command palette">
+  <div class="palette-input-wrap">
+    <input type="text" id="palette-input" class="palette-input"
+           placeholder="Search commands and posts…"
+           autocomplete="off" autocapitalize="off" spellcheck="false">
   </div>
-</div>
+  <div id="palette-results" role="listbox"></div>
+</dialog>

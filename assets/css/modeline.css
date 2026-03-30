@@ -114,14 +114,14 @@
 
 /* Echo message — default "? help", flashes on messages */
 .ml-echo-msg {
-  background: none;
+  background: var(--bg-active);
   border: none;
-  color: var(--fg-dim);
+  color: var(--blue);
   font-family: inherit;
   font-size: inherit;
   cursor: pointer;
-  padding: 0 0.4ch;
-  opacity: 0.65;
+  padding: 0 0.5ch;
+  opacity: 0.9;
   white-space: nowrap;
   overflow: hidden;
   max-width: 22ch;
@@ -129,9 +129,9 @@
   transition: opacity 0.15s, background 0.15s;
   border-radius: 2px;
 }
-.ml-echo-msg:hover { opacity: 1; color: var(--fg-main); }
+.ml-echo-msg:hover { opacity: 1; }
 .ml-echo-msg.flash {
-  background: var(--modeline-border);
+  background: var(--blue);
   color: var(--bg-main);
   opacity: 1;
   padding: 0 0.5ch;

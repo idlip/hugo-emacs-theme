@@ -15,7 +15,6 @@
   const articleList = document.getElementById('article-list');
   const bufferList  = document.getElementById('buffer-list');
   const echoMessage = document.getElementById('echo-message');
-  const helpOverlay = document.getElementById('help-overlay');
 
   // Are we on a single post page (no article list)?
   const isPostPage = !articleList;
@@ -147,24 +146,20 @@
     var meta  = e.metaKey;
     var shift = e.shiftKey;
 
-    // Ignore when typing
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-    // Escape / C-g — close palette, help, or clear sequence
+    // Escape / C-g — always handled, even inside inputs
     if (key === 'Escape' || (ctrl && key === 'g')) {
       if (window.emacsBlog?.palette?.isOpen?.()) {
         window.emacsBlog.palette.close(); e.preventDefault(); return;
-      }
-      if (helpOverlay && helpOverlay.classList.contains('visible')) {
-        toggleHelp(); e.preventDefault(); return;
       }
       keySequence = '';
       return;
     }
 
-    // Help
-    if (key === '?') { toggleHelp(); e.preventDefault(); return; }
-    if (helpOverlay && helpOverlay.classList.contains('visible')) return;
+    // Ignore when typing
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    // Help — open palette in shortcut-browse mode
+    if (key === '?') { window.emacsBlog?.palette?.open('? '); e.preventDefault(); return; }
 
     // g-prefix sequences
     if (keySequence || key === 'g') {
@@ -274,15 +269,6 @@
     }
   }
 
-  // ── Help overlay ───────────────────────────────────────────────────────────
-
-  function toggleHelp() {
-    if (!helpOverlay) return;
-    var v = helpOverlay.classList.toggle('visible');
-    helpOverlay.setAttribute('aria-hidden', !v);
-    if (v) document.getElementById('help-close') && document.getElementById('help-close').focus();
-  }
-
   // ── Scroll sync (list page) ────────────────────────────────────────────────
 
   function handleListScroll(e) {
@@ -305,9 +291,8 @@
 
   function init() {
     document.addEventListener('keydown', handleKeydown);
-    document.getElementById('help-close')?.addEventListener('click', toggleHelp);
-    // Clicking the echo message opens help
-    echoMessage?.addEventListener('click', toggleHelp);
+    // Clicking the echo message opens shortcut help in palette
+    echoMessage?.addEventListener('click', function () { window.emacsBlog?.palette?.open('? '); });
 
     if (!isPostPage) {
       updateSelection(0, false);

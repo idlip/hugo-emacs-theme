@@ -83,7 +83,7 @@
     "title"       .Title
     "wordcount"   .WordCount
     "readingtime" .ReadingTime
-    "date"        (.Date.Format "2006-01-02")
+    "date"        (cond (not .Date.IsZero) (.Date.Format "2006-01-02") (now.Format "2006-01-02"))
     "widthtoggle" true
   ) }}
 </section>

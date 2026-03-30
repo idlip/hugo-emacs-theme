@@ -1,31 +1,36 @@
 # Emacs Hugo Theme
 
-A Hugo theme that transforms your blog into an Emacs-like experience with buffer management, keyboard navigation, and authentic styling.
+A Hugo theme that transforms your blog into an Emacs-like experience — buffer UI, modeline, echo area, keyboard navigation, and a full color scheme system.
+
+Eg: https://idlip.in
 
 ![Emacs Hugo Theme Screenshot](images/screenshot.png)
 
+![M-x Command Palette Dialog](images/m-x-palette.png)
+
+![Color Scheme Picker](images/scheme-picker.png)
+
 ## Features
 
-- **Full-screen buffer view** - Article list and content displayed like Emacs buffers
-- **Window splitting** - Side-by-side (C-x 3) or stacked (C-x 2) layouts
-- **Emacs keybindings** - Navigate with n/p, open with RET, quit with q
-- **Dired-style article list** - Shows reading time, word count, date
-- **Modus themes** - Vivendi (dark) and Operandi (light) with `t` to toggle
-- **Emacs modeline** - Buffer name, scroll position, major mode indicator
-- **Menu bar** - File, View, Buffers, Help dropdowns
-- **Echo area** - Shows keyboard hints and messages
-- **Mobile responsive** - Adapts to single-buffer view on small screens
+- **Buffer UI** — article list (Dired-style) and post content displayed as Emacs buffers
+- **Emacs modeline** — buffer name, word count, scroll position, read time
+- **Command palette** — `x` to open; search posts, run commands, browse 300+ color schemes
+- **Base16 color system** — 11 preset schemes + all 305 tinted-theming schemes via palette
+- **Random scheme per session** — different accent colors on every page load, with pin to lock
+- **Font cycling** — mono → sans → serif → mixed (`f` key)
+- **Content width cycling** — 100% / 80ch / 60ch / 840px (`w` key)
+- **Keyboard navigation** — full keybindings for list and post pages
+- **Echo area** — shows key hints and transient messages
+- **Mobile responsive** — single-buffer layout on small screens
 
 ## Installation
 
-1. Clone or copy this theme to your Hugo site's `themes/` directory:
-
 ```bash
 cd your-hugo-site
-git submodule add https://github.com/ArthurHeymans/hugo-emacs-theme themes/emacs
+git submodule add https://github.com/idlip/hugo-emacs-theme themes/emacs
 ```
 
-2. Update your `config.toml`:
+`config.toml`:
 
 ```toml
 theme = "emacs"
@@ -34,65 +39,87 @@ theme = "emacs"
 noClasses = false
 ```
 
-3. Run Hugo:
-
-```bash
-hugo server -D
-```
-
 ## Keyboard Shortcuts
 
-### Navigation (List Buffer)
+### Global
 
-| Key | Action |
-|-----|--------|
-| `n` / `↓` | Next article |
-| `p` / `↑` | Previous article |
-| `RET` / `o` | Open article |
-| `<` | Beginning of list |
-| `>` | End of list |
+| Key           | Action                        |
+|---------------|-------------------------------|
+| `x`           | Open command palette          |
+| `t` / `i`     | Toggle dark / light theme     |
+| `f`           | Cycle font mode               |
+| `w`           | Cycle content width           |
+| `c`           | Open color scheme picker      |
+| `?`           | Show keyboard help            |
+| `C-g` / `Esc` | Cancel / close                |
+| `+` / `-`     | Increase / decrease font size |
 
-### Navigation (Content Buffer)
+### List page
 
-| Key | Action |
-|-----|--------|
-| `n` / `p` | Scroll down/up (split mode) or next/prev article (single mode) |
-| `↓` / `↑` | Scroll down/up |
-| `PgDn` / `PgUp` | Page down/up |
-| `SPC` / `S-SPC` | Page down/up |
-| `C-v` / `M-v` | Page down/up (Emacs style) |
-| `<` / `>` | Beginning/end of article |
-| `q` | Go back to list |
+| Key                   | Action               |
+|-----------------------|----------------------|
+| `n` / `↓`             | Next article         |
+| `p` / `↑`             | Previous article     |
+| `RET` / `o` / `Space` | Open article         |
+| `<` / `>`             | First / last article |
+| `g g`                 | Top of list          |
+| `g G`                 | Bottom of list       |
+| `g h`                 | Go to home           |
+| `g p`                 | Go to posts          |
 
-### Window Management
+### Post page
 
-| Key | Action |
-|-----|--------|
-| `C-x 3` | Split horizontal (side by side) |
-| `C-x 2` | Split vertical (stacked) |
-| `C-x 0` | Close current window |
-| `C-x 1` | Close other windows |
-| `C-x o` / `Tab` | Switch to other window |
+| Key                 | Action               |
+|---------------------|----------------------|
+| `n` / `p`           | Next / previous post |
+| `↓` / `↑`           | Scroll down / up     |
+| `Space` / `S-Space` | Page down / up       |
+| `C-v` / `M-v`       | Page down / up       |
+| `q`                 | Back to list         |
 
-### View
+### Command palette
 
-| Key | Action |
-|-----|--------|
-| `t` | Toggle dark/light theme |
-| `+` | Increase font size |
-| `-` | Decrease font size |
-| `?` | Show help overlay |
-| `C-g` / `Esc` | Quit/cancel |
+| Key                        | Action                              |
+|----------------------------|-------------------------------------|
+| Type to filter             | Search commands and posts           |
+| `t ` (t-space)             | Browse all 305 base16 color schemes |
+| `↑` / `↓` or `C-p` / `C-n` | Navigate items                      |
+| `RET`                      | Execute / select                    |
+| `Backspace` on `t `        | Return to command mode              |
+| `Esc`                      | Close palette                       |
 
-## Theme Customization
+## Color Scheme System
 
-### Colors
+### Preset schemes (menu bar picker)
 
-The theme uses Modus Vivendi (dark) and Modus Operandi (light) color schemes. Colors are defined as CSS custom properties in `assets/css/themes.css`.
+11 built-in base16 schemes selectable from the `󰏘` button or `c` key. Hover previews the scheme live; click applies and persists.
 
-### Fonts
+### Full tinted-theming library (command palette)
 
-The theme uses Fira Code as the monospace font. Font files are included in `static/fonts/`. To use a different font, update the `@font-face` declarations in `assets/css/main.css`.
+Open the palette (`x`), type `t ` to enter scheme mode. All 305 schemes from the [tinted-theming/schemes](https://github.com/tinted-theming/schemes) collection are available with live arrow-key preview. Selected scheme is persisted to `localStorage` and restored before first paint (no flash).
+
+### Random scheme
+
+A random scheme is applied on every page load unless pinned. Use the pin button in the scheme popup to lock the current scheme across sessions.
+
+## Changes from upstream fork
+
+The following features were added or replaced after forking from [hugo-emacs-theme](https://github.com/ArthurHeymans/hugo-emacs-theme):
+
+| Area                     | Change                                                                               |
+|--------------------------|--------------------------------------------------------------------------------------|
+| **Command palette**      | New — `x` key opens native `<dialog>` palette with post search + commands            |
+| **Color schemes**        | Replaced Modus-only with full base16 system (11 presets + 305 via tinted-theming)    |
+| **Random scheme**        | New — random base16 scheme per session with localStorage pin                         |
+| **Custom palette**       | New — palette picker persists chosen scheme; restored before paint via inline script |
+| **Font cycling**         | New — mono/sans/serif/mixed via `f` key and `data-font` attribute                    |
+| **Width cycling**        | New — four content widths via `w` key                                                |
+| **Post navigation**      | `n`/`p` navigate prev/next post on post pages                                        |
+| **`g`-prefix sequences** | New — `gg`, `gG`, `gh`, `gp` sequences                                               |
+| **Echo area button**     | Styled as highlighted pill; flashes on messages                                      |
+| **CSS**                  | ~1000 lines removed — split-view dead code, duplicate rules, legacy echo styles      |
+| **Split-view**           | Removed — `C-x 2/3` window splitting no longer present                               |
+| **JS bundle**            | 4 files → 1 deferred bundle (`app.js`, ~19 KB minified)                              |
 
 ## File Structure
 
@@ -100,52 +127,43 @@ The theme uses Fira Code as the monospace font. Font files are included in `stat
 themes/emacs/
 ├── assets/
 │   ├── css/
-│   │   ├── echo-area.css    # Echo area styling
-│   │   ├── main.css         # Core layout, typography
-│   │   ├── menu-bar.css     # Menu bar dropdowns
-│   │   ├── mobile.css       # Responsive design
+│   │   ├── echo-area.css    # Command palette + help overlay
+│   │   ├── main.css         # Global reset, typography, callouts
+│   │   ├── menu-bar.css     # Menu bar and dropdowns
+│   │   ├── mobile.css       # Responsive breakpoints
 │   │   ├── modeline.css     # Emacs modeline
-│   │   ├── syntax.css       # Code highlighting
-│   │   ├── themes.css       # Modus color schemes
-│   │   └── windows.css      # Buffer/window styling
+│   │   ├── schemes.css      # Preset base16 scheme variables
+│   │   ├── syntax.css       # Code block highlighting
+│   │   ├── themes.css       # Semantic color variables + font/width modes
+│   │   └── windows.css      # Buffer frame and article list layout
 │   └── js/
-│       ├── keyboard.js      # Keyboard navigation
-│       ├── menu.js          # Menu interactions
-│       └── windows.js       # Window management
+│       ├── keyboard.js      # Keyboard navigation and shortcuts
+│       ├── menu.js          # Menu bar, scheme picker, font/width cycling
+│       ├── palette.js       # Command palette (native <dialog>)
+│       └── windows.js       # Buffer scroll sync and modeline updates
 ├── layouts/
 │   ├── _default/
-│   │   ├── baseof.html      # Base template
+│   │   ├── baseof.html      # Base template (data-theme, data-scheme attrs)
 │   │   ├── list.html        # List pages
-│   │   ├── single.html      # Article pages
+│   │   ├── single.html      # Post pages
 │   │   └── terms.html       # Taxonomy pages
-│   ├── partials/
-│   │   ├── echo-area.html   # Echo area partial
-│   │   ├── head.html        # HTML head
-│   │   ├── help-overlay.html# Help modal
-│   │   ├── menu-bar.html    # Menu bar
-│   │   └── modeline.html    # Modeline partial
-│   ├── 404.html             # Error page
-│   └── index.html           # Homepage
-├── static/
-│   └── fonts/               # Fira Code font files
-├── theme.toml               # Theme metadata
+│   └── partials/
+│       ├── echo-area.html   # Palette <dialog> + help overlay
+│       ├── head.html        # CSS/JS bundles, schemes JSON, restore script
+│       ├── menu-bar.html    # Top menu bar
+│       ├── modeline.html    # Modeline partial
+│       └── post-listing.html# Article list item
 └── README.md
 ```
 
 ## Browser Support
 
-- Modern browsers (Chrome, Firefox, Safari, Edge)
-- Keyboard navigation requires JavaScript
-- Graceful degradation for older browsers
-
-## Vibe Coded
-
-This theme was fully vibe coded with [Claude](https://claude.ai) (Anthropic's AI assistant). The entire theme - HTML templates, CSS styling, JavaScript interactions, and documentation - was created through conversational AI-assisted development.
+Modern browsers (Chrome, Firefox, Safari, Edge). Uses `<dialog>` element, CSS custom properties, `localStorage`, and `fetch` — no polyfills included.
 
 ## Credits
 
-- Color schemes based on [Modus Themes](https://protesilaos.com/emacs/modus-themes) by Protesilaos Stavrou
-- Font: [Fira Code](https://github.com/tonsky/FiraCode) by Nikita Prokopov
+- Forked from [hugo-emacs-theme](https://github.com/ArthurHeymans/hugo-emacs-theme) by Arthur Heymans
+- Color schemes: [tinted-theming/schemes](https://github.com/tinted-theming/schemes) (base16 spec)
 - Inspired by GNU Emacs
 
 ## License

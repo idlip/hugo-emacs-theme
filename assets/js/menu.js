@@ -272,7 +272,7 @@
       case 'fix-scheme':     fixScheme(); break;
       case 'open-palette':   window.emacsBlog?.palette?.open(); break;
       case 'show-help':
-        document.getElementById('help-overlay')?.classList.add('visible');
+        window.emacsBlog?.palette?.open('? ');
         break;
     }
     closeAllMenus();
@@ -288,6 +288,7 @@
       localStorage.setItem('emacs-scheme-fixed', el.dataset.scheme || '');
       localStorage.setItem('emacs-scheme', el.dataset.scheme || '');
     }
+    previewScheme = null; // commit — prevent closeSchemePopup from restoring old scheme
     closeAllMenus();
     closeSchemePopup();
   }

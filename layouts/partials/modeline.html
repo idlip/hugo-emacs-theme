@@ -27,7 +27,7 @@
     {{- end }}
 
     <span class="ml-group">
-      <button class="ml-buffer" data-action="open-palette" title="Open command palette (x)">  {{ ($title | default $buffer) | truncate 40 }}</button>
+      <button class="ml-buffer" data-action="open-palette" title="Open command palette (x)">  {{ ($title | default $buffer) | truncate 80 }}</button>
     </span>
 
     {{- if $rt }}
@@ -50,6 +50,9 @@
   <span class="ml-fill" aria-hidden="true"></span>
 
   <div class="ml-right">
+    <button class="ml-pin-btn ml-hide-mobile" id="ml-pin-btn"
+            data-action="fix-scheme"
+            title="Pin / unpin color scheme"><span id="ml-pin-label">Pin</span></button>
     <button class="ml-echo-msg" id="echo-message"
             data-action="show-help"
             title="Keyboard shortcuts — click or press ?">? help</button>

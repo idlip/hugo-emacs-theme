@@ -55,7 +55,6 @@
 .ml-buffer {
   font-weight: 600;
   color: var(--modeline-fg);
-  max-width: 28ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -70,6 +69,15 @@
   text-decoration: underline;
   background: var(--bg-hover);
 }
+
+/* Pin button */
+.ml-pin-btn {
+  color: var(--fg-dim); opacity: 0.7;
+  transition: opacity 0.15s, color 0.15s;
+  border-radius: 2px; padding: 0 0.4ch;
+}
+.ml-pin-btn:hover { opacity: 1; color: var(--fg-main); }
+.ml-pin-btn.pinned { color: var(--yellow); opacity: 1; }
 
 /* Items hidden on mobile via .ml-hide-mobile */
 .ml-hide-mobile { display: inline-flex; }
@@ -142,4 +150,5 @@
   .modeline { padding: 0.2em 0.5em; font-size: 0.78rem; }
   .ml-sep   { padding: 0 0.3ch; }
   .ml-hide-mobile { display: none !important; }
+  .ml-buffer { max-width: 20ch; }
 }

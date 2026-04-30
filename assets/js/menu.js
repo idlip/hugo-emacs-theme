@@ -85,8 +85,13 @@
   }
 
   function updatePinLabel(pinned) {
+    const text = pinned ? 'Unpin' : 'Pin';
     const label = document.getElementById('pin-scheme-label');
-    if (label) label.textContent = pinned ? 'Unpin' : 'Pin';
+    if (label) label.textContent = text;
+    const mlLabel = document.getElementById('ml-pin-label');
+    if (mlLabel) mlLabel.textContent = text;
+    const mlBtn = document.getElementById('ml-pin-btn');
+    if (mlBtn) mlBtn.classList.toggle('pinned', pinned);
   }
 
   // Live hover preview — temporarily apply hovered scheme (~15 LOC)

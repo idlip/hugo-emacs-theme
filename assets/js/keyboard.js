@@ -275,7 +275,12 @@
     if (isScrollingProgrammatically) return;
     var items = getArticleItems();
     if (!items.length) return;
-    var containerTop = e.target.getBoundingClientRect().top;
+    var el = e.target;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) {
+      if (selectedIndex !== items.length - 1) updateSelection(items.length - 1, false);
+      return;
+    }
+    var containerTop = el.getBoundingClientRect().top;
     var closest = 0, closestDist = Infinity;
     items.forEach(function (item, i) {
       var top = item.getBoundingClientRect().top - containerTop;

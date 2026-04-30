@@ -5,6 +5,7 @@
 
 /* ── Article list (Dired-style) ─────────────────────────── */
 .article-list { list-style: none; padding: 0; margin: 0; }
+.article-list.similar-posts { margin-top: 2em; border-top: 1px solid var(--border-dim); padding-top: 0.5em; }
 
 .article-item {
   display: flex; align-items: baseline;

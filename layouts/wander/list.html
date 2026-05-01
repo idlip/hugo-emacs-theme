@@ -1,7 +1,7 @@
 {{ define "main" }}
 {{- $dts      := findRE `<dt>(?s:.*?)</dt>` .Content -}}
 {{- $dds      := findRE `<dd>(?s:.*?)</dd>` .Content -}}
-{{- $consoles := split (.Params.wanderconsoles | default "") " " -}}
+{{- $consoles := split (.Params.wanderconsoles | default "") "|" -}}
 
 <section class="buffer buffer-content active"
          id="buffer-content"
@@ -39,32 +39,40 @@
           <span class="year-label"><span class="nf" aria-hidden="true">󰙴</span> Neighbour Consoles</span>
         </li>
         {{- range $consoles }}{{- if . }}
-        <li class="article-item" aria-selected="false" data-url="{{ . }}" data-title="{{ . }}">
-          <a href="{{ . }}" class="article-link" target="_blank" rel="noopener">
-            <span class="article-title">{{ . | replaceRE `https?://(www\.)?` "" | replaceRE `/.*` "" }}</span>
-            <span class="article-date" style="width: auto; flex-shrink: 0;">console</span>
+        {{- $parts  := split . "::" -}}
+        {{- $curl   := index $parts 0 -}}
+        {{- $clabel := index $parts 1 | default "console" -}}
+        <li class="article-item" aria-selected="false" data-url="{{ $curl }}" data-title="{{ $curl | lower }}">
+          <a href="{{ $curl }}" class="article-link" target="_blank" rel="noopener">
+            <span class="article-title">{{ $curl }}</span>
+            <span class="article-date" style="width: auto; flex-shrink: 0;">{{ $clabel }}</span>
           </a>
         </li>
         {{- end }}{{- end }}
         {{- end }}
 
         {{- if $dts }}
+        {{- $sites := slice -}}
+        {{- range $i, $dt := $dts -}}
+          {{- $url  := $dt | replaceRE `(?s).*<a href="?([^ ">]+)"?.*` "$1" -}}
+          {{- $name := $dt | replaceRE `(?s).*<a[^>]+>([^<]+)</a>.*` "$1" -}}
+          {{- $desc := index $dds $i | replaceRE `(?s)<dd>\s*(.*?)\s*</dd>` "$1" -}}
+          {{- $kind := cond (eq ($url | replaceRE `https?://[^/]+/?$` "") "") "site" "post" -}}
+          {{- $sites = $sites | append (dict "url" $url "name" $name "desc" $desc "kind" $kind) -}}
+        {{- end }}
         <li class="year-divider" role="presentation" aria-hidden="true">
           <span class="year-label">↝ Known Sites</span>
         </li>
-        {{- range $i, $dt := $dts }}
-        {{- $url  := $dt | replaceRE `(?s).*<a href="?([^ ">]+)"?.*` "$1" -}}
-        {{- $name := $dt | replaceRE `(?s).*<a[^>]+>([^<]+)</a>.*` "$1" -}}
-        {{- $desc := index $dds $i | replaceRE `(?s)<dd>\s*(.*?)\s*</dd>` "$1" -}}
+        {{- range sort $sites "name" }}
         <li class="article-item" aria-selected="false"
-            data-url="{{ $url }}" data-title="{{ $name | lower }}">
+            data-url="{{ .url }}" data-title="{{ .name | lower }}">
           <span class="article-marker" aria-hidden="true"> </span>
-          <a href="{{ $url }}" class="article-link" target="_blank" rel="noopener">
-            <span class="article-title">{{ $name }}</span>
+          <a href="{{ .url }}" class="article-link" target="_blank" rel="noopener">
+            <span class="article-title"><span class="nf" aria-hidden="true">{{ if eq .kind "post" }}󰈙{{ else }}󰖟{{ end }}</span> {{ .name }}</span>
             <span class="article-date">
-              <span class="nf nf-sm" aria-hidden="true"> </span>{{ $url | replaceRE `https?://(www\.)?` "" | replaceRE `/.*` "" }}
+              <span class="nf nf-sm" aria-hidden="true"> </span>{{ .url | replaceRE `https?://(www\.)?` "" | replaceRE `/.*` "" }}
             </span>
-            <span class="wander-desc">{{ $desc }}</span>
+            <span class="wander-desc">{{ .desc }}</span>
           </a>
         </li>
         {{- end }}

@@ -127,7 +127,7 @@
   --h4-color: var(--base08);  /* red/pink */
 
   /* Content width — cycled by the width-toggle button */
-  --content-max-width: 80ch;
+  --content-max-width: 840px;
 
   /* Body font — cycled by font-mode button */
   --body-font-family: var(--code-font);

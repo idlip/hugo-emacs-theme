@@ -12,16 +12,18 @@ Eg: https://idlip.in
 
 ## Features
 
-- **Buffer UI** — article list (Dired-style) and post content displayed as Emacs buffers
-- **Emacs modeline** — buffer name, word count, scroll position, read time
-- **Command palette** — `x` to open; search posts, run commands, browse 300+ color schemes
-- **Base16 color system** — 11 preset schemes + all 305 tinted-theming schemes via palette
-- **Random scheme per session** — different accent colors on every page load, with pin to lock
-- **Font cycling** — mono → sans → serif → mixed (`f` key)
-- **Content width cycling** — 100% / 80ch / 60ch / 840px (`w` key)
-- **Keyboard navigation** — full keybindings for list and post pages
-- **Echo area** — shows key hints and transient messages
-- **Mobile responsive** — single-buffer layout on small screens
+- **Buffer UI** - article list (Dired-style) and post content displayed as Emacs buffers
+- **Emacs modeline** - buffer name, word count, scroll position, read time
+- **Command palette** - `x` to open; search posts, run commands, browse 300+ color schemes
+- **Base16 color system** - 11 preset schemes + all 305 tinted-theming schemes via palette
+- **Random scheme per session** - different accent colors on every page load, with pin to lock
+- **Font cycling** - mono → sans → serif → mixed (`f` key)
+- **Content width cycling** - 100% / 80ch / 60ch / 840px (`w` key)
+- **Keyboard navigation** - full keybindings for list and post pages
+- **Echo area** - shows key hints and transient messages
+- **Mobile responsive** - single-buffer layout on small screens
+- **Wander** - Integrate wandering of known sites using https://codeberg.org/susam/wander from org
+  mode file
 
 ## Installation
 
@@ -108,17 +110,17 @@ The following features were added or replaced after forking from [hugo-emacs-the
 
 | Area                     | Change                                                                               |
 |--------------------------|--------------------------------------------------------------------------------------|
-| **Command palette**      | New — `x` key opens native `<dialog>` palette with post search + commands            |
+| **Command palette**      | New - `x` key opens native `<dialog>` palette with post search + commands            |
 | **Color schemes**        | Replaced Modus-only with full base16 system (11 presets + 305 via tinted-theming)    |
-| **Random scheme**        | New — random base16 scheme per session with localStorage pin                         |
-| **Custom palette**       | New — palette picker persists chosen scheme; restored before paint via inline script |
-| **Font cycling**         | New — mono/sans/serif/mixed via `f` key and `data-font` attribute                    |
-| **Width cycling**        | New — four content widths via `w` key                                                |
+| **Random scheme**        | New - random base16 scheme per session with localStorage pin                         |
+| **Custom palette**       | New - palette picker persists chosen scheme; restored before paint via inline script |
+| **Font cycling**         | New - mono/sans/serif/mixed via `f` key and `data-font` attribute                    |
+| **Width cycling**        | New - four content widths via `w` key                                                |
 | **Post navigation**      | `n`/`p` navigate prev/next post on post pages                                        |
-| **`g`-prefix sequences** | New — `gg`, `gG`, `gh`, `gp` sequences                                               |
+| **`g`-prefix sequences** | New - `gg`, `gG`, `gh`, `gp` sequences                                               |
 | **Echo area button**     | Styled as highlighted pill; flashes on messages                                      |
-| **CSS**                  | ~1000 lines removed — split-view dead code, duplicate rules, legacy echo styles      |
-| **Split-view**           | Removed — `C-x 2/3` window splitting no longer present                               |
+| **CSS**                  | ~1000 lines removed - split-view dead code, duplicate rules, legacy echo styles      |
+| **Split-view**           | Removed - `C-x 2/3` window splitting no longer present                               |
 | **JS bundle**            | 4 files → 1 deferred bundle (`app.js`, ~19 KB minified)                              |
 
 ## File Structure
@@ -158,7 +160,7 @@ themes/emacs/
 
 ## Browser Support
 
-Modern browsers (Chrome, Firefox, Safari, Edge). Uses `<dialog>` element, CSS custom properties, `localStorage`, and `fetch` — no polyfills included.
+Modern browsers (Chrome, Firefox, Safari, Edge). Uses `<dialog>` element, CSS custom properties, `localStorage`, and `fetch` - no polyfills included.
 
 ## Credits
 

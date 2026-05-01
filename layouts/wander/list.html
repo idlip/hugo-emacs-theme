@@ -1,0 +1,87 @@
+{{ define "main" }}
+{{- $dts      := findRE `<dt>(?s:.*?)</dt>` .Content -}}
+{{- $dds      := findRE `<dd>(?s:.*?)</dd>` .Content -}}
+{{- $consoles := split (.Params.wanderconsoles | default "") " " -}}
+
+<section class="buffer buffer-content active"
+         id="buffer-content"
+         role="region"
+         aria-label="Wander — known network"
+         tabindex="0">
+  <div class="buffer-body" id="content-body">
+    <article class="post-content" id="article-content">
+
+      <div class="post-header">
+        <h1 class="post-title">{{ .Title }}</h1>
+        {{- if .Date }}
+        <div class="post-meta">
+          <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+        </div>
+        {{- end }}
+      </div>
+
+      {{- $intro := .Content | replaceRE `(?s)<dl>.*?</dl>` "" -}}
+      {{- with $intro }}
+      <div class="post-body">{{ . | safeHTML }}</div>
+      {{- end }}
+
+      <div class="wander-launch">
+        <a href="{{ "/wander/console/" | relURL }}" class="wander-btn">
+          <span class="nf" aria-hidden="true"> </span> Launch Wander Console
+        </a>
+        <span class="wander-hint">browse random sites from this network</span>
+      </div>
+
+      <ul class="article-list wander-list" id="article-list" role="list">
+
+        {{- if $consoles }}
+        <li class="year-divider" role="presentation" aria-hidden="true">
+          <span class="year-label"><span class="nf" aria-hidden="true">󰙴</span> Neighbour Consoles</span>
+        </li>
+        {{- range $consoles }}{{- if . }}
+        <li class="article-item" aria-selected="false" data-url="{{ . }}" data-title="{{ . }}">
+          <a href="{{ . }}" class="article-link" target="_blank" rel="noopener">
+            <span class="article-title">{{ . | replaceRE `https?://(www\.)?` "" | replaceRE `/.*` "" }}</span>
+            <span class="article-date" style="width: auto; flex-shrink: 0;">console</span>
+          </a>
+        </li>
+        {{- end }}{{- end }}
+        {{- end }}
+
+        {{- if $dts }}
+        <li class="year-divider" role="presentation" aria-hidden="true">
+          <span class="year-label">↝ Known Sites</span>
+        </li>
+        {{- range $i, $dt := $dts }}
+        {{- $url  := $dt | replaceRE `(?s).*<a href="?([^ ">]+)"?.*` "$1" -}}
+        {{- $name := $dt | replaceRE `(?s).*<a[^>]+>([^<]+)</a>.*` "$1" -}}
+        {{- $desc := index $dds $i | replaceRE `(?s)<dd>\s*(.*?)\s*</dd>` "$1" -}}
+        <li class="article-item" aria-selected="false"
+            data-url="{{ $url }}" data-title="{{ $name | lower }}">
+          <span class="article-marker" aria-hidden="true"> </span>
+          <a href="{{ $url }}" class="article-link" target="_blank" rel="noopener">
+            <span class="article-title">{{ $name }}</span>
+            <span class="article-date">
+              <span class="nf nf-sm" aria-hidden="true"> </span>{{ $url | replaceRE `https?://(www\.)?` "" | replaceRE `/.*` "" }}
+            </span>
+            <span class="wander-desc">{{ $desc }}</span>
+          </a>
+        </li>
+        {{- end }}
+        {{- end }}
+
+      </ul>
+
+    </article>
+
+    <footer>{{ partial "footer" . }}</footer>
+  </div>
+
+  {{ partial "modeline.html" (dict
+    "buffer"      "*wander*"
+    "title"       "Wander"
+    "date"        (cond (not .Date.IsZero) (.Date.Format "2006-01-02") (now.Format "2006-01-02"))
+    "widthtoggle" true
+  ) }}
+</section>
+{{ end }}

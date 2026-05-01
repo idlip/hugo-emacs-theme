@@ -28,6 +28,8 @@
   var CMDS = [
     { t: 'Navigate: Home',            a: function () { location.href = '/'; } },
     { t: 'Navigate: All Posts',       a: function () { location.href = '/posts/'; } },
+    { t: 'Navigate: Wander',          a: function () { location.href = '/wander/'; } },
+    { t: 'Navigate: Wander Console',  a: function () { location.href = '/wander/console/'; } },
     { t: 'Toggle dark / light theme', a: function () { dlg.close(); window.toggleTheme && window.toggleTheme(); } },
     { t: 'Cycle font mode',           a: function () { dlg.close(); window.cycleFontMode && window.cycleFontMode(); } },
     { t: 'Cycle content width',       a: function () { dlg.close(); window.cycleWidth && window.cycleWidth(); } },

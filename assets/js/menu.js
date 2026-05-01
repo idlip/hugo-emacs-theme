@@ -192,8 +192,8 @@
   // ── Content Width Cycle ───────────────────────────────────────────────────
   // First click → 100%, then cycles 80ch → 60ch → 840px → back
 
-  const WIDTH_STEPS = ['100%', '80ch', '60ch', '840px'];
-  let widthIdx = 3; // default 840px; first click → idx 0 = 100%
+  const WIDTH_STEPS = ['840px', '100%', '80%', '60%'];
+  let widthIdx = 0; // default 840px; first click → idx 1 = 100%
 
   function cycleWidth() {
     widthIdx = (widthIdx + 1) % WIDTH_STEPS.length;

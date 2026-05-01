@@ -19,24 +19,32 @@
   .menu-hamburger   { display: block; }
   .menu-bar-title   { display: none; }
   .menu-bar-right   { margin-left: auto; }
+  /* Last menu item (Help) anchors dropdown to right edge to avoid overflow */
+  .menu-item:last-child .menu-dropdown { left: auto; right: 0; }
 
   /* Article list */
-  .article-meta  { display: none; }
-  .article-item  { flex-wrap: wrap; padding: 0.5em 0.75em; }
-  .article-title { width: 100%; }
+  .article-meta    { display: none; }
+  .article-marker  { display: none; }
+  .article-item    { flex-wrap: wrap; padding: 0.5em 0.75em; }
+  .article-title   { width: 100%; }
   .article-item .article-link  { flex: 0 0 100%; padding: 0.5em 0.75em 0.2em; }
-  .article-item .post-tags     { flex: 0 0 100%; display: flex; flex-wrap: wrap; gap: 0.3em; padding: 0 0.75em 0.4em 2.25em; }
+  .article-item .post-tags     { flex: 0 0 100%; display: flex; flex-wrap: wrap; gap: 0.3em; padding: 0 0.75em 0.4em 0.75em; }
 
   /* Content */
   .post-content { padding: 0.75em; }
   .term-header  { flex-direction: column; align-items: flex-start; gap: 0.3em; }
+
+  /* Wander table: stack 3 columns into rows */
+  .wander-list .article-link  { flex-wrap: wrap; gap: 0.1em 0; }
+  .wander-list .article-title { flex: 0 0 100%; }
+  .wander-list .article-date  { flex: 0 0 auto; font-size: 0.8rem; }
+  .wander-list .wander-desc   { flex: 0 0 100%; padding-left: 0; font-size: 0.78rem; opacity: 0.8; }
 }
 
 /* ── Small mobile (≤480px) ─────────────────────────────────── */
 @media screen and (max-width: 480px) {
   body { font-size: 0.9rem; }
   .article-item  { padding: 0.5em; }
-  .article-marker { width: 1em; }
   .tag-cloud     { gap: 0.25em; padding: 0.4em 0.5em; }
   .tag-cloud-btn { font-size: 0.75rem; padding: 0.25em 0.5em; }
   .list-search   { margin: 0.4em 0; }

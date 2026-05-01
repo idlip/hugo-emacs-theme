@@ -2,6 +2,8 @@
 .buffer          { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; min-width: 0; }
 .buffer.active   { display: flex; }
 .buffer-body     { flex: 1; overflow-y: auto; overflow-x: hidden; background: var(--bg-main); min-height: 0; }
+.buffer-content .buffer-body { display: flex; flex-direction: column; }
+.buffer-content .buffer-body > article { flex: 1; }
 
 /* ── Article list (Dired-style) ─────────────────────────── */
 .article-list { list-style: none; padding: 0; margin: 0; }
@@ -78,14 +80,15 @@
 .post-body img { display: block; margin: 1em auto; max-width: 100%; }
 
 /* ── List page layout ───────────────────────────────────── */
-.list-content { max-width: 840px; margin: 0 auto; width: 100%; }
+.list-content { max-width: 840px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; min-height: 100%; }
+.list-content .list-footer { margin-top: auto; }
 
 .year-divider {
   display: flex; align-items: center;
   padding: 0.5em 0.75em 0.25em;
   pointer-events: none; user-select: none;
   border-bottom: 1px solid var(--border-dim);
-  margin-top: 0.5em;
+  margin-top: 1.25em;
 }
 .year-divider:first-child { margin-top: 0; }
 .year-label { font-weight: bold; color: var(--magenta); letter-spacing: 0.05em; opacity: 0.9; }
@@ -126,3 +129,12 @@
 }
 .social-link:hover { border-left-color: var(--cursor); background: var(--bg-active); text-decoration: none; color: var(--fg-main); }
 .social-label { font-size: 0.9em; color: var(--fg-dim); }
+
+/* ── Wander listing ─────────────────────────────────────── */
+.wander-launch { display: flex; align-items: center; gap: 1em; padding: 0.75em 0.75em; border-bottom: 1px solid var(--border-dim); margin-bottom: 0.5em; }
+.wander-hint   { flex: 1; font-size: 0.85rem; color: var(--fg-dim); }
+.wander-btn    { display: inline-flex; align-items: center; gap: 0.5em; padding: 0.3em 0.9em; border: 1px solid var(--border); color: var(--cyan-cooler); background: var(--bg-dim); text-decoration: none; font-size: 0.85rem; transition: border-color 0.1s; }
+.wander-btn:hover { border-color: var(--cyan-cooler); }
+.wander-list .article-title { flex: 1; }
+.wander-list .article-date  { flex: 1; width: auto; color: var(--blue); }
+.wander-desc { flex: 1; font-size: 0.85rem; color: var(--fg-alt); }

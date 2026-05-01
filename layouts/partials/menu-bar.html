@@ -19,6 +19,12 @@
           <span>All Posts</span>
           <span class="menu-shortcut">g p</span>
         </a>
+        <a href="{{ "/now/" | relURL }}" class="menu-dropdown-item" role="menuitem">
+          <span>Now Now Now</span>
+        </a>
+        <a href="{{ "/wander/" | relURL }}" class="menu-dropdown-item" role="menuitem">
+          <span>Wander My Small Web</span>
+        </a>
         {{ with .OutputFormats.Get "RSS" -}}
         <div class="menu-separator" role="separator"></div>
         <a href="{{ .RelPermalink }}" class="menu-dropdown-item" role="menuitem" target="_blank">

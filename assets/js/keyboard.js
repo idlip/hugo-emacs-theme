@@ -113,6 +113,8 @@
     var sequences = {
       'gh': function () { window.location.href = '/'; },
       'gp': function () { window.location.href = '/posts/'; },
+      'gw': function () { window.location.href = '/wander/'; },
+      'gr': function () { window.location.href = '/repo/'; },
       'gg': function () {
         if (isPostPage) { if (contentBody) contentBody.scrollTop = 0; }
         else updateSelection(0);
@@ -304,6 +306,16 @@
     document.addEventListener('keydown', handleKeydown);
     // Clicking the echo message opens shortcut help in palette
     echoMessage?.addEventListener('click', function () { window.emacsBlog?.palette?.open('? '); });
+
+    if (isPostPage) {
+      var progressBar = document.getElementById('read-progress');
+      if (progressBar && contentBody) {
+        contentBody.addEventListener('scroll', function () {
+          var pct = contentBody.scrollHeight - contentBody.clientHeight;
+          progressBar.style.width = (pct > 0 ? (contentBody.scrollTop / pct) * 100 : 0) + '%';
+        }, { passive: true });
+      }
+    }
 
     if (!isPostPage) {
       updateSelection(0, false);

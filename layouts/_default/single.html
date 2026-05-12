@@ -2,11 +2,14 @@
 {{- /* Single Article Page - Full-screen content buffer */ -}}
 
 {{- /* Article Content Buffer (active by default) */ -}}
-<section class="buffer buffer-content active" 
-         id="buffer-content" 
-         role="region" 
+<section class="buffer buffer-content active"
+         id="buffer-content"
+         role="region"
          aria-label="Article content"
          tabindex="0">
+  {{- if or (gt .ReadingTime 3) (gt .WordCount 500) -}}
+  <div class="read-progress" id="read-progress" aria-hidden="true"></div>
+  {{- end -}}
   <div class="buffer-body" id="content-body">
     <article class="post-content" id="article-content">
       {{- /* Breadcrumbs */ -}}

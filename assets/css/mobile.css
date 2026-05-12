@@ -1,7 +1,6 @@
 /* ── Tablet (≤1024px) ──────────────────────────────────────── */
 @media screen and (max-width: 1024px) {
   .article-meta { gap: 0.5em; }
-  .article-word-count { display: none; }
 }
 
 /* ── Mobile (≤768px) ──────────────────────────────────────── */
@@ -33,6 +32,20 @@
   /* Content */
   .post-content { padding: 0.75em; }
   .term-header  { flex-direction: column; align-items: flex-start; gap: 0.3em; }
+
+  /* Projects listing — column card layout: [icon ... links] / [name tags] / [desc] */
+  .project-item { flex-direction: column; gap: 0.2em; padding: 0.65em 0.75em; }
+  .project-item .project-left { flex-direction: row; width: 100%; align-items: center; gap: 0.5em; padding: 0; }
+  .project-item .project-ext-links { margin-left: auto; display: flex; gap: 0.4em; }
+  .project-item .project-ext-link { font-size: 1.0em; padding: 0.15em; }
+  .project-icon { font-size: 1.1em; }
+  .project-item .article-link { width: 100%; flex: none; padding: 0.1em 0 0; }
+  .project-tags { flex-wrap: wrap; }
+  .project-header { flex-wrap: wrap; }
+  .project-name { word-break: break-word; }
+
+  /* Wander launch bar */
+  .wander-launch { flex-direction: column; align-items: flex-start; gap: 0.4em; }
 
   /* Wander table: stack 3 columns into rows */
   .wander-list .article-link  { flex-wrap: wrap; gap: 0.1em 0; }

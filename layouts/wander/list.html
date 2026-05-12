@@ -42,7 +42,7 @@
         {{- $parts  := split . "::" -}}
         {{- $curl   := index $parts 0 -}}
         {{- $clabel := index $parts 1 | default "console" -}}
-        <li class="article-item" aria-selected="false" data-url="{{ $curl }}" data-title="{{ $curl | lower }}">
+        <li class="article-item" aria-selected="false" data-url="{{ $curl }}" data-title="{{ $curl | lower }}" data-external="true">
           <a href="{{ $curl }}" class="article-link" target="_blank" rel="noopener">
             <span class="article-title">{{ $curl }}</span>
             <span class="article-date" style="width: auto; flex-shrink: 0;">{{ $clabel }}</span>
@@ -76,7 +76,7 @@
         </li>
         {{- range sort $sites "name" }}
         <li class="article-item" aria-selected="false"
-            data-url="{{ .url }}" data-title="{{ .name | lower }}">
+            data-url="{{ .url }}" data-title="{{ .name | lower }}" data-external="true">
           <span class="article-marker" aria-hidden="true"> </span>
           <a href="{{ .url }}" class="article-link" target="_blank" rel="noopener">
             <span class="article-title"><span class="nf" aria-hidden="true">{{ if eq .kind "post" }}󰈙{{ else }}󰖟{{ end }}</span> {{ .name }}</span>

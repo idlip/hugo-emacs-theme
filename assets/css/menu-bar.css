@@ -19,7 +19,7 @@
   color: var(--menu-fg);
   transition: background-color 0.1s;
 }
-:is(.menu-item > button:hover, .menu-item.open > button) { background: var(--menu-hover-bg); }
+:is(.menu-item > button:hover, .menu-item > button:focus-visible, .menu-item.open > button) { background: var(--menu-hover-bg); outline: none; }
 .menu-item.open > button { background: var(--menu-active-bg); }
 .menu-item > button .underline { text-decoration: underline; }
 
@@ -40,7 +40,7 @@
   transition: background-color 0.1s;
   width: 100%;
 }
-.menu-dropdown-item:hover { background: var(--menu-hover-bg); }
+:is(.menu-dropdown-item:hover, .menu-dropdown-item:focus-visible) { background: var(--menu-hover-bg); outline: none; }
 .menu-dropdown-item.disabled { color: var(--fg-dim); pointer-events: none; }
 
 .menu-shortcut { color: var(--fg-dim); font-size: 0.85em; margin-left: 2em; }
@@ -55,7 +55,7 @@
 
 /* Scheme option — preview colours from inline CSS vars */
 .scheme-option { background: var(--p-bg, var(--menu-bg)); color: var(--p-fg, var(--menu-fg)); gap: 0.5em; }
-.scheme-option:hover { filter: brightness(1.15); }
+:is(.scheme-option:hover, .scheme-option:focus-visible) { filter: brightness(1.15); outline: none; }
 
 .scheme-dot {
   width: 0.55em; height: 0.55em; border-radius: 50%;
@@ -73,7 +73,7 @@
   color: var(--fg-dim); font-size: 0.82rem;
   transition: background 0.1s, color 0.1s;
 }
-.scheme-action-btn:hover { background: var(--menu-hover-bg); color: var(--fg-main); }
+:is(.scheme-action-btn:hover, .scheme-action-btn:focus-visible) { background: var(--menu-hover-bg); color: var(--fg-main); outline: none; }
 .scheme-action-btn + .scheme-action-btn { border-left: 1px solid var(--menu-border); }
 
 /* ── Scheme popup ────────────────────────────────────────── */
@@ -89,9 +89,9 @@
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   margin-left: 0.3em;
 }
-:is(.menu-bar-btn:hover, .menu-bar-btn[aria-expanded="true"],
-    .scheme-popup-btn:hover, .scheme-popup-btn[aria-expanded="true"]) {
-  background: var(--menu-hover-bg); color: var(--fg-main); border-color: var(--border);
+:is(.menu-bar-btn:hover, .menu-bar-btn:focus-visible, .menu-bar-btn[aria-expanded="true"],
+    .scheme-popup-btn:hover, .scheme-popup-btn:focus-visible, .scheme-popup-btn[aria-expanded="true"]) {
+  background: var(--menu-hover-bg); color: var(--fg-main); border-color: var(--border); outline: none;
 }
 
 .scheme-popup {
@@ -115,8 +115,8 @@
 
 /* Site title */
 .menu-bar-title { color: var(--fg-dim); font-size: 0.85rem; padding: 0 1em; text-decoration: none; }
-.menu-bar-title:hover { color: var(--fg-main); }
+:is(.menu-bar-title:hover, .menu-bar-title:focus-visible) { color: var(--fg-main); outline: none; }
 
 /* ── Hamburger ───────────────────────────────────────────── */
 .menu-hamburger { display: none; padding: 0.5em; color: var(--menu-fg); font-size: 1.2rem; }
-.menu-hamburger:hover { background: var(--menu-hover-bg); }
+:is(.menu-hamburger:hover, .menu-hamburger:focus-visible) { background: var(--menu-hover-bg); outline: none; }

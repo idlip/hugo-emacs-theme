@@ -13,7 +13,10 @@
 
   // DOM
   const articleList = document.getElementById('article-list');
-  const bufferList  = document.getElementById('buffer-list');
+  // wander/projects use #buffer-content instead of #buffer-list — fall back so
+  // scroll-sync and modeline updates work on those pages too
+  const bufferList  = document.getElementById('buffer-list') ||
+                      (articleList && document.getElementById('buffer-content')) || null;
   const echoMessage = document.getElementById('echo-message');
 
   // Are we on a single post page (no article list)?
@@ -94,8 +97,11 @@
   function openSelected() {
     var items = getArticleItems();
     if (!items.length) return;
-    var url = items[selectedIndex].dataset.url;
-    if (url) window.location.href = url;
+    var item = items[selectedIndex];
+    var url = item.dataset.url;
+    if (!url) return;
+    if (item.dataset.external) window.open(url, '_blank', 'noopener');
+    else window.location.href = url;
   }
 
   // ── Key sequences ──────────────────────────────────────────────────────────
@@ -304,6 +310,15 @@
       updateListModeline();
       var listBody = bufferList && bufferList.querySelector('.buffer-body');
       if (listBody) listBody.addEventListener('scroll', handleListScroll, { passive: true });
+
+      if (articleList) {
+        articleList.addEventListener('mouseover', function (e) {
+          var item = e.target.closest('.article-item:not(.no-articles)');
+          if (!item) return;
+          var idx = getArticleItems().indexOf(item);
+          if (idx >= 0 && idx !== selectedIndex) updateSelection(idx, false);
+        });
+      }
     }
 
     updateEchoHint();

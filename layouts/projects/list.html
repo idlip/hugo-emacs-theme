@@ -34,30 +34,22 @@
           {{- if $label -}}
 
           <li class="year-divider" role="presentation" aria-hidden="true">
-            <span class="year-label">{{ $label }}</span>
+            <span class="year-label">{{ $label }}<span class="year-count">{{ len $dts }}</span></span>
           </li>
 
           {{- range $i, $dt := $dts -}}
-            {{- $url   := $dt | replaceRE `(?s).*<a href="?([^ ">]+)"?.*` "$1" -}}
-            {{- $name  := $dt | replaceRE `(?s).*<a[^>]+>(.*?)</a>.*` "$1" | htmlUnescape | replaceRE `<[^>]+>` "" -}}
-            {{- $ddraw := index $dds $i | replaceRE `(?s)<dd>\s*(.*?)\s*</dd>` "$1" -}}
-            {{- $parts := split $ddraw " | " -}}
-            {{- $desc  := index $parts 0 -}}
-            {{- $tags  := slice -}}
-            {{- $web   := "" -}}
-            {{- $docs  := "" -}}
-            {{- range after 1 $parts -}}
+            {{- $e    := partial "parse-dl.html" (dict "dt" $dt "dd" (index $dds $i)) -}}
+            {{- $tags := slice -}}
+            {{- $web  := "" -}}
+            {{- $docs := "" -}}
+            {{- range $e.parts -}}
               {{- $p := strings.TrimSpace . -}}
               {{- if strings.HasPrefix $p "tags:" -}}
                 {{- $tags = split (strings.TrimPrefix "tags:" $p | strings.TrimSpace) "," -}}
               {{- else if strings.HasPrefix $p "web:" -}}
-                {{- $raw := strings.TrimPrefix "web:" $p | strings.TrimSpace -}}
-                {{- $ext := $raw | replaceRE `(?s).*<a[^>]+href="?([^ ">]+)"?.*` "$1" -}}
-                {{- $web = cond (ne $ext $raw) $ext $raw -}}
+                {{- $web = partial "extract-href.html" (strings.TrimPrefix "web:" $p | strings.TrimSpace) -}}
               {{- else if strings.HasPrefix $p "docs:" -}}
-                {{- $raw := strings.TrimPrefix "docs:" $p | strings.TrimSpace -}}
-                {{- $ext := $raw | replaceRE `(?s).*<a[^>]+href="?([^ ">]+)"?.*` "$1" -}}
-                {{- $docs = cond (ne $ext $raw) $ext $raw -}}
+                {{- $docs = partial "extract-href.html" (strings.TrimPrefix "docs:" $p | strings.TrimSpace) -}}
               {{- end -}}
             {{- end -}}
 
@@ -72,22 +64,22 @@
             {{- if not $icon -}}{{- $icon = index $icons "_default" | default "" -}}{{- end -}}
 
           <li class="article-item project-item" aria-selected="false"
-              data-url="{{ $url }}" data-title="{{ $name | lower }}" data-external="true">
+              data-url="{{ $e.url }}" data-title="{{ $e.name | lower }}" data-external="true">
             <div class="project-left">
               <span class="project-icon nf" aria-hidden="true">{{ $icon }}</span>
               {{- if or $web $docs }}<span class="project-ext-links">{{- if $web }}<a href="{{ $web | safeURL }}" class="project-ext-link" title="Website" target="_blank" rel="noopener" aria-label="Website"><span class="nf" aria-hidden="true">󰖟</span></a>{{- end }}{{- if $docs }}<a href="{{ $docs | safeURL }}" class="project-ext-link" title="Docs" target="_blank" rel="noopener" aria-label="Docs"><span class="nf" aria-hidden="true">󰈙</span></a>{{- end }}</span>{{- end }}
             </div>
             <div class="article-link">
               <div class="project-header">
-                <a href="{{ $url }}" class="article-title project-name"
-                   target="_blank" rel="noopener">{{ $name }}</a>
+                <a href="{{ $e.url }}" class="article-title project-name"
+                   target="_blank" rel="noopener">{{ $e.name }}</a>
                 {{- if $tags }}
                 <span class="project-tags" aria-label="tags">
                   {{- range $tags }}<span class="project-tag">{{ strings.TrimSpace . }}</span>{{- end }}
                 </span>
                 {{- end }}
               </div>
-              {{- with $desc }}<span class="wander-desc">{{ . | safeHTML }}</span>{{- end }}
+              {{- with $e.desc }}<span class="wander-desc">{{ . | safeHTML }}</span>{{- end }}
             </div>
           </li>
           {{- end -}}

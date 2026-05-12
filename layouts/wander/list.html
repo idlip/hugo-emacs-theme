@@ -54,22 +54,16 @@
         {{- if $dts }}
         {{- $sites := slice -}}
         {{- range $i, $dt := $dts -}}
-          {{- $url    := $dt | replaceRE `(?s).*<a href="?([^ ">]+)"?.*` "$1" -}}
-          {{- $name   := $dt | replaceRE `(?s).*<a[^>]+>(.*?)</a>.*` "$1" | htmlUnescape | replaceRE `<[^>]+>` "" -}}
-          {{- $ddraw  := index $dds $i | replaceRE `(?s)<dd>\s*(.*?)\s*</dd>` "$1" -}}
-          {{- $dparts := split $ddraw " | " -}}
-          {{- $desc   := index $dparts 0 -}}
-          {{- $rss    := "" -}}
-          {{- range after 1 $dparts -}}
+          {{- $e   := partial "parse-dl.html" (dict "dt" $dt "dd" (index $dds $i)) -}}
+          {{- $rss := "" -}}
+          {{- range $e.parts -}}
             {{- $p := strings.TrimSpace . -}}
             {{- if strings.HasPrefix $p "rss:" -}}
-              {{- $raw := strings.TrimPrefix "rss:" $p | strings.TrimSpace -}}
-              {{- $ext := $raw | replaceRE `(?s).*<a[^>]+href="?([^ ">]+)"?.*` "$1" -}}
-              {{- $rss = cond (ne $ext $raw) $ext $raw -}}
+              {{- $rss = partial "extract-href.html" (strings.TrimPrefix "rss:" $p | strings.TrimSpace) -}}
             {{- end -}}
           {{- end -}}
-          {{- $kind := cond (eq ($url | replaceRE `https?://[^/]+/?$` "") "") "site" "post" -}}
-          {{- $sites = $sites | append (dict "url" $url "name" $name "desc" $desc "rss" $rss "kind" $kind) -}}
+          {{- $kind := cond (eq ($e.url | replaceRE `https?://[^/]+/?$` "") "") "site" "post" -}}
+          {{- $sites = $sites | append (dict "url" $e.url "name" $e.name "desc" $e.desc "rss" $rss "kind" $kind) -}}
         {{- end }}
         <li class="year-divider" role="presentation" aria-hidden="true">
           <span class="year-label">↝ Known Sites</span>

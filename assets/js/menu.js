@@ -276,12 +276,13 @@
       case 'cycle-font':     cycleFontMode(); break;
       case 'fix-scheme':     fixScheme(); break;
       case 'open-palette':   window.emacsBlog?.palette?.open(); break;
+      case 'browse-schemes': window.emacsBlog?.palette?.open('t '); break;
       case 'show-help':
         window.emacsBlog?.palette?.open('? ');
         break;
     }
     closeAllMenus();
-    if (action !== 'cycle-width' && action !== 'cycle-font' && action !== 'fix-scheme' && action !== 'open-palette') closeSchemePopup();
+    if (action !== 'cycle-width' && action !== 'cycle-font' && action !== 'fix-scheme' && action !== 'open-palette' && action !== 'browse-schemes') closeSchemePopup();
   }
 
   function handleSchemeOptionClick(e) {

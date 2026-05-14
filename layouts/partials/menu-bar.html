@@ -155,7 +155,7 @@
             title="Cycle font: mono → sans → mixed"
             aria-label="Cycle font mode"
             data-action="cycle-font">
-      <span class="nf" aria-hidden="true"> </span>
+      <span class="nf" aria-hidden="true"> </span>
     </button>
 
     {{- /* Width cycle button */ -}}
@@ -172,7 +172,7 @@
       <button class="menu-bar-btn scheme-popup-btn" id="scheme-popup-btn"
               aria-label="Color scheme (c)" title="Color scheme (c)"
               aria-expanded="false" aria-haspopup="true">
-        <span class="nf" aria-hidden="true">󰏘</span>
+        <span class="nf" aria-hidden="true"> </span>
       </button>
       <div class="scheme-popup" id="scheme-popup" role="menu" aria-label="Color schemes">
         {{- range .Site.Params.colorSchemes }}
@@ -187,7 +187,7 @@
         <div class="scheme-popup-actions">
           <button class="scheme-action-btn" id="pin-scheme-btn" data-action="fix-scheme"
                   title="Pin: lock current scheme, or unpin to go random each session">
-            <span class="nf" aria-hidden="true">󰐅</span> <span id="pin-scheme-label">Pin</span>
+            <span class="nf" aria-hidden="true">󰐅 </span> <span id="pin-scheme-label">Pin</span>
           </button>
         </div>
       </div>
@@ -196,8 +196,8 @@
 
     {{- /* Theme toggle */ -}}
     <button class="menu-bar-btn" aria-label="Toggle dark/light" data-action="toggle-theme" title="Toggle dark/light (t)">
-      <span class="nf theme-icon-dark" aria-hidden="true"></span>
-      <span class="nf theme-icon-light" aria-hidden="true"> </span>
+      <span class="nf theme-icon-dark" aria-hidden="true"></span>
+      <span class="nf theme-icon-light" aria-hidden="true"> </span>
     </button>
   </div>
 </header>

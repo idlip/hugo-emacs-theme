@@ -88,7 +88,7 @@
             {{- $icon := index $iconsMap ($label | htmlUnescape | lower) | default (index $iconsMap "_default") | default "" -}}
 
             <li class="year-divider" role="presentation" aria-hidden="true">
-              <span class="year-label">{{ $label | htmlUnescape }}<span class="year-count">{{ len $dts }}</span></span>
+              <span class="year-label">{{ $label | htmlUnescape }}<span class="year-count">({{ len $dts }})</span></span>
             </li>
 
             {{- $items := slice -}}

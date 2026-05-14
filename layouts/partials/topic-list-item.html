@@ -3,8 +3,22 @@
   Input: dict "e" (parse-dl result) "icon" (nf glyph) "chipColor" (base16 var name e.g. "base0E")
 */ -}}
 {{- $chipColor := .chipColor -}}
+
+{{- /* Pre-scan parts for ref: key to build backlinks before rendering header */ -}}
+{{- $refPages := slice -}}
+{{- range .e.parts -}}
+  {{- $p := strings.TrimSpace . -}}
+  {{- if strings.HasPrefix $p "refs:" -}}
+    {{- $slug := replaceRE `(?s)^refs:(.*)$` "$1" $p | strings.TrimSpace | urlize -}}
+    {{- with index site.Taxonomies.refs $slug -}}
+      {{- $refPages = . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 <li class="article-item topic-item" aria-selected="false"
-    data-url="{{ .e.url }}" data-title="{{ .e.name | lower }}" data-external="true">
+    data-url="{{ .e.url }}" data-title="{{ .e.name | lower }}" data-external="true"
+    {{- if $chipColor }} style="--chip-color: var(--{{ $chipColor }})"{{- end }}>
   <div class="project-left">
     <span class="project-icon nf" aria-hidden="true">{{ .icon }}</span>
   </div>
@@ -12,18 +26,28 @@
     <div class="project-header">
       <a href="{{ .e.url }}" class="article-title project-name"
          target="_blank" rel="noopener">{{ .e.name }}</a>
+      {{- with $refPages }}
+      <span class="project-refs" aria-label="related posts">
+        {{- range $i, $wp := . -}}
+        <a href="{{ $wp.RelPermalink }}" class="project-ref-link"
+           title="{{ $wp.Title }}">[{{ add $i 1 }}]</a>
+        {{- end -}}
+      </span>
+      {{- end }}
     </div>
     {{- with .e.desc }}<span class="wander-desc">{{ . | safeHTML }}</span>{{- end }}
     {{- with .e.parts }}
-    <span class="project-tags" aria-label="metadata"{{- if $chipColor }} style="--chip-color: var(--{{ $chipColor }})"{{- end }}>
+    <span class="project-tags" aria-label="metadata">
       {{- range . -}}
         {{- $p      := strings.TrimSpace . -}}
         {{- if strings.Contains $p ":" -}}
-          {{- $key    := replaceRE `^([^:]+):.*$` "$1" $p | strings.TrimSpace -}}
-          {{- $rawval := replaceRE `^[^:]+:(.*)$`  "$1" $p | strings.TrimSpace -}}
+          {{- $key    := replaceRE `(?s)^([^:]+):.*$` "$1" $p | strings.TrimSpace -}}
+          {{- $rawval := replaceRE `(?s)^[^:]+:(.*)$`  "$1" $p | strings.TrimSpace -}}
           {{- $url    := partial "extract-href.html" $rawval -}}
           {{- if eq $key "tag" -}}
-            <a href="{{ "/tags/" | relURL }}{{ $rawval | urlize }}/" class="project-tag" aria-label="tag: {{ $rawval }}">{{ $rawval }}</a>
+            <a href="{{ "/tags/" | relURL }}{{ $rawval | urlize }}/" class="project-tag" aria-label="{{ $rawval }}">{{ $rawval }}</a>
+          {{- else if eq $key "refs" -}}
+            <a href="{{ "/refs/" | relURL }}{{ $rawval | urlize }}/" class="project-tag" aria-label="refs: {{ $rawval }}">{{ $rawval }}</a>
           {{- else if strings.HasPrefix $url "http" -}}
             <a href="{{ $url | safeURL }}" class="project-tag" target="_blank" rel="noopener" aria-label="{{ $key }}">{{ $key }} ↗</a>
           {{- else if $rawval -}}

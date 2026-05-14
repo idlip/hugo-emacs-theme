@@ -5,12 +5,17 @@
 {{- $tags := .Params.tags -}}
 {{- $tag1 := index $tags 0 -}}
 {{- $tag2 := index $tags 1 -}}
-{{- if or $tag1 $tag2 -}}
+{{- $refs := .Params.refs -}}
+{{- $ref1 := index $refs 0 -}}
+{{- $ref2 := index $refs 1 -}}
+{{- if or $tag1 $tag2 $ref1 $ref2 -}}
   {{- $current := . -}}
   {{- $limit := 5 -}}
   {{- $related := slice -}}
   {{- range .Site.RegularPages -}}
-    {{- if and (ne . $current) (or (and $tag1 (in .Params.tags $tag1)) (and $tag2 (in .Params.tags $tag2))) -}}
+    {{- $tagMatch := or (and $tag1 (in .Params.tags $tag1)) (and $tag2 (in .Params.tags $tag2)) -}}
+    {{- $refMatch := or (and $ref1 (in .Params.refs $ref1)) (and $ref2 (in .Params.refs $ref2)) -}}
+    {{- if and (ne . $current) (or $tagMatch $refMatch) -}}
       {{- $related = $related | append . -}}
     {{- end -}}
   {{- end -}}

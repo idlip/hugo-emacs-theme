@@ -72,8 +72,8 @@
 
     if (scroll) {
       isScrollingProgrammatically = true;
-      sel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      setTimeout(function () { isScrollingProgrammatically = false; }, 150);
+      sel.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+      setTimeout(function () { isScrollingProgrammatically = false; }, 50);
     }
 
     updateListModeline();

@@ -1,0 +1,29 @@
+<script>
+(function () {
+  var body = document.querySelector('.post-body');
+  if (!body) return;
+
+  body.querySelectorAll('h2, h3').forEach(function (h) {
+    var level = parseInt(h.tagName[1]), siblings = [], el = h.nextElementSibling;
+    while (el && !(el.tagName.match(/^H[23]$/) && parseInt(el.tagName[1]) <= level))
+      { siblings.push(el); el = el.nextElementSibling; }
+    if (!siblings.length) return;
+    var wrap = document.createElement('div');
+    h.after(wrap);
+    siblings.forEach(function (s) { wrap.appendChild(s); });
+    h.dataset.collapsible = '1';
+    h.onclick = function () { wrap.classList.toggle('hidden'); };
+  });
+
+  body.querySelectorAll('.highlight, pre.src').forEach(function (block) {
+    var code = block.querySelector('code[class]');
+    var lang = (code && (code.className.match(/language-(\S+)/) || [])[1])
+            || (block.className.match(/src-(\S+)/) || [])[1] || 'src';
+    var hdr = document.createElement('div');
+    hdr.className = 'pre-header';
+    hdr.textContent = lang;
+    block.before(hdr);
+    hdr.onclick = function () { block.classList.toggle('hidden'); };
+  });
+}());
+</script>

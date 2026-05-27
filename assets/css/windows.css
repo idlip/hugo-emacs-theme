@@ -91,6 +91,49 @@
 .year-label { font-weight: bold; color: var(--magenta); letter-spacing: 0.05em; opacity: 0.9; }
 .year-count { margin-left: 0.5em; font-size: 0.75em; font-weight: normal; color: var(--fg-dim); opacity: 0.7; }
 
+/* ── Collapsible sections (topic-list + post pages) ── */
+.hidden { display: none; }
+
+/* topic-list: full-width button wrapping year-label — makes entire row clickable */
+.year-divider.collapsible { pointer-events: auto; cursor: pointer; }
+.year-divider.collapsible:hover { background: var(--bg-hover); }
+.year-divider.collapsed .year-label { opacity: 0.65; }
+.section-toggle-btn {
+  display: flex; align-items: center; gap: 0.25em;
+  width: 100%; text-align: left; padding: 0; margin: 0;
+  background: none; border: none; cursor: pointer;
+  font: inherit; color: inherit; letter-spacing: inherit;
+}
+.section-toggle-btn:focus-visible { outline: 2px solid var(--border-highlight); outline-offset: -2px; }
+
+/* post headings: tabindex makes them focusable; cursor signals interactivity */
+:is(h2, h3)[data-collapsible] { cursor: pointer; }
+:is(h2, h3)[data-collapsible]:hover { opacity: 0.8; }
+:is(h2, h3)[data-collapsible]:focus-visible { outline: 2px solid var(--border-highlight); outline-offset: 3px; }
+
+/* collapsed-state icon — replace content value with your Nerd Font glyph */
+.year-divider.collapsed .section-toggle-btn::after,
+:is(h2, h3)[data-collapsible]:has(+ .hidden)::after,
+.pre-header:has(+ .highlight.hidden)::after,
+.pre-header:has(+ pre.hidden)::after {
+  content: ' [...]';     /* section org collapse icon*/
+  color: var(--fg-dim);
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+/* code block toggle bar */
+.pre-header + .highlight,
+.pre-header + pre { margin-top: 0; }  /* close gap — both .highlight and pre.src have 1em top margin */
+.pre-header {
+  background: var(--bg-dim); border: 1px solid var(--border-dim); border-bottom: none;
+  padding: 0.2em 0.75em; font-size: 0.78rem;
+  font-family: var(--code-font), monospace;
+  color: var(--fg-dim); cursor: pointer; user-select: none;
+}
+.pre-header:hover { background: var(--bg-active); color: var(--fg-main); }
+.pre-header:focus-visible { outline: 2px solid var(--border-highlight); outline-offset: -2px; }
+
 .term-header { display: flex; align-items: baseline; gap: 0.5em; padding: 0.5em 0.75em; border-bottom: 1px solid var(--border-dim); background: var(--bg-dim); }
 .term-tag-name { font-size: 1.1rem; font-weight: bold; color: var(--cyan-cooler); }
 .term-back { margin-left: auto; font-size: 0.8rem; color: var(--yellow-cooler); text-decoration: none; opacity: 0.8; }

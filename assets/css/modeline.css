@@ -16,12 +16,6 @@
   flex-shrink: 0;
 }
 
-/* Inactive modeline */
-.buffer:not(.active) .modeline {
-  background-color: var(--modeline-bg-inactive);
-  color: var(--modeline-fg-inactive);
-}
-
 /* Left cluster */
 .ml-left {
   display: flex;
@@ -91,7 +85,7 @@
 
 /* Date calendar icon */
 .ml-date-icon {
-  color: var(--fg-dim);
+  color: var(--yellow-faint);
   font-size: 0.9em;
 }
 
@@ -108,17 +102,17 @@
 }
 
 /* Word count */
-.ml-wc { color: var(--fg-dim); }
+.ml-wc { color: var(--blue-faint); }
 
 /* Reading time */
 .ml-readtime {
-  color: var(--fg-dim);
+  color: var(--cyan-faint);
   opacity: 0.75;
   font-size: 0.9em;
 }
 
 /* Publication date */
-.ml-date { color: var(--fg-dim); opacity: 0.8; }
+.ml-date { color: var(--yellow-faint); opacity: 0.8; }
 
 /* Echo message — default "? help", flashes on messages */
 .ml-echo-msg {

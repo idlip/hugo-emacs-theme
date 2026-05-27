@@ -62,7 +62,7 @@
 
 {{- /* Schemes JSON for command palette "t " mode — fingerprinted, lazy-loaded */ -}}
 {{- $sl := slice -}}
-{{- range $k, $d := .Site.Data.schemes.base16 -}}
+{{- range $k, $d := hugo.Data.schemes.base16 -}}
   {{- $p := $d.palette -}}
   {{- if $p -}}
     {{- $c := slice

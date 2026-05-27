@@ -11,70 +11,104 @@
  */
 
 :root {
-  /* Backgrounds */
+  /* Backgrounds — base00/01/02 are the scheme's bg ladder (main → dim → active).
+   * color-mix creates midpoints: hover between dim and active; hl-line subtler than dim. */
   --bg-main:      var(--base00);
   --bg-dim:       var(--base01);
   --bg-alt:       var(--base01);
   --bg-active:    var(--base02);
   --bg-inactive:  var(--base01);
   --bg-hover:     var(--base02);
+  --bg-hover:     color-mix(in oklch, var(--base01) 50%, var(--base02));  /* midpoint dim→active */
   --bg-region:    var(--base02);
   --bg-hl-line:   var(--base01);
+  --bg-hl-line:   color-mix(in oklch, var(--base00) 75%, var(--base01));  /* subtler than dim */
 
-  /* Foregrounds */
+  /* Foregrounds — base05/04/03 cover main/alt/dim; unfocused pushed further toward bg. */
   --fg-main:      var(--base05);
   --fg-dim:       var(--base03);
   --fg-alt:       var(--base04);
   --fg-unfocused: var(--base03);
+  --fg-unfocused: color-mix(in oklch, var(--base03) 65%, var(--base00)); /* dimmer than fg-dim */
 
   /* Borders */
   --border:           var(--base02);
   --border-highlight: var(--base0D);
   --border-dim:       var(--base01);
+  --border-dim:       color-mix(in oklch, var(--base00) 55%, var(--base01)); /* barely visible */
 
   /* Cursor */
   --cursor:    var(--base05);
   --cursor-bg: var(--base0E);
 
-  /* Accent colors — short aliases */
-  --red:           var(--base08);
-  --red-warmer:    var(--base08);
-  --red-cooler:    var(--base08);
-  --red-faint:     var(--base08);
-  --green:         var(--base0B);
-  --green-warmer:  var(--base0B);
-  --green-cooler:  var(--base0B);
-  --green-faint:   var(--base0B);
-  --yellow:        var(--base0A);
-  --yellow-warmer: var(--base09);
-  --yellow-cooler: var(--base0A);
-  --yellow-faint:  var(--base0A);
-  --blue:          var(--base0D);
-  --blue-warmer:   var(--base0D);
-  --blue-cooler:   var(--base0D);
-  --blue-faint:    var(--base0D);
-  --magenta:       var(--base0E);
-  --magenta-warmer:var(--base0E);
-  --magenta-cooler:var(--base0E);
-  --magenta-faint: var(--base0E);
-  --cyan:          var(--base0C);
-  --cyan-warmer:   var(--base0C);
-  --cyan-cooler:   var(--base0C);
-  --cyan-faint:    var(--base0C);
+  /* Accent color families — three-tier system:
+   *  1. var(--baseXX)       — old-browser fallback; tracks active scheme via JS
+   *  2. color-mix(in oklch) — works without @supports; faint mixes toward bg,
+   *                           warmer/cooler mix toward adjacent palette slots
+   *  3. @supports block     — precise ±20° hue shifts in oklch perceptual space
+   *
+   * base08..base0E MUST stay as var() — JS sets these as hex for all 305 schemes. */
 
-  /* Modeline */
-  --modeline-bg:          var(--base02);
-  --modeline-fg:          var(--base05);
-  --modeline-bg-inactive: var(--base01);
-  --modeline-fg-inactive: var(--base03);
-  --modeline-border:      var(--base0D);
+  --red:            var(--base08);
+  --red-faint:      var(--base08);
+  --red-faint:      color-mix(in oklch, var(--base08) 60%, var(--base00));
+  --red-warmer:     var(--base08);
+  --red-warmer:     color-mix(in oklch, var(--base08) 80%, var(--base09)); /* → orange */
+  --red-cooler:     var(--base08);
+  --red-cooler:     color-mix(in oklch, var(--base08) 80%, var(--base0E)); /* → violet */
+
+  --green:          var(--base0B);
+  --green-faint:    var(--base0B);
+  --green-faint:    color-mix(in oklch, var(--base0B) 60%, var(--base00));
+  --green-warmer:   var(--base0B);
+  --green-warmer:   color-mix(in oklch, var(--base0B) 80%, var(--base0A)); /* → yellow */
+  --green-cooler:   var(--base0B);
+  --green-cooler:   color-mix(in oklch, var(--base0B) 80%, var(--base0C)); /* → cyan */
+
+  --yellow:         var(--base0A);
+  --yellow-faint:   var(--base0A);
+  --yellow-faint:   color-mix(in oklch, var(--base0A) 60%, var(--base00));
+  --yellow-warmer:  var(--base09);                                          /* base09 = orange/warm slot */
+  --yellow-cooler:  var(--base0A);
+  --yellow-cooler:  color-mix(in oklch, var(--base0A) 80%, var(--base0B)); /* → green */
+
+  --blue:           var(--base0D);
+  --blue-faint:     var(--base0D);
+  --blue-faint:     color-mix(in oklch, var(--base0D) 60%, var(--base00));
+  --blue-warmer:    var(--base0D);
+  --blue-warmer:    color-mix(in oklch, var(--base0D) 80%, var(--base0C)); /* → cyan */
+  --blue-cooler:    var(--base0D);
+  --blue-cooler:    color-mix(in oklch, var(--base0D) 80%, var(--base0E)); /* → violet */
+
+  --magenta:        var(--base0E);
+  --magenta-faint:  var(--base0E);
+  --magenta-faint:  color-mix(in oklch, var(--base0E) 60%, var(--base00));
+  --magenta-warmer: var(--base0E);
+  --magenta-warmer: color-mix(in oklch, var(--base0E) 80%, var(--base08)); /* → red */
+  --magenta-cooler: var(--base0E);
+  --magenta-cooler: color-mix(in oklch, var(--base0E) 80%, var(--base0D)); /* → blue */
+
+  --cyan:           var(--base0C);
+  --cyan-faint:     var(--base0C);
+  --cyan-faint:     color-mix(in oklch, var(--base0C) 60%, var(--base00));
+  --cyan-warmer:    var(--base0C);
+  --cyan-warmer:    color-mix(in oklch, var(--base0C) 80%, var(--base0B)); /* → green */
+  --cyan-cooler:    var(--base0C);
+  --cyan-cooler:    color-mix(in oklch, var(--base0C) 80%, var(--base0D)); /* → blue */
+
+  /* Modeline — no split-window; only one active buffer renders at a time. */
+  --modeline-bg:     var(--base02);
+  --modeline-bg:     color-mix(in oklch, var(--base02) 75%, var(--base03)); /* above bg-active */
+  --modeline-fg:     var(--base05);
+  --modeline-border: var(--base0D);
 
   /* Menu bar */
-  --menu-bg:       var(--base01);
-  --menu-fg:       var(--base05);
-  --menu-border:   var(--base02);
-  --menu-hover-bg: var(--base02);
-  --menu-active-bg:var(--base02);
+  --menu-bg:        var(--base01);
+  --menu-fg:        var(--base05);
+  --menu-border:    var(--base02);
+  --menu-hover-bg:  var(--base02);
+  --menu-hover-bg:  color-mix(in oklch, var(--base01) 50%, var(--base02)); /* distinct from border */
+  --menu-active-bg: var(--base02);
 
   /* Echo area */
   --echo-bg: var(--base00);
@@ -119,6 +153,7 @@
   --list-selected-bg: var(--base02);
   --list-selected-fg: var(--base05);
   --list-hover-bg:    var(--base01);
+  --list-hover-bg:    color-mix(in oklch, var(--base01) 60%, var(--base02)); /* between dim and selected */
 
   /* Heading colors (h1–h4) */
   --h1-color: var(--base0E);  /* violet   */
@@ -131,6 +166,29 @@
 
   /* Body font — cycled by font-mode button */
   --body-font-family: var(--code-font);
+}
+
+/* ── Precise oklch hue shifts (Chrome 119+ / Safari 16.4+ / Firefox 128+) ──────────────────
+ * Overrides color-mix fallbacks above with ±20° rotation in perceptual oklch space.
+ * Same L and C as the base — only hue changes, so lightness/chroma stay scheme-appropriate.
+ * Directions chosen to match the color-mix targets: warmer → adjacent warm slot hue,
+ * cooler → adjacent cool slot hue. green and cyan run opposite sign to red/blue/magenta
+ * because green (142°) and cyan (200°) sit on the cool side of the hue circle. */
+@supports (color: oklch(from red l c h)) {
+  :root {
+    --red-warmer:     oklch(from var(--base08) l c calc(h + 20)); /* → orange ~46° */
+    --red-cooler:     oklch(from var(--base08) l c calc(h - 20)); /* → rose   ~6°  */
+    --green-warmer:   oklch(from var(--base0B) l c calc(h - 20)); /* → yellow ~122° */
+    --green-cooler:   oklch(from var(--base0B) l c calc(h + 20)); /* → cyan   ~162° */
+    /* --yellow-warmer stays var(--base09) — canonical orange/warm slot, no shift needed */
+    --yellow-cooler:  oklch(from var(--base0A) l c calc(h + 20)); /* → green  ~125° */
+    --blue-warmer:    oklch(from var(--base0D) l c calc(h + 20)); /* → violet ~284° */
+    --blue-cooler:    oklch(from var(--base0D) l c calc(h - 20)); /* → azure  ~244° */
+    --magenta-warmer: oklch(from var(--base0E) l c calc(h + 20)); /* → rose   ~335° */
+    --magenta-cooler: oklch(from var(--base0E) l c calc(h - 20)); /* → violet ~295° */
+    --cyan-warmer:    oklch(from var(--base0C) l c calc(h - 20)); /* → green  ~180° */
+    --cyan-cooler:    oklch(from var(--base0C) l c calc(h + 20)); /* → blue   ~220° */
+  }
 }
 
 /* ── Font mode cycling ──────────────────────────────────────────────── */
@@ -163,10 +221,11 @@
   --base0F: #ff9580;  /* Deprecated / Brown        */
 
   /* Modus-specific semantic overrides (richer than pure base16 mapping) */
-  --modeline-bg:     #505050;
-  --modeline-border: #626262;
-  --menu-bg:         #1e1e1e;
-  --code-bg:         #0d0e1c;
+  --modeline-bg:     oklch(0.36 0 0);       /* #505050 */
+  --modeline-fg:     oklch(0.94 0 0);       /* near-white — fixed contrast on L=0.36 bg */
+  --modeline-border: oklch(0.43 0 0);       /* #626262 */
+  --menu-bg:         oklch(0.14 0 0);       /* #1e1e1e */
+  --code-bg:         oklch(0.08 0.04 264);  /* #0d0e1c — dark blue-tinted */
 }
 
 /* ============================================================
@@ -191,6 +250,7 @@
   --base0F: #a0132f;  /* Deprecated / Brown    */
 
   /* Modus operandi semantic overrides */
-  --modeline-bg:     #c8c8c8;
-  --modeline-border: #a3a3a3;
+  --modeline-bg:     oklch(0.81 0 0);  /* #c8c8c8 */
+  --modeline-fg:     oklch(0.18 0 0);  /* near-black — fixed contrast on L=0.81 bg */
+  --modeline-border: oklch(0.67 0 0);  /* #a3a3a3 */
 }

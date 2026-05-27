@@ -33,13 +33,10 @@
   .post-content { padding: 0.75em; }
   .term-header  { flex-direction: column; align-items: flex-start; gap: 0.3em; }
 
-  /* Projects listing — column card layout: [icon ... links] / [name tags] / [desc] */
-  .project-item { flex-direction: column; gap: 0.2em; padding: 0.65em 0.75em; }
-  .project-item .project-left { flex-direction: row; width: 100%; align-items: center; gap: 0.5em; padding: 0; }
-  .project-item .project-ext-links { margin-left: auto; display: flex; gap: 0.4em; }
-  .project-item .project-ext-link { font-size: 1.0em; padding: 0.15em; }
-  .project-icon { font-size: 1.1em; }
-  .project-item .article-link { width: 100%; flex: none; padding: 0.1em 0 0; }
+  /* Topic items (projects/wander): keep [icon] [title] on same line */
+  .topic-item { flex-wrap: nowrap; align-items: flex-start; }
+  .topic-item .project-left { width: 1.8em; padding: 0.3em 0 0 0; flex-shrink: 0; }
+  .topic-item .article-link { flex: 1; width: auto; padding: 0.2em 0; }
   .project-tags { flex-wrap: wrap; }
   .project-header { flex-wrap: wrap; }
   .project-name { word-break: break-word; }

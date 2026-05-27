@@ -230,7 +230,7 @@ pre:not([data-lang])::before {
 /* Generic */
 .highlight .gd { /* Generic.Deleted */
   color: var(--red);
-  background-color: rgba(255, 95, 89, 0.1);
+  background-color: color-mix(in oklch, var(--red) 12%, transparent);
 }
 
 .highlight .ge { /* Generic.Emph */
@@ -248,7 +248,7 @@ pre:not([data-lang])::before {
 
 .highlight .gi { /* Generic.Inserted */
   color: var(--green);
-  background-color: rgba(68, 188, 68, 0.1);
+  background-color: color-mix(in oklch, var(--green) 12%, transparent);
 }
 
 .highlight .go { /* Generic.Output */

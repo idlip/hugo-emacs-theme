@@ -28,7 +28,7 @@
   position: absolute; top: 100%; left: 0;
   min-width: 200px;
   background: var(--menu-bg); border: 1px solid var(--menu-border);
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 2px 2px 8px color-mix(in oklch, black 30%, transparent);
   display: none; z-index: 1000;
 }
 .menu-item.open .menu-dropdown { display: block; }
@@ -98,13 +98,13 @@
   position: absolute; top: calc(100% + 2px); right: 0;
   min-width: 180px;
   background: var(--menu-bg); border: 1px solid var(--menu-border);
-  box-shadow: 2px 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 2px 4px 12px color-mix(in oklch, black 40%, transparent);
   display: none; z-index: 1001; overflow: hidden;
 }
 .scheme-popup.open { display: block; }
 
 /* Backdrop */
-.menu-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 198; }
+.menu-backdrop { display: none; position: fixed; inset: 0; background: color-mix(in oklch, black 45%, transparent); z-index: 198; }
 .menu-backdrop.visible { display: block; }
 
 /* Theme toggle icons — CSS-driven */

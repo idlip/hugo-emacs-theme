@@ -2,7 +2,7 @@
 #palette-dialog {
   background: var(--bg-main);
   border: 1px solid var(--border);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 32px color-mix(in oklch, black 50%, transparent);
   width: min(640px, 92vw);
   max-height: 70vh;
   padding: 0;
@@ -13,7 +13,7 @@
   flex-direction: column;
   overflow: hidden;
 }
-#palette-dialog::backdrop { background: rgba(0,0,0,0.6); }
+#palette-dialog::backdrop { background: color-mix(in oklch, black 60%, transparent); }
 
 .palette-input-wrap {
   display: flex; align-items: center;

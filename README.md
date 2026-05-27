@@ -1,3 +1,6 @@
+This fork project has deviated and has additions personally wanted only for my site.
+You are encouraged to either fork or copy into your hugo site and modify as you require.
+
 # Emacs Hugo Theme
 
 A Hugo theme that transforms your blog into an Emacs-like experience — buffer UI, modeline, echo area, keyboard navigation, and a full color scheme system.
@@ -16,6 +19,8 @@ Eg: https://idlip.in
 - **Emacs modeline** - buffer name, word count, scroll position, read time
 - **Command palette** - `x` to open; search posts, run commands, browse 300+ color schemes
 - **Base16 color system** - 11 preset schemes + all 305 tinted-theming schemes via palette
+  - **oklch** - Use oklch color mixin to reduce lightness for some color variables, so base16 is
+    universally used.
 - **Random scheme per session** - different accent colors on every page load, with pin to lock
 - **Font cycling** - mono → sans → serif → mixed (`f` key)
 - **Content width cycling** - 100% / 80ch / 60ch / 840px (`w` key)

@@ -47,9 +47,6 @@
 
 .menu-separator { height: 1px; background: var(--menu-border); margin: 0.25em 0; }
 
-.menu-dropdown-item.checked::before      { content: "✓"; margin-right: 0.5em; color: var(--green); }
-.menu-dropdown-item.has-submenu::after   { content: "▸"; margin-left: auto; padding-left: 1em; }
-
 /* ── Right side ──────────────────────────────────────────── */
 .menu-bar-right { margin-left: auto; display: flex; align-items: center; padding-right: 0.5em; }
 

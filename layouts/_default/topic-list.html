@@ -52,6 +52,14 @@
       </div>
       {{- end }}
 
+      <div class="list-search" role="search">
+        <span class="list-search-prompt">Search:</span>
+        <input type="text" id="topic-search" class="list-search-input"
+               placeholder="filter&#x2026; (/ to focus, Esc to clear)"
+               autocomplete="off" autocapitalize="off" spellcheck="false">
+        <span id="topic-count" class="list-search-count"></span>
+      </div>
+
       <ul class="article-list wander-list" id="article-list" role="list">
 
         {{- /* Neighbour consoles (wander #+wanderconsoles) */}}
@@ -130,6 +138,8 @@
         {{- end }}
 
       </ul>
+
+      {{ partial "topic-list-js.html" . }}
 
     </article>
 

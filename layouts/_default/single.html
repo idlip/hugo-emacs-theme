@@ -57,6 +57,8 @@
         {{ .Content }}
       </div>
       
+      {{ partial "post-collapsible-js.html" . }}
+
       {{- if not .Params.no_comment }}{{ partial "comment.html" . }}{{ end -}}
 
       {{ partial "similar-posts.html" . }}

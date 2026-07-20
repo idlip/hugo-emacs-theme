@@ -14,48 +14,6 @@
     return items;
   }
 
-  /* ── section collapse ── */
-  list.querySelectorAll('.year-divider').forEach(function (div) {
-    var items = groupItems(div);
-    if (!items.length) return;
-
-    /* remove decorative-only ARIA — element is now interactive */
-    div.removeAttribute('role');
-    div.removeAttribute('aria-hidden');
-    div.classList.add('collapsible');
-
-    var label = div.querySelector('.year-label');
-    /* extract name before moving child nodes */
-    var name = label ? label.textContent.trim().replace(/\s*\(\d+\)\s*$/, '').trim() : 'section';
-
-    /* full-width <button> wrapping label content — keyboard-accessible, proper semantics */
-    var btn = document.createElement('button');
-    btn.className = 'section-toggle-btn';
-    btn.setAttribute('aria-expanded', 'true');
-    btn.title = 'Click to collapse "' + name + '"';
-    if (label) {
-      Array.from(label.childNodes).forEach(function (c) { btn.appendChild(c); });
-      label.appendChild(btn);
-    }
-
-    btn.addEventListener('click', function () {
-      var expanded = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!expanded));
-      div.classList.toggle('collapsed', expanded);
-      btn.title = expanded
-        ? '"' + name + '" is collapsed — click to expand'
-        : 'Click to collapse "' + name + '"';
-
-      var inp = document.getElementById('topic-search');
-      if (!inp || !inp.value.trim()) {
-        items.forEach(function (item) {
-          item.dataset.sectionHidden = expanded ? '1' : '';
-          item.style.display = expanded ? 'none' : '';
-        });
-      }
-    });
-  });
-
   /* ── search ── */
   var inp   = document.getElementById('topic-search');
   var count = document.getElementById('topic-count');
@@ -68,7 +26,7 @@
     list.querySelectorAll('.topic-item[data-title]').forEach(function (el) {
       var ok = !q || (el.dataset.title || '').indexOf(q) !== -1;
       el.dataset.searchHidden = ok ? '' : '1';
-      el.style.display = q ? (ok ? '' : 'none') : (el.dataset.sectionHidden ? 'none' : '');
+      el.style.display = q ? (ok ? '' : 'none') : '';
       if (ok) n++;
     });
 

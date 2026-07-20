@@ -22,7 +22,7 @@
     <link>{{ .Site.BaseURL }}</link>
     <description>{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}</description>
     <generator>Hugo -- gohugo.io</generator>
-    {{ with .Site.LanguageCode }}<language>{{ . }}</language>{{ end }}
+    {{ with .Site.Language.Locale }}<language>{{ . }}</language>{{ end }}
     {{ with .Site.Copyright }}<copyright>{{ . | markdownify | plainify }}</copyright>{{ end }}
     {{ with $authorEmail }}<managingEditor>{{ . }}{{ with $authorName }} ({{ . }}){{ end }}</managingEditor>{{ end }}
     {{ with $authorEmail }}<webMaster>{{ . }}{{ with $authorName }} ({{ . }}){{ end }}</webMaster>{{ end }}

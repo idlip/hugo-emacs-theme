@@ -1,0 +1,31 @@
+{{- /*
+  References / Citations - auto-collected external links from post content.
+  Scans .Content for <a href>, keeps http(s) links, dedups by URL, numbers in
+  order of appearance. Renders nothing when the post has no external links.
+  Usage: {{ partial "references.html" . }}
+*/ -}}
+{{- $matches := findRESubmatch `(?s)<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>` .Content -}}
+{{- $seen := slice -}}
+{{- $refs := slice -}}
+{{- range $matches -}}
+  {{- $href := index . 1 -}}
+  {{- $text := index . 2 | plainify | htmlUnescape | strings.TrimSpace -}}
+  {{- if and (or (hasPrefix $href "http://") (hasPrefix $href "https://")) (not (in $seen $href)) -}}
+    {{- $seen = $seen | append $href -}}
+    {{- $refs = $refs | append (dict "href" $href "text" $text) -}}
+  {{- end -}}
+{{- end -}}
+{{- with $refs -}}
+<section class="references" aria-labelledby="references-heading">
+  <h2 id="references-heading" class="references-title">References</h2>
+  <ol class="references-list">
+    {{- range . }}
+    {{- $domain := .href | replaceRE `^https?://(www\.)?` "" | replaceRE `/.*$` "" -}}
+    <li>
+      <a href="{{ .href }}" target="_blank" rel="noopener noreferrer">{{ with .text }}{{ . }}{{ else }}{{ .href }}{{ end }}</a>
+      {{- if and .text (ne .text .href) }}<span class="references-url">{{ $domain }}</span>{{ end }}
+    </li>
+    {{- end }}
+  </ol>
+</section>
+{{- end -}}

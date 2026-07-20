@@ -91,6 +91,13 @@
 .year-label { font-weight: bold; color: var(--magenta); letter-spacing: 0.05em; opacity: 0.9; }
 .year-count { margin-left: 0.5em; font-size: 0.75em; font-weight: normal; color: var(--fg-dim); opacity: 0.7; }
 
+/* ── References / citations (auto-collected from post links) ── */
+.references { margin-top: 3em; padding-top: 1em; border-top: 1px solid var(--border-dim); }
+.references-title { font-size: 1.1rem; color: var(--fg-dim); margin-bottom: 0.5em; }
+.references-list { margin: 0; padding-left: 1.6em; display: flex; flex-direction: column; gap: 0.3em; }
+.references-list li { color: var(--fg-dim); font-size: 0.9rem; }
+.references-list a { color: var(--blue); overflow-wrap: anywhere; }
+.references-url { color: var(--fg-dim); opacity: 0.65; margin-left: 0.5em; font-size: 0.85em; }
 
 .term-header { display: flex; align-items: baseline; gap: 0.5em; padding: 0.5em 0.75em; border-bottom: 1px solid var(--border-dim); background: var(--bg-dim); }
 .term-tag-name { font-size: 1.1rem; font-weight: bold; color: var(--cyan-cooler); }

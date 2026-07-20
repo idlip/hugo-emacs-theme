@@ -60,6 +60,19 @@ a         { color: var(--link); text-decoration: none; }
 a:visited { color: var(--link-visited); }
 a:hover   { color: var(--link-hover); text-decoration: underline; }
 
+/* WCAG 1.4.1 — links in prose must not rely on color alone. Underline them
+   always (faint by default, solid on hover), independent of the base16 scheme.
+   Chrome links (menu, breadcrumbs, list) stay undecorated: layout distinguishes them. */
+:is(.post-body, .references-list, .callout) a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in oklch, currentColor 45%, transparent);
+}
+:is(.post-body, .references-list, .callout) a:hover {
+  text-decoration-color: currentColor;
+}
+
 /* ── Typography ─────────────────────────────────────────────── */
 :is(h1, h2, h3, h4, h5, h6) {
   font-weight: bold;

@@ -1,6 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0a0f0a">
 
 {{- /* Title */ -}}
 <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
@@ -19,6 +20,11 @@
 <meta name="author" content="{{ . }}">
 {{- end }}
 
+{{- /* Robots: opt a page out with `noindex: true` in front matter */ -}}
+{{ if .Param "noindex" -}}
+<meta name="robots" content="noindex">
+{{- end }}
+
 {{- /* Canonical URL */ -}}
 <link rel="canonical" href="{{ .Permalink }}">
 
@@ -35,10 +41,33 @@
 <meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{ with .Summary }}{{ . | plainify | truncate 160 }}{{ else }}{{ .Site.Params.description }}{{ end }}{{ end }}">
 <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
 <meta property="og:url" content="{{ .Permalink }}">
-{{ with .Params.images -}}
-<meta property="og:image" content="{{ index . 0 | absURL }}">
-{{- else with .Site.Params.images -}}
-<meta property="og:image" content="{{ index . 0 | absURL }}">
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:locale" content="{{ .Site.Language.Lang }}">
+{{- if .IsPage }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- with .Lastmod }}
+<meta property="article:modified_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+{{- range .Params.tags }}
+<meta property="article:tag" content="{{ . }}">
+{{- end }}
+{{- end }}
+{{- /* OG image: explicit page param → per-post rasterized PNG → site default.
+       The PNG at static/og/<slug>.png is produced by `just og` (rsvg-convert). */ -}}
+{{- $ogImage := "" -}}
+{{- with .Params.images }}{{ $ogImage = index . 0 }}{{ end -}}
+{{- if and (not $ogImage) (or .IsPage .IsSection) -}}
+  {{- $slug := path.Base .RelPermalink -}}
+  {{- $png := printf "static/og/%s.png" $slug -}}
+  {{- if os.FileExists $png }}{{ $ogImage = printf "/og/%s.png" $slug }}{{ end -}}
+{{- end -}}
+{{- if not $ogImage }}{{ with .Site.Params.images }}{{ $ogImage = index . 0 }}{{ end }}{{ end -}}
+{{ with $ogImage }}
+<meta property="og:image" content="{{ . | absURL }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ if $.IsHome }}{{ $.Site.Title }}{{ else }}{{ $.Title }}{{ end }}">
+<meta name="twitter:image" content="{{ . | absURL }}">
 {{- end }}
 <meta name="twitter:card" content="summary_large_image">
 
@@ -83,25 +112,54 @@
 {{- end -}}
 {{- $sr := resources.FromString "js/schemes-data.json" ($sl | jsonify) | fingerprint -}}
 
-{{- /* Theme + scheme restore — runs before paint to prevent flash */ -}}
+{{- /* Preset scheme keys, so the pre-paint script can pick the random one
+       itself instead of leaving it to deferred app.js (which repainted). */ -}}
+{{- $schemeKeys := slice -}}
+{{- range .Site.Params.colorSchemes }}{{ $schemeKeys = $schemeKeys | append .name }}{{ end -}}
+
+{{- /* Pre-paint script: theme + scheme applied before paint so the final
+       scheme is right on the first paint (no repaint flash). */ -}}
 <script>
-  (function() {
-    var t = localStorage.getItem('emacs-theme');
-    var s = localStorage.getItem('emacs-scheme');
-    if (t) document.documentElement.setAttribute('data-theme', t);
-    if (s) document.documentElement.setAttribute('data-scheme', s);
-    // Restore custom palette from "t " mode (inline vars override preset CSS)
-    var cp = localStorage.getItem('emacs-custom-palette');
-    if (cp) { try {
-      var d = JSON.parse(cp), r = document.documentElement;
-      var ks = ['base00','base01','base02','base03','base04','base05','base06','base07','base08','base09','base0A','base0B','base0C','base0D','base0E','base0F'];
-      d.colors.forEach(function(c,i){ if(c) r.style.setProperty('--'+ks[i],c); });
-    } catch(e){} }
-  })();
   window.__schemesUrl = "{{ $sr.RelPermalink }}";
+  (function() {
+    var r = document.documentElement;
+
+    // Theme.
+    var t = localStorage.getItem('emacs-theme');
+    if (t) r.setAttribute('data-theme', t);
+
+    // Custom "t "-mode palette: inline vars override preset CSS. Wins outright.
+    var cp = localStorage.getItem('emacs-custom-palette');
+    if (cp) {
+      try {
+        var d = JSON.parse(cp);
+        var ks = ['base00','base01','base02','base03','base04','base05','base06','base07','base08','base09','base0A','base0B','base0C','base0D','base0E','base0F'];
+        d.colors.forEach(function(c,i){ if(c) r.style.setProperty('--'+ks[i],c); });
+      } catch (e) {}
+    } else {
+      // Pinned scheme wins. Otherwise: random on fresh loads/reloads, but keep
+      // the last scheme on back/forward so returning to a page doesn't recolor.
+      var fixed = localStorage.getItem('emacs-scheme-fixed');
+      if (fixed !== null) {
+        if (fixed) r.setAttribute('data-scheme', fixed); else r.removeAttribute('data-scheme');
+      } else {
+        var nav = (performance.getEntriesByType('navigation')[0] || {}).type;
+        var last = localStorage.getItem('emacs-scheme-last');
+        var pick;
+        if (nav === 'back_forward' && last !== null) {
+          pick = last;
+        } else {
+          var S = {{ $schemeKeys | jsonify | safeJS }};
+          pick = S[Math.floor(Math.random() * S.length)];
+        }
+        if (pick) r.setAttribute('data-scheme', pick); else r.removeAttribute('data-scheme');
+        localStorage.setItem('emacs-scheme-last', pick || '');
+      }
+    }
+  })();
 </script>
 
-{{- /* JS bundle — defer so it doesn't block first paint */ -}}
+{{- /* app.js bundle — defer so it doesn't block first paint */ -}}
 {{- $keyboard := resources.Get "js/keyboard.js" -}}
 {{- $windows2 := resources.Get "js/windows.js" -}}
 {{- $menu := resources.Get "js/menu.js" -}}
@@ -109,7 +167,22 @@
 {{- $jsBundle := slice $keyboard $windows2 $menu $palette | resources.Concat "js/app.js" | minify | fingerprint -}}
 <script src="{{ $jsBundle.RelPermalink }}" defer></script>
 
+{{- /* Prerender same-origin links on hover for near-instant forward nav.
+       Native Speculation Rules; no library. Absolute external URLs don't match
+       the leading-slash pattern, so only in-site links are prerendered. */ -}}
+<script type="speculationrules">
+{
+  "prerender": [{
+    "where": { "href_matches": "/*" },
+    "eagerness": "moderate"
+  }]
+}
+</script>
+
 {{- /* Google Analytics */ -}}
 {{ if hugo.IsProduction -}}
 {{ template "_internal/google_analytics.html" . }}
 {{- end }}
+
+{{- /* Site extension point (override at site level to add head tags) */ -}}
+{{- partial "extended_head.html" . -}}

@@ -47,23 +47,24 @@
     });
   }
 
-  // Random scheme — picks a new random on every page load unless pinned
+  // Scheme state sync. The scheme itself (pinned / custom / fresh random) is
+  // applied BEFORE paint by head.html's inline script, so we must NOT re-apply
+  // here — doing so caused a visible repaint on every page load. We only sync
+  // the menu's active-marker + pin label to whatever is already showing.
   function initRandomScheme() {
-    // Don't clobber a custom palette chosen via command palette
-    if (localStorage.getItem('emacs-custom-palette')) return;
-    const fixed = localStorage.getItem('emacs-scheme-fixed');
-    if (fixed !== null) {
-      applyScheme(fixed);
-      updatePinLabel(true);
-      return;
-    }
+    const custom = localStorage.getItem('emacs-custom-palette') !== null;
+    const pinned = localStorage.getItem('emacs-scheme-fixed') !== null;
+    updateSchemeMarkers(document.documentElement.getAttribute('data-scheme') || '');
+    updatePinLabel(pinned);
 
-    const opts = Array.from(document.querySelectorAll('.scheme-option'))
-                      .map(el => el.dataset.scheme || '');
-    if (!opts.length) return;
-    const pick = opts[Math.floor(Math.random() * opts.length)];
-    applyScheme(pick);
-    updatePinLabel(false);
+    // First-visit only: announce that the scheme is random and pinnable. The
+    // pin control is otherwise invisible until the user opens the menu.
+    if (!pinned && !custom && !localStorage.getItem('emacs-scheme-hint-seen')) {
+      const active = document.querySelector('.scheme-option.active span:last-child');
+      const label = (active?.textContent || 'random').trim();
+      showMsg('Scheme: ' + label + ' (random each reload, pin in menu)');
+      localStorage.setItem('emacs-scheme-hint-seen', '1');
+    }
   }
 
   function fixScheme() {
@@ -396,6 +397,7 @@
   window.cycleFontMode    = cycleFontMode;
   window.toggleSchemePopup = toggleSchemePopup;
   window.applyScheme      = applyScheme;
+  window.pinScheme        = fixScheme;
 
   window.emacsBlog = window.emacsBlog || {};
   window.emacsBlog.menu = { toggleTheme, adjustFontSize, resetFontSize,

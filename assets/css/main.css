@@ -2,6 +2,16 @@
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; padding: 0; }
 
+/* ── Skip to content (WCAG 2.4.1 Bypass Blocks) ── */
+.skip-link {
+  position: absolute; inset-inline-start: 8px; inset-block-start: -100%;
+  z-index: 1000; padding: 0.5em 1em;
+  background: var(--bg-main); color: var(--fg-main);
+  border: 1px solid var(--border-highlight); border-radius: 4px;
+  text-decoration: none;
+}
+.skip-link:focus { inset-block-start: 8px; outline: 2px solid var(--border-highlight); outline-offset: 2px; }
+
 html {
   font-size: 100%;
   -webkit-font-smoothing: antialiased;

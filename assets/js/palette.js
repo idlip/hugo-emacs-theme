@@ -53,6 +53,8 @@
     { t: 'f  —  Cycle font mode',            a: function () { dlg.close(); window.cycleFontMode && window.cycleFontMode(); } },
     { t: 'w  —  Cycle content width',        a: function () { dlg.close(); window.cycleWidth && window.cycleWidth(); } },
     { t: 'c  —  Color scheme picker',        a: function () { dlg.close(); window.toggleSchemePopup && window.toggleSchemePopup(); } },
+    { t: 'Pin scheme  —  keep this one every load',   a: function () { dlg.close(); window.pinScheme && window.pinScheme(); } },
+    { t: '(unpinned = new random scheme each reload)', a: null },
     { t: '+ / -  —  Font size',              a: null },
     { t: 'x  —  Open command palette',       a: null },
   ];

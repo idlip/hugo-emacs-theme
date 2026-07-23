@@ -227,7 +227,6 @@ li.unchecked::before { content: "󱋭 "; color: var(--yellow); }
   h2 { font-size: 1.15rem; }
   pre { font-size: 0.82rem; }
   table { font-size: 0.85rem; }
-  .post-body table { display: block; overflow-x: auto; }
   .comment-submit { width: 100%; }
   .comment-actions { flex-direction: column; align-items: flex-start; }
 }

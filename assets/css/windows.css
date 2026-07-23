@@ -127,6 +127,7 @@
 .list-footer .craftering { margin: 0.25em 0; }
 
 .social-links { display: flex; flex-direction: column; gap: 0.6em; margin: 1em 0; }
+.social-links.is-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); align-items: start; }
 .social-link {
   display: inline-flex; align-items: center; gap: 0.6em;
   color: var(--fg-main); text-decoration: none;
@@ -148,6 +149,13 @@
 /* ── Topic listing (unified: wander, projects, media, …) ── */
 .topic-item { align-items: flex-start; }
 .topic-item .article-link { flex-direction: column; align-items: flex-start; gap: 0.15em; }
+
+/* Topic pages: grid / card view. Toggled by #view-toggle (persisted in JS);
+   default stays the flat list. Dividers span the full row. */
+.article-list.is-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.6em; padding: 0.5em 0.75em; }
+.article-list.is-grid .year-divider { grid-column: 1 / -1; }
+.article-list.is-grid .topic-item { border: 1px solid var(--border-dim); border-radius: 6px; padding: 0.6em 0.8em; }
+.article-list.is-grid .topic-item:hover { border-color: var(--border-highlight); background: var(--bg-active); }
 .project-left { display: flex; flex-direction: column; align-items: center; width: 2.5em; flex-shrink: 0; gap: 0.25em; padding: 0.3em 0; }
 .project-icon { text-align: center; color: var(--fg-dim); font-size: 1.0em; }
 .article-item.selected .project-icon { color: var(--green); }

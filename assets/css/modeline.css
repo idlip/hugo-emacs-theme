@@ -126,7 +126,9 @@
   opacity: 0.9;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 22ch;
+  /* Expand to fit the message on desktop, but never let it dominate the bar;
+     mobile tightens this below. Ellipsis only bites on truly long messages. */
+  max-width: min(52ch, 45vw);
   text-overflow: ellipsis;
   transition: opacity 0.15s, background 0.15s;
   border-radius: 2px;
@@ -145,4 +147,5 @@
   .ml-sep   { padding: 0 0.3ch; }
   .ml-hide-mobile { display: none !important; }
   .ml-buffer { max-width: 20ch; }
+  .ml-echo-msg { max-width: 16ch; }
 }

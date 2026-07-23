@@ -26,7 +26,11 @@
 
   /* Foregrounds — base05/04/03 cover main/alt/dim; unfocused pushed further toward bg. */
   --fg-main:      var(--base05);
-  --fg-dim:       var(--base03);
+  /* dim = a muted version of the real fg, not base03 (base16's comment slot, too
+     faint: e.g. Nord base03 is 1.7:1 on its bg). 70% toward fg keeps it readable
+     yet visibly dimmer on every scheme; base04 is the pre-color-mix fallback. */
+  --fg-dim:       var(--base04);
+  --fg-dim:       color-mix(in oklch, var(--base05) 70%, var(--base00));
   --fg-alt:       var(--base04);
   --fg-unfocused: var(--base03);
   --fg-unfocused: color-mix(in oklch, var(--base03) 65%, var(--base00)); /* dimmer than fg-dim */

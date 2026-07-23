@@ -49,6 +49,11 @@
   .wander-list .article-title { flex: 0 0 100%; }
   .wander-list .article-date  { flex: 0 0 auto; font-size: 0.8rem; }
   .wander-list .wander-desc   { flex: 0 0 100%; padding-left: 0; font-size: 0.78rem; opacity: 0.8; }
+
+  /* Content tables (home + posts): scroll horizontally instead of cramming or
+     wrapping cells. Block table + non-wrapping cells overflow into a swipe. */
+  .post-content table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .post-content :is(th, td) { white-space: nowrap; }
 }
 
 /* ── Small mobile (≤480px) ─────────────────────────────────── */

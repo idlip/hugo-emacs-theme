@@ -31,14 +31,15 @@
 #palette-results { overflow-y: auto; flex: 1; }
 
 .palette-item {
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: row; align-items: center;
   padding: 0.45em 1em; cursor: pointer;
-  border-bottom: 1px solid var(--border-dim); gap: 0.1em;
+  border-bottom: 1px solid var(--border-dim); gap: 0.6em;
 }
 .palette-item:last-child { border-bottom: none; }
 :is(.palette-item.selected, .palette-item:hover) {
   background: var(--list-selected-bg, var(--bg-active));
   color: var(--list-selected-fg, var(--fg-main));
 }
-.palette-item-title { font-size: 0.92rem; color: var(--fg-main); }
+.palette-item-icon { flex: none; width: 1.3em; text-align: center; color: var(--fg-dim); opacity: 0.85; }
+.palette-item-title { flex: 1; min-width: 0; font-size: 0.92rem; color: var(--fg-main); }
 

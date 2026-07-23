@@ -166,6 +166,16 @@
     // Ignore when typing
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+    // Command palette — familiar editor bindings so people find it by habit:
+    // Ctrl/Cmd+P (quick-open), Ctrl/Cmd+K (command menu), Alt+X (Emacs M-x).
+    // e.code (not e.key) so Alt+X survives layouts where Alt composes a symbol.
+    var code = e.code;
+    if (((ctrl || meta) && (code === 'KeyP' || code === 'KeyK')) || (e.altKey && code === 'KeyX')) {
+      window.emacsBlog?.palette?.open();
+      e.preventDefault();
+      return;
+    }
+
     // Help — open palette in shortcut-browse mode
     if (key === '?') { window.emacsBlog?.palette?.open('? '); e.preventDefault(); return; }
 

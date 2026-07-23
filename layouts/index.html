@@ -1,6 +1,9 @@
 {{ define "main" }}
+{{- /* Home renders content/_index.org as a *home* buffer. The landing's
+       structure (intro, feature buttons, section + key tables) lives in that
+       org file, so the page is content-driven with no bespoke layout. Falls
+       back to the post listing if there is no content. */ -}}
 {{- if .Content }}
-
 <section class="buffer buffer-content active"
          id="buffer-content"
          role="region"
@@ -8,6 +11,10 @@
          tabindex="0">
   <div class="buffer-body">
     <article class="post-content">
+      {{- /* Title as an h1, same as single pages (no post-meta on the home). */ -}}
+      <div class="post-header">
+        <h1 class="post-title">{{ .Title }}</h1>
+      </div>
       {{ .Content }}
     </article>
     <footer>{{ partial "footer" . }}</footer>
@@ -17,10 +24,9 @@
     "buffer"   "*home*"
     "mode"     "Org"
     "readonly" true
-    "keyhint"  "<kbd>q</kbd> back"
+    "keyhint"  "<kbd>x</kbd> palette"
   ) }}
 </section>
-
 {{- else }}
 {{ partial "post-listing.html" . }}
 {{- end }}

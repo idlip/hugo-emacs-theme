@@ -25,18 +25,34 @@
     localStorage.removeItem('emacs-custom-palette');
   }
 
-  var CMDS = [
-    { t: 'Navigate: Home',            a: function () { location.href = '/'; } },
-    { t: 'Navigate: All Posts',       a: function () { location.href = '/posts/'; } },
-    { t: 'Navigate: Wander',          a: function () { location.href = '/wander/'; } },
-    { t: 'Navigate: Wander Console',  a: function () { location.href = '/wander/console/'; } },
-    { t: 'Toggle dark / light theme', a: function () { dlg.close(); window.toggleTheme && window.toggleTheme(); } },
-    { t: 'Cycle font mode',           a: function () { dlg.close(); window.cycleFontMode && window.cycleFontMode(); } },
-    { t: 'Cycle content width',       a: function () { dlg.close(); window.cycleWidth && window.cycleWidth(); } },
-    { t: 'Browse all color schemes',  a: function () { inp.value = 't '; render('t '); inp.focus(); inp.setSelectionRange(2, 2); } },
-    { t: 'Color scheme picker',       a: function () { dlg.close(); window.toggleSchemePopup && window.toggleSchemePopup(); } },
-    { t: 'Keyboard shortcuts',        a: function () { inp.value = '? '; render('? '); inp.focus(); inp.setSelectionRange(2, 2); } },
-  ];
+  // Per-type icons (config: params.paletteIcons), with built-in fallbacks.
+  var ICONS = Object.assign(
+    { nav: '', command: '', post: '', tag: '', scheme: '', help: '' },
+    window.__paletteIcons || {}
+  );
+
+  // Section navigation from the site menu (window.__nav) so it stays in sync,
+  // plus destinations the menu doesn't list.
+  var NAV = (window.__nav || []).map(function (n) {
+    return { t: n.name, type: 'nav', a: function () { location.href = n.url; } };
+  }).concat([
+    { t: 'Wander Console', type: 'nav', a: function () { location.href = '/wander/console/'; } }
+  ]);
+
+  // Commands (nav is dynamic above; these are the explicit action list).
+  var CMDS = NAV.concat([
+    { t: 'Toggle dark / light theme', type: 'command', a: function () { dlg.close(); window.toggleTheme && window.toggleTheme(); } },
+    { t: 'Cycle font mode',           type: 'command', a: function () { dlg.close(); window.cycleFontMode && window.cycleFontMode(); } },
+    { t: 'Cycle content width',       type: 'command', a: function () { dlg.close(); window.cycleWidth && window.cycleWidth(); } },
+    { t: 'Increase font size',        type: 'command', a: function () { dlg.close(); window.adjustFontSize && window.adjustFontSize(1); } },
+    { t: 'Decrease font size',        type: 'command', a: function () { dlg.close(); window.adjustFontSize && window.adjustFontSize(-1); } },
+    { t: 'Reset font size',           type: 'command', a: function () { dlg.close(); window.resetFontSize && window.resetFontSize(); } },
+    { t: 'Pin / unpin scheme',        type: 'command', a: function () { dlg.close(); window.pinScheme && window.pinScheme(); } },
+    { t: 'Color scheme picker',       type: 'command', a: function () { dlg.close(); window.toggleSchemePopup && window.toggleSchemePopup(); } },
+    { t: 'Browse all color schemes',  type: 'scheme',  a: function () { inp.value = 't '; render('t '); inp.focus(); inp.setSelectionRange(2, 2); } },
+    { t: 'Browse tags',               type: 'tag',     a: function () { inp.value = '#'; render('#'); inp.focus(); inp.setSelectionRange(1, 1); } },
+    { t: 'Keyboard shortcuts',        type: 'help',    a: function () { inp.value = '? '; render('? '); inp.focus(); inp.setSelectionRange(2, 2); } }
+  ]);
 
   var HELP = [
     { t: 'n / ↓  —  Next article',           a: null },
@@ -86,7 +102,9 @@
   function buildList() {
     res.innerHTML = items.length
       ? items.map(function (it, i) {
+          var ic = it.type && ICONS[it.type];
           return '<div class="palette-item' + (i ? '' : ' selected') + '" data-i="' + i + '">'
+            + (ic ? '<span class="palette-item-icon nf" aria-hidden="true">' + ic + '</span>' : '')
             + '<span class="palette-item-title">' + it.html + '</span></div>';
         }).join('')
       : '<div class="palette-empty">No results</div>';
@@ -118,7 +136,6 @@
           applyCustomPalette(colors);
           localStorage.setItem('emacs-custom-palette', JSON.stringify({ key: key, name: name, colors: colors }));
           document.documentElement.removeAttribute('data-scheme');
-          localStorage.removeItem('emacs-scheme');
           snap = null; dlg.close();
         }});
       }
@@ -136,19 +153,36 @@
       items = [];
       HELP.forEach(function (h) {
         var ht = match(h.t, q);
-        if (ht !== null) items.push({ html: ht, action: h.a || function () { dlg.close(); } });
+        if (ht !== null) items.push({ html: ht, action: h.a || function () { dlg.close(); }, type: 'help' });
       });
       buildList();
+    } else if (v.charAt(0) === '#') {
+      inp.placeholder = 'Jump to a tag\u2026';
+      var tq = v.slice(1);
+      items = [];
+      (window.__tags || []).forEach(function (t) {
+        var label = '#' + t.name + (t.count ? '  (' + t.count + ')' : '');
+        var h = match(label, tq);
+        if (h !== null) { var url = t.url; items.push({ html: h, action: function () { location.href = url; }, type: 'tag' }); }
+      });
+      items = items.slice(0, 40);
+      buildList();
     } else {
-      inp.placeholder = 'Search commands and posts\u2026';
+      inp.placeholder = 'Search posts, run commands, browse themes  (M-x \u00b7 Ctrl-P \u00b7 Ctrl-K)\u2026';
       var q = v.trim();
       items = [];
       CMDS.forEach(function (c) {
-        var h = match(c.t, q); if (h !== null) items.push({ html: h, action: c.a });
+        var h = match(c.t, q); if (h !== null) items.push({ html: h, action: c.a, type: c.type });
       });
       (window.__posts || []).forEach(function (p) {
         var url = p.url, h = match(p.title, q);
-        if (h !== null) items.push({ html: h, action: function () { location.href = url; } });
+        if (h !== null) items.push({ html: h, action: function () { location.href = url; }, type: 'post' });
+      });
+      // Matching tags after posts (only when searching), so "emacs" lists posts
+      // first, then "#Emacs" as a jump to the tag page.
+      if (q) (window.__tags || []).forEach(function (t) {
+        var h = match('#' + t.name, q);
+        if (h !== null) { var url = t.url; items.push({ html: h, action: function () { location.href = url; }, type: 'tag' }); }
       });
       items = items.slice(0, 30);
       buildList();

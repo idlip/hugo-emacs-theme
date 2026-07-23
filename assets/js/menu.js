@@ -22,11 +22,29 @@
   // ── Theme ─────────────────────────────────────────────────────────────────
 
   function toggleTheme() {
-    const html = document.documentElement;
-    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', next);
-    localStorage.setItem('emacs-theme', next);
-    showMsg('Theme: ' + (next === 'dark' ? 'Dark' : 'Light'));
+    const root = document.documentElement;
+    const cur  = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const want = cur === 'dark' ? 'light' : 'dark';
+    // Flip only if the current scheme actually defines the wanted variant.
+    // Tentatively switch and check whether the palette changed; if not — a
+    // dark-only preset (e.g. Everforest, Monokai) or a single-variant custom
+    // palette — revert and route to a search for schemes of the wanted mode,
+    // rather than showing an unmapped/broken theme. Self-maintaining: any scheme
+    // that later gains a real variant will just flip.
+    const before = getComputedStyle(root).getPropertyValue('--base00').trim();
+    root.setAttribute('data-theme', want);
+    const after = getComputedStyle(root).getPropertyValue('--base00').trim();
+    if (before === after) {
+      root.setAttribute('data-theme', cur);
+      showMsg('No ' + want + ' variant for this scheme — pick one');
+      window.emacsBlog?.palette?.open('t ' + want);
+      return;
+    }
+    localStorage.setItem('emacs-theme', want);
+    // Name the scheme it switched to, e.g. "Dracula · Light", not just the mode.
+    var opt = document.querySelector('.scheme-option[data-scheme="' + (root.getAttribute('data-scheme') || '') + '"] span:last-child');
+    var name = opt ? opt.textContent.trim() : 'Modus';
+    showMsg(name + ' · ' + (want === 'dark' ? 'Dark' : 'Light'));
   }
 
   // ── Color Scheme ──────────────────────────────────────────────────────────
@@ -37,7 +55,6 @@
     const html = document.documentElement;
     if (name) html.setAttribute('data-scheme', name);
     else      html.removeAttribute('data-scheme');
-    localStorage.setItem('emacs-scheme', name || '');
     updateSchemeMarkers(name || '');
   }
 
@@ -72,14 +89,12 @@
     if (isPinned) {
       // Unpin — go back to random each session
       localStorage.removeItem('emacs-scheme-fixed');
-      localStorage.removeItem('emacs-scheme');
       updatePinLabel(false);
       showMsg('Scheme unpinned (random each session)');
     } else {
       // Pin current scheme
       const cur = document.documentElement.getAttribute('data-scheme') || '';
       localStorage.setItem('emacs-scheme-fixed', cur);
-      localStorage.setItem('emacs-scheme', cur);
       updatePinLabel(true);
       showMsg('Scheme pinned: ' + (cur || 'Modus'));
     }
@@ -290,10 +305,10 @@
     const el = e.target.closest('.scheme-option');
     if (!el) return;
     applyScheme(el.dataset.scheme || '');
-    // If pinned, update the pin to the newly selected scheme
+    // Random every load unless the user explicitly Pins. Picking here only
+    // previews for this view; if already pinned, retarget the pin to this pick.
     if (localStorage.getItem('emacs-scheme-fixed') !== null) {
       localStorage.setItem('emacs-scheme-fixed', el.dataset.scheme || '');
-      localStorage.setItem('emacs-scheme', el.dataset.scheme || '');
     }
     previewScheme = null; // commit — prevent closeSchemePopup from restoring old scheme
     closeAllMenus();

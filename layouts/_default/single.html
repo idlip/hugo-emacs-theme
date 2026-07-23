@@ -57,11 +57,11 @@
         {{ .Content }}
       </div>
       
+      {{- /* references.html renders both the References list and the See Also
+             related posts (shared link budget), so no separate similar-posts. */ -}}
       {{ partial "references.html" . }}
 
       {{- if not .Params.no_comment }}{{ partial "comment.html" . }}{{ end -}}
-
-      {{ partial "similar-posts.html" . }}
 
       {{- /* Post navigation */ -}}
       <nav class="post-navigation" style="margin-top: 3em; padding-top: 1em; border-top: 1px solid var(--border-dim);">

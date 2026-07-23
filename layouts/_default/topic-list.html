@@ -58,6 +58,12 @@
                placeholder="filter&#x2026; (/ to focus, Esc to clear)"
                autocomplete="off" autocapitalize="off" spellcheck="false">
         <span id="topic-count" class="list-search-count"></span>
+        {{- /* List / grid view toggle (persisted in JS). Glyph is a placeholder. */ -}}
+        <button id="view-toggle" class="tag-cloud-btn" type="button"
+                aria-label="Toggle list / grid view" aria-pressed="false"
+                title="Toggle list / grid view">
+          <span class="nf" aria-hidden="true">󰕰 </span>
+        </button>
       </div>
 
       <ul class="article-list wander-list" id="article-list" role="list">

@@ -82,8 +82,10 @@
 {{- $mobile := resources.Get "css/mobile.css" -}}
 {{- $custom := resources.Get "css/custom.css" -}}
 {{- $schemes := resources.Get "css/schemes.css" -}}
+{{- /* Preset scheme blocks generated from base16 yaml (partials/scheme-css.html). */ -}}
+{{- $schemesGen := partial "scheme-css.html" . | resources.FromString "css/schemes-gen.css" -}}
 
-{{- $allCSS := slice $themes $main $menuBar $windows $modeline $echoArea $syntax $mobile $custom $schemes | resources.Concat "css/bundle.css" | minify | fingerprint -}}
+{{- $allCSS := slice $themes $main $menuBar $windows $modeline $echoArea $syntax $mobile $custom $schemes $schemesGen | resources.Concat "css/bundle.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $allCSS.RelPermalink }}" integrity="{{ $allCSS.Data.Integrity }}">
 
 {{- /* Preload critical font only (headings, 32 KiB) */ -}}

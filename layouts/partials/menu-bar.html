@@ -44,7 +44,7 @@
         {{- range .Site.Params.colorSchemes }}
         <button class="menu-dropdown-item scheme-option" role="menuitem"
                 data-scheme="{{ .name }}"
-                style="--p-bg:{{ .bg }};--p-fg:{{ .fg }};--p-accent:{{ .accent }}">
+                style="{{ partial "scheme-swatch.html" . | safeCSS }}">
           <span class="scheme-dot" aria-hidden="true"></span>
           <span>{{ .label }}</span>
         </button>
@@ -178,7 +178,7 @@
         {{- range .Site.Params.colorSchemes }}
         <button class="menu-dropdown-item scheme-option" role="menuitem"
                 data-scheme="{{ .name }}"
-                style="--p-bg:{{ .bg }};--p-fg:{{ .fg }};--p-accent:{{ .accent }}">
+                style="{{ partial "scheme-swatch.html" . | safeCSS }}">
           <span class="scheme-dot" aria-hidden="true"></span>
           <span>{{ .label }}</span>
         </button>

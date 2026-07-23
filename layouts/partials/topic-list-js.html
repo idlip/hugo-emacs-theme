@@ -4,6 +4,24 @@
   var list = document.getElementById('article-list');
   if (!list) return;
 
+  /* ── list / grid view toggle (persisted across topic pages) ── */
+  var vbtn = document.getElementById('view-toggle');
+  if (vbtn) {
+    var VIEW_KEY = 'topic-view';
+    var applyView = function (v) {
+      var grid = v === 'grid';
+      list.classList.toggle('is-grid', grid);
+      vbtn.classList.toggle('active', grid);
+      vbtn.setAttribute('aria-pressed', grid ? 'true' : 'false');
+    };
+    applyView(localStorage.getItem(VIEW_KEY) || 'list');
+    vbtn.addEventListener('click', function () {
+      var v = list.classList.contains('is-grid') ? 'list' : 'grid';
+      localStorage.setItem(VIEW_KEY, v);
+      applyView(v);
+    });
+  }
+
   function groupItems(divider) {
     var items = [];
     var el = divider.nextElementSibling;

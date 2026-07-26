@@ -178,6 +178,29 @@
     }
   }
 
+  // ── Text Alignment Cycling ────────────────────────────────────────────────
+  // Normal (left) → Justified → Columns. First-line indent is always on (CSS).
+  // Justified is the default (CSS base); the attr is only set once cycled.
+  const ALIGN_STEPS  = ['justify', 'normal', 'columns'];
+  const ALIGN_LABELS = { justify: 'Justified', normal: 'Normal', columns: 'Columns' };
+  let alignIdx = 0;
+
+  function cycleAlign() {
+    alignIdx = (alignIdx + 1) % ALIGN_STEPS.length;
+    const a = ALIGN_STEPS[alignIdx];
+    document.documentElement.setAttribute('data-align', a);
+    localStorage.setItem('emacs-align', a);
+    showMsg('Align: ' + ALIGN_LABELS[a]);
+  }
+
+  function restoreAlign() {
+    const saved = localStorage.getItem('emacs-align');
+    if (saved && ALIGN_STEPS.includes(saved)) {
+      alignIdx = ALIGN_STEPS.indexOf(saved);
+      document.documentElement.setAttribute('data-align', saved);
+    }
+  }
+
   // ── Font Size ─────────────────────────────────────────────────────────────
 
   function adjustFontSize(delta) {
@@ -290,6 +313,8 @@
       case 'reset-font':     resetFontSize(); break;
       case 'cycle-width':    cycleWidth(); break;
       case 'cycle-font':     cycleFontMode(); break;
+      case 'cycle-align':    cycleAlign(); break;
+      case 'toggle-keys':    window.toggleKeys && window.toggleKeys(); break;
       case 'fix-scheme':     fixScheme(); break;
       case 'open-palette':   window.emacsBlog?.palette?.open(); break;
       case 'browse-schemes': window.emacsBlog?.palette?.open('t '); break;
@@ -298,7 +323,7 @@
         break;
     }
     closeAllMenus();
-    if (action !== 'cycle-width' && action !== 'cycle-font' && action !== 'fix-scheme' && action !== 'open-palette' && action !== 'browse-schemes') closeSchemePopup();
+    if (action !== 'cycle-width' && action !== 'cycle-font' && action !== 'cycle-align' && action !== 'fix-scheme' && action !== 'open-palette' && action !== 'browse-schemes') closeSchemePopup();
   }
 
   function handleSchemeOptionClick(e) {
@@ -390,6 +415,7 @@
     restoreFontSize();
     restoreWidth();
     restoreFontMode();
+    restoreAlign();
 
     // Random/pinned scheme
     initRandomScheme();
@@ -410,11 +436,12 @@
   window.resetFontSize    = resetFontSize;
   window.cycleWidth       = cycleWidth;
   window.cycleFontMode    = cycleFontMode;
+  window.cycleAlign       = cycleAlign;
   window.toggleSchemePopup = toggleSchemePopup;
   window.applyScheme      = applyScheme;
   window.pinScheme        = fixScheme;
 
   window.emacsBlog = window.emacsBlog || {};
   window.emacsBlog.menu = { toggleTheme, adjustFontSize, resetFontSize,
-                             closeAllMenus, applyScheme, cycleWidth, cycleFontMode };
+                             closeAllMenus, applyScheme, cycleWidth, cycleFontMode, cycleAlign };
 })();

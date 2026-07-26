@@ -44,6 +44,7 @@
     { t: 'Toggle dark / light theme', type: 'command', a: function () { dlg.close(); window.toggleTheme && window.toggleTheme(); } },
     { t: 'Cycle font mode',           type: 'command', a: function () { dlg.close(); window.cycleFontMode && window.cycleFontMode(); } },
     { t: 'Cycle content width',       type: 'command', a: function () { dlg.close(); window.cycleWidth && window.cycleWidth(); } },
+    { t: 'Cycle text alignment',      type: 'command', a: function () { dlg.close(); window.cycleAlign && window.cycleAlign(); } },
     { t: 'Increase font size',        type: 'command', a: function () { dlg.close(); window.adjustFontSize && window.adjustFontSize(1); } },
     { t: 'Decrease font size',        type: 'command', a: function () { dlg.close(); window.adjustFontSize && window.adjustFontSize(-1); } },
     { t: 'Reset font size',           type: 'command', a: function () { dlg.close(); window.resetFontSize && window.resetFontSize(); } },
@@ -51,7 +52,8 @@
     { t: 'Color scheme picker',       type: 'command', a: function () { dlg.close(); window.toggleSchemePopup && window.toggleSchemePopup(); } },
     { t: 'Browse all color schemes',  type: 'scheme',  a: function () { inp.value = 't '; render('t '); inp.focus(); inp.setSelectionRange(2, 2); } },
     { t: 'Browse tags',               type: 'tag',     a: function () { inp.value = '#'; render('#'); inp.focus(); inp.setSelectionRange(1, 1); } },
-    { t: 'Keyboard shortcuts',        type: 'help',    a: function () { inp.value = '? '; render('? '); inp.focus(); inp.setSelectionRange(2, 2); } }
+    { t: 'Keyboard shortcuts',        type: 'help',    a: function () { inp.value = '? '; render('? '); inp.focus(); inp.setSelectionRange(2, 2); } },
+    { t: 'Enable / disable keyboard shortcuts', type: 'command', a: function () { dlg.close(); window.toggleKeys && window.toggleKeys(); } }
   ]);
 
   var HELP = [
@@ -68,6 +70,7 @@
     { t: 't  —  Toggle theme',               a: function () { dlg.close(); window.toggleTheme && window.toggleTheme(); } },
     { t: 'f  —  Cycle font mode',            a: function () { dlg.close(); window.cycleFontMode && window.cycleFontMode(); } },
     { t: 'w  —  Cycle content width',        a: function () { dlg.close(); window.cycleWidth && window.cycleWidth(); } },
+    { t: 'a  —  Cycle text alignment',       a: function () { dlg.close(); window.cycleAlign && window.cycleAlign(); } },
     { t: 'c  —  Color scheme picker',        a: function () { dlg.close(); window.toggleSchemePopup && window.toggleSchemePopup(); } },
     { t: 'Pin scheme  —  keep this one every load',   a: function () { dlg.close(); window.pinScheme && window.pinScheme(); } },
     { t: '(unpinned = new random scheme each reload)', a: null },
@@ -214,6 +217,7 @@
     open: open,
     close: function () { snapRestore(); dlg.close(); },
     isOpen: function () { return dlg.open; },
-    clearCustomPalette: clearCustomPalette
+    clearCustomPalette: clearCustomPalette,
+    applyCustomPalette: applyCustomPalette
   };
 })();

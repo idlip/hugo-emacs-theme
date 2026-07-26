@@ -5,11 +5,7 @@
 <section class="buffer buffer-content active"
          id="buffer-content"
          role="region"
-         aria-label="Article content"
-         tabindex="0">
-  {{- if or (gt .ReadingTime 3) (gt .WordCount 500) -}}
-  <div class="read-progress" id="read-progress" aria-hidden="true"></div>
-  {{- end -}}
+         aria-label="Article content">
   <div class="buffer-body" id="content-body">
     <article class="post-content" id="article-content">
       {{- /* Breadcrumbs */ -}}
@@ -92,6 +88,8 @@
     "readingtime" .ReadingTime
     "date"        (cond (not .Date.IsZero) (.Date.Format "2006-01-02") (now.Format "2006-01-02"))
     "widthtoggle" true
+    "scrollpos"   true
+    "progress"    (or (gt .ReadingTime 3) (gt .WordCount 500))
   ) }}
 </section>
 {{ end }}

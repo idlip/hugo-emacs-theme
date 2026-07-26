@@ -24,8 +24,7 @@
 <section class="buffer buffer-content active"
          id="buffer-content"
          role="region"
-         aria-label="{{ .Title }}"
-         tabindex="0">
+         aria-label="{{ .Title }}">
   <div class="buffer-body" id="content-body">
     <article class="post-content" id="article-content">
 
@@ -157,6 +156,7 @@
     "title"       .Title
     "date"        (cond (not .Date.IsZero) (.Date.Format "2006-01-02") (now.Format "2006-01-02"))
     "widthtoggle" true
+    "scrollpos"   true
   ) }}
 </section>
 {{ end }}

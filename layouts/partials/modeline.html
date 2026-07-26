@@ -7,6 +7,11 @@
   - .readingtime : optional reading time in minutes
   - .date        : optional publication date string (YYYY-MM-DD)
   - .widthtoggle : true to show the width-cycle button (post pages only)
+  - .scrollpos   : true to show the Top/Bot/% position readout. Only list-type
+                   pages set this — keyboard.js drives it from the selected
+                   article index. Post pages omit it (no per-frame scroll JS).
+  - .progress    : true to render the reading-progress bar hugging the modeline's
+                   top edge (post pages with enough content). JS drives scaleX.
 */ -}}
 
 {{- $buffer := .buffer | default "*scratch*" -}}
@@ -15,8 +20,11 @@
 {{- $rt := .readingtime | default 0 -}}
 {{- $date := .date | default "" -}}
 {{- $widthtoggle := .widthtoggle | default false -}}
+{{- $scrollpos := .scrollpos | default false -}}
+{{- $progress := .progress | default false -}}
 
 <div class="modeline" role="status">
+  {{- if $progress }}<div class="read-progress" id="read-progress" aria-hidden="true"></div>{{ end }}
   <div class="ml-left">
 
     {{- if $date -}}
@@ -38,9 +46,9 @@
     {{- if $wc }}
     <span class="ml-sep" aria-hidden="true">·</span>
     <span class="ml-wc">{{ $wc }}w</span>
-    <span class="ml-sep" aria-hidden="true">·</span>
-    <span class="ml-pos"><span data-scroll-position>All</span></span>
-    {{- else }}
+    {{- end }}
+
+    {{- if $scrollpos }}
     <span class="ml-sep" aria-hidden="true">·</span>
     <span class="ml-pos"><span data-scroll-position>All</span></span>
     {{- end }}

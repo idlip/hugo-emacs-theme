@@ -72,45 +72,24 @@
 <meta name="twitter:card" content="summary_large_image">
 
 {{- /* CSS - Combined and minified */ -}}
-{{- $themes := resources.Get "css/themes.css" -}}
-{{- $main := resources.Get "css/main.css" -}}
-{{- $menuBar := resources.Get "css/menu-bar.css" -}}
-{{- $windows := resources.Get "css/windows.css" -}}
-{{- $modeline := resources.Get "css/modeline.css" -}}
-{{- $echoArea := resources.Get "css/echo-area.css" -}}
-{{- $syntax := resources.Get "css/syntax.css" -}}
-{{- $mobile := resources.Get "css/mobile.css" -}}
+{{- $theme := resources.Get "css/theme.css" -}}
 {{- $custom := resources.Get "css/custom.css" -}}
 {{- $schemes := resources.Get "css/schemes.css" -}}
 {{- /* Preset scheme blocks generated from base16 yaml (partials/scheme-css.html). */ -}}
 {{- $schemesGen := partial "scheme-css.html" . | resources.FromString "css/schemes-gen.css" -}}
 
-{{- $allCSS := slice $themes $main $menuBar $windows $modeline $echoArea $syntax $mobile $custom $schemes $schemesGen | resources.Concat "css/bundle.css" | minify | fingerprint -}}
+{{- $allCSS := slice $theme $custom $schemes $schemesGen | resources.Concat "css/bundle.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $allCSS.RelPermalink }}" integrity="{{ $allCSS.Data.Integrity }}">
 
 {{- /* Preload critical font only (headings, 32 KiB) */ -}}
 <link rel="preload" href="/fonts/impress.woff2" as="font" type="font/woff2" crossorigin>
 
-{{- /* Schemes JSON for command palette "t " mode — fingerprinted, lazy-loaded */ -}}
+{{- /* Schemes JSON for command palette "t " mode — fingerprinted, lazy-loaded.
+       Sourced from the merged base16 + custom list (all-schemes.html) so
+       custom schemes (haki) show up in the picker automatically. */ -}}
 {{- $sl := slice -}}
-{{- range $k, $d := hugo.Data.schemes.base16 -}}
-  {{- $p := $d.palette -}}
-  {{- if $p -}}
-    {{- $c := slice
-      ($p.base00 | default "") ($p.base01 | default "")
-      ($p.base02 | default "") ($p.base03 | default "")
-      ($p.base04 | default "") ($p.base05 | default "")
-      ($p.base06 | default "") ($p.base07 | default "")
-      ($p.base08 | default "") ($p.base09 | default "")
-      (or (index $p "base0A") (index $p "base0a") | default "")
-      (or (index $p "base0B") (index $p "base0b") | default "")
-      (or (index $p "base0C") (index $p "base0c") | default "")
-      (or (index $p "base0D") (index $p "base0d") | default "")
-      (or (index $p "base0E") (index $p "base0e") | default "")
-      (or (index $p "base0F") (index $p "base0f") | default "")
-    -}}
-    {{- $sl = $sl | append (dict "key" $k "name" ($d.name | default $k) "colors" $c) -}}
-  {{- end -}}
+{{- range partial "all-schemes.html" . -}}
+  {{- $sl = $sl | append (dict "key" .key "name" .name "colors" .colors) -}}
 {{- end -}}
 {{- $sr := resources.FromString "js/schemes-data.json" ($sl | jsonify) | fingerprint -}}
 
@@ -163,10 +142,10 @@
 
 {{- /* app.js bundle — defer so it doesn't block first paint */ -}}
 {{- $keyboard := resources.Get "js/keyboard.js" -}}
-{{- $windows2 := resources.Get "js/windows.js" -}}
 {{- $menu := resources.Get "js/menu.js" -}}
 {{- $palette := resources.Get "js/palette.js" -}}
-{{- $jsBundle := slice $keyboard $windows2 $menu $palette | resources.Concat "js/app.js" | minify | fingerprint -}}
+{{- $themesGallery := resources.Get "js/themes-gallery.js" -}}
+{{- $jsBundle := slice $keyboard $menu $palette $themesGallery | resources.Concat "js/app.js" | minify | fingerprint -}}
 <script src="{{ $jsBundle.RelPermalink }}" defer></script>
 
 {{- /* Prerender same-origin links on hover for near-instant forward nav.

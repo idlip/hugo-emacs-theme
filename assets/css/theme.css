@@ -489,9 +489,6 @@
 }
 
 @layer components {
-  /* Typed scroll-progress var — JS writes --sp (0..1) on the .modeline. */
-  @property --sp { syntax: "<number>"; inherits: true; initial-value: 0; }
-
   /* ── Buffer frame: native document scroll, buffers are plain blocks ── */
   .buffer        { display: none; min-width: 0; }
   .buffer.active { display: block; }
@@ -544,15 +541,22 @@
   .breadcrumb-sep     { margin: 0 0.3em; opacity: 0.5; }
   .breadcrumb-current { color: var(--fg-main); opacity: 0.6; }
 
-  /* Reading progress along the modeline's top edge. JS writes --sp on .modeline;
-     transform-only (compositor) so scrolling stays smooth. Modeline has
-     overflow:hidden, so top:0 — a negative top would be clipped. */
+  @keyframes read-progress-fill {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
   .read-progress {
     position: absolute; top: 0; left: 0; right: 0; z-index: 1;
     height: 2px; background: var(--blue);
     transform-origin: 0 50%;
-    transform: scaleX(var(--sp, 0));
+    transform: scaleX(0);
     will-change: transform;
+  }
+  @supports (animation-timeline: scroll(root)) {
+    .read-progress {
+      animation: read-progress-fill linear;
+      animation-timeline: scroll(root);
+    }
   }
 
   .post-header       { margin-bottom: 2em; padding-bottom: 1em; border-bottom: 1px solid var(--border-dim); }

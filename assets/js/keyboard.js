@@ -8,7 +8,6 @@
   let selectedIndex = 0;
   let keySequence = '';
   let sequenceTimeout = null;
-  let isScrollingProgrammatically = false;
   let msgTimeout = null;
 
   // DOM
@@ -22,12 +21,10 @@
   // Are we on a single post page (no article list)?
   const isPostPage = !articleList;
 
-  // ── Shared scroll utilities (used by the list-page scroll sync) ────────────
-  // The document scrolls natively now; these centralise the rAF throttling and
-  // the document-scroll metrics so nothing duplicates the pattern.
+  // ── Shared scroll utilities ──────────────────────────────────────────────
   window.emacsBlog = window.emacsBlog || {};
   window.emacsBlog.util = window.emacsBlog.util || {
-    // Run fn at most once per animation frame (coalesces bursty scroll events).
+    // Run fn at most once per animation frame (coalesces bursty resize events).
     rafThrottle: function (fn) {
       var ticking = false;
       return function () {
@@ -35,11 +32,6 @@
         ticking = true;
         requestAnimationFrame(function () { fn(); ticking = false; });
       };
-    },
-    // Native document scroll position/extent.
-    scrollMetrics: function () {
-      var d = document.documentElement;
-      return { top: d.scrollTop, max: d.scrollHeight - d.clientHeight, h: d.clientHeight };
     }
   };
 
@@ -96,9 +88,7 @@
     if (marker) marker.textContent = '>';
 
     if (scroll) {
-      isScrollingProgrammatically = true;
       sel.scrollIntoView({ block: 'nearest', behavior: 'instant' });
-      setTimeout(function () { isScrollingProgrammatically = false; }, 50);
     }
 
     updateListModeline();
@@ -315,30 +305,6 @@
     }
   }
 
-  // ── Scroll sync (list page) ────────────────────────────────────────────────
-
-  // Sync the list cursor to the document scroll position (native page scroll).
-  function handleListScroll() {
-    if (isScrollingProgrammatically) return;
-    var items = getArticleItems();
-    if (!items.length) return;
-    var m = window.emacsBlog.util.scrollMetrics();
-    if (m.top >= m.max - 4) {           // at page bottom → last item
-      if (selectedIndex !== items.length - 1) updateSelection(items.length - 1, false);
-      return;
-    }
-    var offset = 64;                     // clear the sticky menu-bar
-    var closest = 0, closestDist = Infinity;
-    items.forEach(function (item, i) {
-      var top = item.getBoundingClientRect().top - offset; // viewport-relative
-      if (top >= -item.offsetHeight / 2) {
-        var d = Math.abs(top);
-        if (d < closestDist) { closestDist = d; closest = i; }
-      }
-    });
-    if (closest !== selectedIndex) updateSelection(closest, false);
-  }
-
   // ── Init ───────────────────────────────────────────────────────────────────
 
   function init() {
@@ -361,34 +327,9 @@
       window.addEventListener('resize', util.rafThrottle(setMenuH), { passive: true });
     }
 
-    // Post pages: one passive, rAF-throttled listener updates the modeline.
-    // Single scrollMetrics() read, then batched writes — one custom prop --sp
-    // (0..1) that CSS turns into the fill (scaleX) and the arrowhead (translateX),
-    // plus the % text. transform-only visuals + contained layer = smooth scroll.
-    if (isPostPage) {
-      var modeline = document.querySelector('.modeline');
-      var posEl = modeline && modeline.querySelector('[data-scroll-position]');
-      if (modeline) {
-        var updateProgress = function () {
-          var m = util.scrollMetrics();
-          var p = m.max > 0 ? m.top / m.max : 0;
-          modeline.style.setProperty('--sp', p);
-          if (posEl) {
-            if (m.max <= 0)              posEl.textContent = 'All';
-            else if (m.top <= 0)         posEl.textContent = 'Top';
-            else if (m.top >= m.max - 1) posEl.textContent = 'Bot';
-            else                         posEl.textContent = Math.round(p * 100) + '%';
-          }
-        };
-        window.addEventListener('scroll', util.rafThrottle(updateProgress), { passive: true });
-        updateProgress();
-      }
-    }
-
     if (!isPostPage) {
       updateSelection(0, false);
       updateListModeline();
-      window.addEventListener('scroll', util.rafThrottle(handleListScroll), { passive: true });
 
       if (articleList) {
         articleList.addEventListener('mouseover', function (e) {

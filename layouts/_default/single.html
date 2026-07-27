@@ -88,7 +88,7 @@
     "readingtime" .ReadingTime
     "date"        (cond (not .Date.IsZero) (.Date.Format "2006-01-02") (now.Format "2006-01-02"))
     "widthtoggle" true
-    "scrollpos"   true
+    "scrollpos"   false
     "progress"    (or (gt .ReadingTime 3) (gt .WordCount 500))
   ) }}
 </section>

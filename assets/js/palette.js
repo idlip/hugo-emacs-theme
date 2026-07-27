@@ -140,6 +140,7 @@
           localStorage.setItem('emacs-custom-palette', JSON.stringify({ key: key, name: name, colors: colors }));
           document.documentElement.removeAttribute('data-scheme');
           snap = null; dlg.close();
+          window.emacsBlog?.menu?.refreshPinState?.();
         }});
       }
     });

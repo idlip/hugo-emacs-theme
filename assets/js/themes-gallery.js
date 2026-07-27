@@ -54,6 +54,8 @@
       snap = null;
       window.emacsBlog && window.emacsBlog.keyboard && window.emacsBlog.keyboard.showMessage
         && window.emacsBlog.keyboard.showMessage('Pinned: ' + name);
+      window.emacsBlog && window.emacsBlog.menu && window.emacsBlog.menu.refreshPinState
+        && window.emacsBlog.menu.refreshPinState();
     });
   });
 }());

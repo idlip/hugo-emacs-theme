@@ -555,6 +555,7 @@
   @supports (animation-timeline: scroll(root)) {
     .read-progress {
       animation: read-progress-fill linear;
+      animation-duration: 1ms;
       animation-timeline: scroll(root);
     }
   }

@@ -262,10 +262,6 @@
           updateSelection(getArticleItems().length - 1);
           e.preventDefault();
           break;
-        case '/':
-          document.getElementById('post-search')?.focus();
-          e.preventDefault();
-          break;
       }
     }
 

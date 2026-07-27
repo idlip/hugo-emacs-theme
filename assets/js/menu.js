@@ -70,7 +70,7 @@
   // the menu's active-marker + pin label to whatever is already showing.
   function initRandomScheme() {
     const custom = localStorage.getItem('emacs-custom-palette') !== null;
-    const pinned = localStorage.getItem('emacs-scheme-fixed') !== null;
+    const pinned = isPinned();
     updateSchemeMarkers(document.documentElement.getAttribute('data-scheme') || '');
     updatePinLabel(pinned);
 
@@ -84,11 +84,23 @@
     }
   }
 
+  // Pinned = either mechanism: emacs-scheme-fixed (menu presets, e.g. haki,
+  // dracula) or emacs-custom-palette (the "t " picker / /themes gallery, any
+  // of the 305+ base16 schemes). Both mean "persists across reloads".
+  function isPinned() {
+    return localStorage.getItem('emacs-scheme-fixed') !== null
+        || localStorage.getItem('emacs-custom-palette') !== null;
+  }
+
   function fixScheme() {
-    const isPinned = localStorage.getItem('emacs-scheme-fixed') !== null;
-    if (isPinned) {
-      // Unpin — go back to random each session
-      localStorage.removeItem('emacs-scheme-fixed');
+    if (isPinned()) {
+      // Unpin — go back to random each session. Clear whichever mechanism
+      // is actually active so the two never end up in a conflicting state.
+      if (localStorage.getItem('emacs-custom-palette') !== null) {
+        window.emacsBlog?.palette?.clearCustomPalette?.();
+      } else {
+        localStorage.removeItem('emacs-scheme-fixed');
+      }
       updatePinLabel(false);
       showMsg('Scheme unpinned (random each session)');
     } else {
@@ -443,5 +455,6 @@
 
   window.emacsBlog = window.emacsBlog || {};
   window.emacsBlog.menu = { toggleTheme, adjustFontSize, resetFontSize,
-                             closeAllMenus, applyScheme, cycleWidth, cycleFontMode, cycleAlign };
+                             closeAllMenus, applyScheme, cycleWidth, cycleFontMode, cycleAlign,
+                             refreshPinState: function () { updatePinLabel(isPinned()); } };
 })();

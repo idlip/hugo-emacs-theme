@@ -74,11 +74,10 @@
 {{- /* CSS - Combined and minified */ -}}
 {{- $theme := resources.Get "css/theme.css" -}}
 {{- $custom := resources.Get "css/custom.css" -}}
-{{- $schemes := resources.Get "css/schemes.css" -}}
 {{- /* Preset scheme blocks generated from base16 yaml (partials/scheme-css.html). */ -}}
 {{- $schemesGen := partial "scheme-css.html" . | resources.FromString "css/schemes-gen.css" -}}
 
-{{- $allCSS := slice $theme $custom $schemes $schemesGen | resources.Concat "css/bundle.css" | minify | fingerprint -}}
+{{- $allCSS := slice $theme $custom $schemesGen | resources.Concat "css/bundle.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $allCSS.RelPermalink }}" integrity="{{ $allCSS.Data.Integrity }}">
 
 {{- /* Preload critical font only (headings, 32 KiB) */ -}}

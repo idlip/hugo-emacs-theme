@@ -968,6 +968,7 @@
    Last layer, so it wins over every earlier layer regardless of specificity —
    mirroring the old mobile.css that was concatenated last. */
 @layer overrides {
+  .center { display: flex; width: fit-content; margin-inline: auto; align-items: center; justify-content: center; }
   /* Tablet */
   @media screen and (width <= 1024px) {
     .article-meta { gap: 0.5em; }

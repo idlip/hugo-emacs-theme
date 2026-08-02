@@ -16,7 +16,7 @@
       </div>
       {{- /* .post-body so home prose reads like a post body and responds to the
              `a` alignment cycle (justify / normal / columns). */ -}}
-      <div class="post-body">{{ .Content }}</div>
+      <div class="post-body">{{ .Content | replaceRE `<img ` `<img loading="lazy" decoding="async" ` | safeHTML }}</div>
     </article>
     <footer>{{ partial "footer" . }}</footer>
   </div>

@@ -154,10 +154,13 @@
   }
 
   /* ── Font mode cycling ──────────────────────────────────────────────── */
+  [data-font="mono"]   { --body-font-family: var(--code-font); }
   [data-font="sans"]   { --body-font-family: var(--sans-font); }
   [data-font="serif"]  { --body-font-family: var(--serif-font); }
-  [data-font="mixed"]  { --body-font-family: var(--sans-font); }
-  /* In "mixed": body→sans, code/pre keep --code-font (set explicitly elsewhere) */
+  /* "Mixed" defaults prose to serif; structure/meta/UI overridden to sans
+     below (@layer components, "Mixed font mode"). Code/pre/verbatim stay
+     mono always, independent of font mode entirely (custom.css). */
+  [data-font="mixed"]  { --body-font-family: var(--serif-font); }
 
   /* ============================================================
      MODUS VIVENDI — dark default
@@ -419,6 +422,19 @@
     & code { display: block; padding: 1em; overflow-x: auto; background: none; font-size: 0.9rem; line-height: 1.5; }
   }
 
+  .code-copy-btn {
+    position: absolute; top: 0.3em; right: 0.5em; z-index: 2;
+    padding: 0.15em 0.6em;
+    border: 1px solid var(--border-dim); border-radius: 3px;
+    background: var(--bg-dim); color: var(--fg-dim);
+    font-size: 0.72rem; font-family: var(--code-font);
+    opacity: 0; transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    &:hover { color: var(--fg-main); border-color: var(--border-highlight); }
+    &.copied { color: var(--green); border-color: var(--green); opacity: 1; }
+  }
+  pre:is(:hover, :focus-within) .code-copy-btn,
+  .code-copy-btn:focus-visible { opacity: 1; }
+
   /* ── Chroma syntax highlighting (Hugo default classes) ── */
   .highlight {
     background-color: var(--code-bg);
@@ -582,6 +598,13 @@
     & h3 { margin-top: 1.5em; }
     & :is(ul, ol, pre, blockquote) { margin-bottom: 1em; }
     & img { display: block; margin: 1em auto; max-width: 100%; }
+    & :is(h2, h3, h4, h5, h6) .heading-anchor {
+      margin-left: 0.4em; font-size: 0.75em; color: var(--fg-dim); text-decoration: none;
+      opacity: 0; transition: opacity 0.15s, color 0.15s;
+    }
+    & :is(h2, h3, h4, h5, h6):hover .heading-anchor,
+    & .heading-anchor:focus-visible { opacity: 1; }
+    & .heading-anchor:hover { color: var(--link); }
   }
 
   /* ── List page layout ── */
@@ -1038,4 +1061,20 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+@layer components {
+  /* ── Mixed font mode ──────────────────────────────────────────────────
+     Prose (paragraphs, list items, blockquotes, table data) reads in serif —
+     inherited from --body-font-family set above; no rule needed, it's the
+     baseline. Structure/meta/UI elements are overridden to sans here: they're
+     scanned, not read, so they get the neutral register (classic serif-body /
+     sans-byline editorial split). Table headers are labels, so sans; table
+     data stays the inherited serif. Code/pre/verbatim stay mono always,
+     independent of font mode entirely (custom.css). */
+  [data-font="mixed"] :is(.post-meta, .breadcrumbs, .table-of-contents, .references,
+                          .post-comment, .callout, .sidenote, .todo) {
+    font-family: var(--sans-font);
+  }
+  [data-font="mixed"] .post-body th { font-family: var(--sans-font); }
 }

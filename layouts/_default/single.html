@@ -50,7 +50,9 @@
       {{- end }}
       
       <div class="post-body">
-        {{ .Content }}
+        {{- /* Lazy-load images below the fold; org output has no loading/decoding
+               attrs of its own, so this is a pure addition (no clobbering). */ -}}
+        {{ .Content | replaceRE `<img ` `<img loading="lazy" decoding="async" ` | safeHTML }}
       </div>
       
       {{- /* references.html renders both the References list and the See Also

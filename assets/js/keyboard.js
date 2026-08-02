@@ -301,6 +301,51 @@
     }
   }
 
+  // ── Code copy buttons ────────────────────────────────────────────────────
+  // Chroma puts data-lang on <code>, not <pre> — the pre::before lang label
+  // (theme.css) reads it from <pre>, so it silently never fired. Copy it up
+  // while we're already walking every code block for the copy button.
+  function addCodeCopyButtons() {
+    document.querySelectorAll('.post-body pre').forEach(function (pre) {
+      var code = pre.querySelector('code');
+      if (!code) return;
+      var lang = code.getAttribute('data-lang');
+      if (lang) pre.setAttribute('data-lang', lang);
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'code-copy-btn';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', 'Copy code to clipboard');
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(code.textContent).then(function () {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          clearTimeout(btn._copyReset);
+          btn._copyReset = setTimeout(function () {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 1500);
+        }).catch(function () {});
+      });
+      pre.appendChild(btn);
+    });
+  }
+
+  // ── Heading anchor links ─────────────────────────────────────────────────
+  // go-org already assigns sequential ids (headline-N) to post headings; add
+  // a visible, focusable link to each so sections are directly linkable.
+  function addHeadingAnchors() {
+    document.querySelectorAll('.post-body :is(h2, h3, h4, h5, h6)[id]').forEach(function (h) {
+      var a = document.createElement('a');
+      a.className = 'heading-anchor';
+      a.href = '#' + h.id;
+      a.setAttribute('aria-label', 'Link to this section');
+      a.textContent = '#';
+      h.appendChild(a);
+    });
+  }
+
   // ── Init ───────────────────────────────────────────────────────────────────
 
   function init() {
@@ -321,6 +366,11 @@
       setMenuH();
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(setMenuH);
       window.addEventListener('resize', util.rafThrottle(setMenuH), { passive: true });
+    }
+
+    if (isPostPage) {
+      addCodeCopyButtons();
+      addHeadingAnchors();
     }
 
     if (!isPostPage) {

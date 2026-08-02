@@ -168,11 +168,13 @@
   }
 
   // ── Font Mode Cycling ─────────────────────────────────────────────────────
-  // Mono → Sans → Serif → Mixed (body sans + code mono)
+  // Mono → Sans → Serif → Mixed (prose serif, structure/meta sans, code mono)
+  // Mixed is the default for first-time visitors (no saved preference).
 
   const FONT_STEPS = ['mono', 'sans', 'serif', 'mixed'];
   const FONT_LABELS = { mono: 'Mono', sans: 'Sans', serif: 'Serif', mixed: 'Mixed' };
-  let fontIdx = 0;
+  const FONT_DEFAULT = 'mixed';
+  let fontIdx = FONT_STEPS.indexOf(FONT_DEFAULT);
 
   function cycleFontMode() {
     fontIdx = (fontIdx + 1) % FONT_STEPS.length;
@@ -184,10 +186,9 @@
 
   function restoreFontMode() {
     const saved = localStorage.getItem('emacs-font-mode');
-    if (saved && FONT_STEPS.includes(saved)) {
-      fontIdx = FONT_STEPS.indexOf(saved);
-      document.documentElement.setAttribute('data-font', saved);
-    }
+    const mode = (saved && FONT_STEPS.includes(saved)) ? saved : FONT_DEFAULT;
+    fontIdx = FONT_STEPS.indexOf(mode);
+    document.documentElement.setAttribute('data-font', mode);
   }
 
   // ── Text Alignment Cycling ────────────────────────────────────────────────

@@ -335,10 +335,7 @@
     text-align: justify;
     -webkit-hyphens: auto; hyphens: auto;
     text-wrap: pretty;
-    & p { margin-bottom: 1em; text-indent: 1.5em; }
-    /* First paragraph, or one after a non-paragraph block, starts flush. */
-    & > p:first-child,
-    & > :is(h1, h2, h3, h4, h5, h6, blockquote, pre, ul, ol, figure, hr, table, .callout) + p { text-indent: 0; }
+    & p { margin-bottom: 1em; }
   }
   html[data-align="normal"] .post-body { text-align: left; -webkit-hyphens: none; hyphens: none; }
   html[data-align="columns"] .post-body {
@@ -597,7 +594,7 @@
     & h2 { margin-top: 2em; }
     & h3 { margin-top: 1.5em; }
     & :is(ul, ol, pre, blockquote) { margin-bottom: 1em; }
-    & img { display: block; margin: 1em auto; max-width: 100%; }
+    & img { display: block; margin: 1em auto; max-width: 100%; cursor: zoom-in; }
     & :is(h2, h3, h4, h5, h6) .heading-anchor {
       margin-left: 0.4em; font-size: 0.75em; color: var(--fg-dim); text-decoration: none;
       opacity: 0; transition: opacity 0.15s, color 0.15s;
@@ -956,6 +953,15 @@
   }
   .palette-item-icon { flex: none; width: 1.3em; text-align: center; color: var(--fg-dim); opacity: 0.85; }
   .palette-item-title { flex: 1; min-width: 0; font-size: 0.92rem; color: var(--fg-main); }
+
+  /* ── Image lightbox (native <dialog>) ── */
+  #image-lightbox {
+    padding: 0; border: none; outline: 2px dashed var(--border-highlight); out ; background: transparent;
+    max-width: 92vw; max-height: 92vh;
+    margin: auto;
+    &::backdrop { background: color-mix(in oklch, black 75%, transparent); }
+    & img { display: block; max-width: 92vw; max-height: 92vh; width: auto; height: auto; cursor: zoom-out; }
+  }
 }
 
 /* ── Responsive + environment overrides ────────────────────────────────────

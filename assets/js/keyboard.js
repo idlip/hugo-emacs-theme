@@ -346,6 +346,25 @@
     });
   }
 
+  // ── Image lightbox ───────────────────────────────────────────────────────
+  // Click a post image to view it full-size in the shared <dialog> (baseof.html).
+  // Esc and backdrop-click close it natively/via the same idiom as the palette.
+  function initImageLightbox() {
+    var imgs = document.querySelectorAll('.post-body img');
+    if (!imgs.length) return;
+    var dlg = document.getElementById('image-lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    if (!dlg || !lbImg) return;
+    imgs.forEach(function (img) {
+      img.addEventListener('click', function () {
+        lbImg.src = img.currentSrc || img.src;
+        lbImg.alt = img.alt || '';
+        dlg.showModal();
+      });
+    });
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+  }
+
   // ── Init ───────────────────────────────────────────────────────────────────
 
   function init() {
@@ -371,6 +390,7 @@
     if (isPostPage) {
       addCodeCopyButtons();
       addHeadingAnchors();
+      initImageLightbox();
     }
 
     if (!isPostPage) {

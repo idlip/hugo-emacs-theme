@@ -1,1 +1,1 @@
-{{- partial "rss-body.xml" . -}}
+{{- partial "atom-body.xml" . -}}

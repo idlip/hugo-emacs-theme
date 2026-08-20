@@ -188,5 +188,12 @@
 {{ template "_internal/google_analytics.html" . }}
 {{- end }}
 
+{{- /* Umami (self-hosted) */ -}}
+{{ if hugo.IsProduction -}}
+{{ with .Site.Params.umamiWebsiteID }}
+<script defer src="{{ $.Site.Params.umamiScriptURL }}" data-website-id="{{ . }}"></script>
+{{- end }}
+{{- end }}
+
 {{- /* Site extension point (override at site level to add head tags) */ -}}
 {{- partial "extended_head.html" . -}}

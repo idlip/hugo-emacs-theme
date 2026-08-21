@@ -99,7 +99,8 @@
     --syntax-keyword:      var(--base0E);
     --syntax-builtin:      var(--base09);
     --syntax-string:       var(--base0B);
-    --syntax-comment:      var(--base03);
+    --syntax-comment:      var(--base03);   /* fallback */
+    --syntax-comment:      color-mix(in oklch, var(--base05) 70%, var(--base00));
     --syntax-function:     var(--base0D);
     --syntax-variable:     var(--base08);
     --syntax-constant:     var(--base0E);
@@ -224,8 +225,7 @@
 }
 
 @layer base {
-  /* Layout token JS overwrites on load / after fonts / on resize (fallback ≈ desktop bar). */
-  :root { --menu-h: 2rem; }
+  :root { --menu-h: calc(2.3rem + env(safe-area-inset-top, 0px)); }
 
   /* ── Reset ── */
   *, *::before, *::after { box-sizing: border-box; }
@@ -328,16 +328,14 @@
 }
 
 @layer components {
-  /* ── Reading: book indent + alignment cycle (post body only) ───────────────
-     Justified with hyphenation by default; first line of each paragraph indented,
-     no blank line between paragraphs. The `a` key / data-align cycles the alignment. */
-  .post-body {
-    text-align: justify;
-    -webkit-hyphens: auto; hyphens: auto;
+
+    .post-body {
+    text-align: left;
+    -webkit-hyphens: none; hyphens: none;
     text-wrap: pretty;
     & p { margin-bottom: 1em; }
   }
-  html[data-align="normal"] .post-body { text-align: left; -webkit-hyphens: none; hyphens: none; }
+  html[data-align="justify"] .post-body { text-align: justify; -webkit-hyphens: auto; hyphens: auto; }
   html[data-align="columns"] .post-body {
     column-width: 20rem; column-gap: 2.5rem;
     & :is(pre, table, figure, img, blockquote, .callout) { break-inside: avoid; }
@@ -376,7 +374,9 @@
 
   /* ── Comments ── */
   .post-comment { margin-top: 3em; padding-top: 1.5em; border-top: 2px solid var(--border-dim); }
-  .comment-label { font-size: 0.85rem; color: var(--fg-dim); margin-bottom: 0.75em; text-transform: uppercase; letter-spacing: 0.05em; }
+  /* display:block :: it is a <label>, which is inline by default; the margin below
+     only applies as it did when this was a <p>. */
+  .comment-label { display: block; font-size: 0.85rem; color: var(--fg-dim); margin-bottom: 0.75em; text-transform: uppercase; letter-spacing: 0.05em; }
   .comment-textarea {
     width: 100%; min-height: 7em; resize: vertical;
     background: var(--bg-dim); color: var(--fg-main); border: 1px solid var(--border-dim);
@@ -441,7 +441,7 @@
     & .lnt { margin-right: 0.5em; }
     & .hl { display: block; background-color: var(--bg-hl-line); }
     & .err { color: var(--red); background-color: transparent; }
-    & .lnlinks { outline: none; text-decoration: none; color: inherit; }
+    & .lnlinks { text-decoration: none; color: inherit; }
     /* keywords */
     & :is(.k, .kc, .kd, .kn, .kp, .kr, .kt) { color: var(--syntax-keyword); font-weight: bold; }
     /* names / identifiers */
@@ -515,31 +515,24 @@
     display: flex; align-items: baseline;
     cursor: pointer; font-size: 0.9rem;
     border-left: 2px solid transparent;
-    transition: background-color 0.1s;
-    &:is(:hover, :focus-within) { background: var(--list-hover-bg); }
-    &.selected { background: var(--list-selected-bg); color: var(--list-selected-fg); border-left-color: var(--blue); }
+    transition: border-color 0.15s, background-color 0.15s;
+    &:is(:hover, :focus-within) { border-left-color: var(--cursor); background: var(--list-hover-bg); }
     &.no-articles { color: var(--fg-dim); padding: 1em; }
   }
-  .article-marker { width: 1.5em; text-align: center; color: var(--fg-dim); flex-shrink: 0; }
-  .article-item.selected .article-marker { color: var(--green); }
 
   .article-meta { display: flex; gap: 1em; font-size: 0.85rem; flex-shrink: 0; margin-right: 1em; }
-  .article-item.selected .article-meta { color: var(--fg-alt); }
   .article-reading-time { color: var(--cyan-faint); }
   .article-date { width: 7em; color: var(--yellow-faint); }
   .article-title { flex: 1; white-space: normal; word-wrap: break-word; color: var(--fg-main); }
-  .article-item.selected .article-title       { color: var(--magenta); }
-  .article-item.selected .article-reading-time { color: var(--cyan); }
-  .article-item.selected .article-date         { color: var(--yellow); }
+  .article-item:is(:hover, :focus-within) .article-title { text-decoration: underline; }
 
   .article-link {
     display: flex; align-items: baseline; flex: 1; min-width: 0;
     text-decoration: none; color: inherit; padding: 0.35em 0.75em;
-    &:is(:hover, :focus-visible, :visited) { text-decoration: none; color: inherit; outline: none; }
+    &:is(:hover, :focus-visible, :visited) { text-decoration: none; color: inherit; }
   }
 
   .article-type-icon { width: 1.4em; text-align: center; flex-shrink: 0; color: var(--fg-dim); font-size: 0.85em; margin-right: 0.5em; }
-  .article-item.selected .article-type-icon { color: var(--cyan-cooler); }
 
   .nf-sm { font-size: 0.85em; opacity: 0.7; margin-right: 0.2em; }
 
@@ -640,7 +633,7 @@
     padding: 0.15em 0.5em; border: 1px solid var(--border); border-radius: 2px;
     color: var(--cyan-cooler); font-size: 0.78rem;
     opacity: 0.8; transition: opacity 0.1s, border-color 0.1s, background 0.1s;
-    &:is(:hover, :focus-visible) { opacity: 1; border-color: var(--cyan-cooler); background: var(--bg-active); outline: none; }
+    &:is(:hover, :focus-visible) { opacity: 1; border-color: var(--cyan-cooler); background: var(--bg-active); }
     &.active { opacity: 1; border-color: var(--cursor); background: var(--bg-hl-line); color: var(--cursor); }
   }
   .tag-cloud-count { font-size: 0.7em; color: var(--fg-dim); opacity: 0.85; }
@@ -667,7 +660,7 @@
     color: var(--fg-main); text-decoration: none;
     padding: 0.25em 0.5em; border-left: 2px solid transparent;
     transition: border-color 0.15s, background 0.15s;
-    &:is(:hover, :focus-visible) { border-left-color: var(--cursor); background: var(--bg-active); text-decoration: none; color: var(--fg-main); outline: none; }
+    &:is(:hover, :focus-visible) { border-left-color: var(--cursor); background: var(--bg-active); text-decoration: none; color: var(--fg-main); }
   }
   .social-label { font-size: 0.9em; color: var(--fg-dim); }
 
@@ -676,15 +669,29 @@
   .wander-hint   { flex: 1; font-size: 0.85rem; color: var(--fg-dim); }
   .wander-btn    {
     display: inline-flex; align-items: center; gap: 0.5em; padding: 0.3em 0.9em; border: 1px solid var(--border); color: var(--cyan-cooler); background: var(--bg-dim); text-decoration: none; font-size: 0.85rem; transition: border-color 0.1s;
-    &:is(:hover, :focus-visible) { border-color: var(--cyan-cooler); outline: none; }
+    &:is(:hover, :focus-visible) { border-color: var(--cyan-cooler); }
   }
   .wander-list .article-title { flex: 1; }
   .wander-list .article-date  { flex: 1; width: auto; color: var(--blue); }
   .wander-desc { font-size: 0.85rem; color: var(--fg-alt); min-width: 0; }
 
   /* ── Topic listing (wander, projects, media, …) ── */
-  .topic-item { align-items: flex-start; }
+  /* The whole card is one click target. HTML forbids nesting <a> inside <a>, so
+     the title anchor is *stretched* over the card with a transparent ::after
+     instead of wrapping it :: one link, one tab stop, and the tag/ref links stay
+     real separate links above the overlay. Card needs position: relative to be
+     the overlay's containing block.
+     Known tradeoff: the overlay sits over the description, so drag-selecting that
+     text no longer works. Pure CSS has no fix for that; JS would be needed. */
+  .topic-item { align-items: flex-start; position: relative; }
   .topic-item .article-link { flex-direction: column; align-items: flex-start; gap: 0.15em; }
+  .topic-item .project-name::after { content: ""; position: absolute; inset: 0; z-index: 0; }
+  /* Anything clickable inside the card must sit above the overlay, or the overlay
+     swallows its clicks. .wander-desc is author HTML and may contain links. */
+  .topic-item :is(.project-ref-link, .project-tag, .wander-desc a) { position: relative; z-index: 1; }
+  /* Card hover/focus also recolours the title. The underline itself comes from
+     the shared .article-item rule above, which every listing gets. */
+  .topic-item:is(:hover, :focus-within) .project-name { color: var(--cyan-cooler); }
 
   /* Topic pages: grid / card view (toggled by #view-toggle, persisted in JS). */
   .article-list.is-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.6em; padding: 0.5em 0.75em; }
@@ -708,26 +715,25 @@
   .scheme-card-swatches .swatch { width: 1rem; height: 1rem; border-radius: 2px; flex-shrink: 0; }
   .scheme-card-author {
     font-size: 0.78rem; color: var(--fg-dim); text-decoration: none;
-    &:is(:hover, :focus-visible) { color: var(--cyan-cooler); text-decoration: underline; outline: none; }
+    &:is(:hover, :focus-visible) { color: var(--cyan-cooler); text-decoration: underline; }
   }
 
   .project-left { display: flex; flex-direction: column; align-items: center; width: 2.5em; flex-shrink: 0; gap: 0.25em; padding: 0.3em 0; }
   .project-icon { text-align: center; color: var(--fg-dim); font-size: 1.0em; }
-  .article-item.selected .project-icon { color: var(--green); }
   .project-header { display: block; width: 100%; line-height: 1.4; }
   .project-header .article-title { display: inline; }
   .project-name {
     color: inherit; text-decoration: none;
-    &:is(:hover, :focus-visible) { color: var(--cyan-cooler); outline: none; }
+    &:is(:hover, :focus-visible) { color: var(--cyan-cooler); }
   }
   .project-refs { display: inline-flex; gap: 0.2em; vertical-align: middle; }
   .project-ref-link {
     font-size: 0.72rem; font-family: var(--code-font); color: var(--chip-color, var(--fg-dim)); text-decoration: none; opacity: 0.75;
-    &:is(:hover, :focus-visible) { opacity: 1; text-decoration: underline; outline: none; }
+    &:is(:hover, :focus-visible) { opacity: 1; text-decoration: underline; }
   }
   .project-tags { display: flex; gap: 0.3em; flex-wrap: wrap; margin-top: 0.1em; }
   .project-tag { font-size: 0.72rem; padding: 0.05em 0.4em; background: var(--bg-dim); border: 1px solid var(--chip-color, var(--border-dim)); color: var(--chip-color, var(--cyan)); font-family: var(--code-font); text-decoration: none; }
-  a.project-tag:is(:hover, :focus-visible) { opacity: 0.8; outline: none; text-decoration: underline; }
+  a.project-tag:is(:hover, :focus-visible) { opacity: 0.8; text-decoration: underline; }
 }
 
 @layer chrome {
@@ -738,8 +744,11 @@
     border-bottom: 1px solid var(--menu-border);
     padding: 0; font-size: 0.9rem;
     user-select: none;
-    /* Fixed so it never moves/jitters during momentum scroll. body has
-       padding-top: var(--menu-h); JS measures the real height into --menu-h. */
+    /* Fixed so it never moves/jitters during momentum scroll. body reserves the
+       space with padding-top: var(--menu-h), and this height makes the bar match
+       that token exactly — border-box, so the 1px border and the notch padding
+       below are both inside it. */
+    height: var(--menu-h);
     position: fixed; top: 0; left: 0; right: 0;
     z-index: 100; flex-wrap: nowrap;
     /* Own compositor layer: content scrolls under without repainting the bar. */
@@ -756,7 +765,7 @@
       color: var(--menu-fg); transition: background-color 0.1s;
       & .underline { text-decoration: underline; }
     }
-    & > button:is(:hover, :focus-visible) { background: var(--menu-hover-bg); outline: none; }
+    & > button:is(:hover, :focus-visible) { background: var(--menu-hover-bg); }
     &.open > button { background: var(--menu-active-bg); }
     &.open .menu-dropdown { display: block; }
   }
@@ -773,7 +782,7 @@
     width: 100%;
     /* Keep label left + shortcut right on one line; dropdown widens to fit. */
     white-space: nowrap; text-align: left;
-    &:is(:hover, :focus-visible) { background: var(--menu-hover-bg); outline: none; }
+    &:is(:hover, :focus-visible) { background: var(--menu-hover-bg); }
     &.disabled { color: var(--fg-dim); pointer-events: none; }
   }
   .menu-shortcut { color: var(--fg-dim); font-size: 0.85em; margin-left: 2em; }
@@ -784,7 +793,7 @@
   /* Scheme option — preview colours from inline CSS vars */
   .scheme-option {
     background: var(--p-bg, var(--menu-bg)); color: var(--p-fg, var(--menu-fg)); gap: 0.5em;
-    &:is(:hover, :focus-visible) { filter: brightness(1.15); outline: none; }
+    &:is(:hover, :focus-visible) { filter: brightness(1.15); }
     &.active .scheme-dot { background: var(--p-accent, currentColor); }
   }
   .scheme-dot {
@@ -798,7 +807,7 @@
     flex: 1; display: flex; align-items: center; justify-content: center;
     gap: 0.3em; padding: 0.4em 0.6em; color: var(--fg-dim); font-size: 0.82rem;
     transition: background 0.1s, color 0.1s;
-    &:is(:hover, :focus-visible) { background: var(--menu-hover-bg); color: var(--fg-main); outline: none; }
+    &:is(:hover, :focus-visible) { background: var(--menu-hover-bg); color: var(--fg-main); }
     & + .scheme-action-btn { border-left: 1px solid var(--menu-border); }
   }
 
@@ -810,7 +819,7 @@
     transition: background 0.12s, color 0.12s, border-color 0.12s; margin-left: 0.3em;
   }
   :is(.menu-bar-btn, .scheme-popup-btn):is(:hover, :focus-visible, [aria-expanded="true"]) {
-    background: var(--menu-hover-bg); color: var(--fg-main); border-color: var(--border); outline: none;
+    background: var(--menu-hover-bg); color: var(--fg-main); border-color: var(--border);
   }
 
   .scheme-popup {
@@ -837,13 +846,13 @@
   /* Site title */
   .menu-bar-title {
     color: var(--fg-dim); font-size: 0.85rem; padding: 0 1em; text-decoration: none;
-    &:is(:hover, :focus-visible) { color: var(--fg-main); outline: none; }
+    &:is(:hover, :focus-visible) { color: var(--fg-main); }
   }
 
   /* ── Hamburger ── */
   .menu-hamburger {
     display: none; padding: 0.5em; color: var(--menu-fg); font-size: 1.2rem;
-    &:is(:hover, :focus-visible) { background: var(--menu-hover-bg); outline: none; }
+    &:is(:hover, :focus-visible) { background: var(--menu-hover-bg); }
   }
 }
 
@@ -896,10 +905,6 @@
 
   .ml-sep { color: var(--modeline-border); padding: 0 1ch; flex-shrink: 0; @media (width <= 768px) { padding: 0 0.3ch; } }
   .ml-date-icon { color: var(--yellow-faint); font-size: 0.9em; }
-  .ml-pos {
-    color: var(--fg-dim); font-variant-numeric: tabular-nums; white-space: nowrap;
-    & [data-scroll-position] { min-width: 3ch; display: inline-block; text-align: right; }
-  }
   .ml-wc { color: var(--blue-faint); }
   .ml-readtime { color: var(--cyan-faint); opacity: 0.75; font-size: 0.9em; }
   .ml-date { color: var(--yellow-faint); opacity: 0.8; }
@@ -976,6 +981,10 @@
 
   /* Mobile */
   @media screen and (width <= 768px) {
+    /* Taller bar here: the hamburger (1.2rem glyph + 0.5em padding block = 3.12rem)
+       replaces the desktop button row, and .menu-items moves out of flow below. */
+    :root { --menu-h: calc(3.2rem + env(safe-area-inset-top, 0px)); }
+
     /* Menu: hidden by default, revealed via hamburger */
     .menu-bar .menu-items {
       display: none;
@@ -994,7 +1003,6 @@
 
     /* Article list */
     .article-meta   { display: none; }
-    .article-marker { display: none; }
     .article-item   { flex-wrap: wrap; padding: 0.5em 0.75em; }
     .article-title  { width: 100%; }
     .article-item .article-link { flex: 0 0 100%; padding: 0.5em 0.75em 0.2em; }

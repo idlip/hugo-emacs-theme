@@ -1,3 +1,12 @@
+#+begin_quote
+[2026-08-21 Fri]
+*IMPORTANT:* This theme has drifted alot from fork, so I'm archiving it here. Thanks to fork for inspiration [[https://github.com/ArthurHeymans/hugo-emacs-theme][ArthurHeymans/hugo-emacs-theme]].
+
+Active development has moved to a new repository with a clean commit history: [[https://github.com/idlip/hakimacs][Hakimacs]].
+
+No further commits will land here, please use the new repo for updates and new looks.
+#+end_quote
+
 This fork project has deviated and has additions personally wanted only
 for my site. You are encouraged to either fork or copy into your hugo
 site and modify as you require.

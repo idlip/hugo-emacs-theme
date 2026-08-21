@@ -5,35 +5,16 @@
 (function () {
   'use strict';
 
-  let selectedIndex = 0;
   let keySequence = '';
   let sequenceTimeout = null;
   let msgTimeout = null;
 
   // DOM
   const articleList = document.getElementById('article-list');
-  // wander/projects use #buffer-content instead of #buffer-list — fall back so
-  // scroll-sync and modeline updates work on those pages too
-  const bufferList  = document.getElementById('buffer-list') ||
-                      (articleList && document.getElementById('buffer-content')) || null;
   const echoMessage = document.getElementById('echo-message');
 
   // Are we on a single post page (no article list)?
   const isPostPage = !articleList;
-
-  // ── Shared scroll utilities ──────────────────────────────────────────────
-  window.emacsBlog = window.emacsBlog || {};
-  window.emacsBlog.util = window.emacsBlog.util || {
-    // Run fn at most once per animation frame (coalesces bursty resize events).
-    rafThrottle: function (fn) {
-      var ticking = false;
-      return function () {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(function () { fn(); ticking = false; });
-      };
-    }
-  };
 
   // Controlled page scroll (~1 screen with overlap). Native PageDown jumps a
   // full viewport, which overshoots to the bottom on short pages; this keeps
@@ -60,63 +41,6 @@
     echoMessage.textContent = '? help';
   }
 
-  // ── List helpers ───────────────────────────────────────────────────────────
-
-  function getArticleItems() {
-    return articleList ? Array.from(articleList.querySelectorAll('.article-item')) : [];
-  }
-
-  function updateSelection(newIndex, scroll) {
-    scroll = scroll !== false;
-    const items = getArticleItems();
-    if (!items.length) return;
-
-    newIndex = Math.max(0, Math.min(newIndex, items.length - 1));
-
-    items.forEach(function (item) {
-      item.classList.remove('selected');
-      item.setAttribute('aria-selected', 'false');
-      var m = item.querySelector('.article-marker');
-      if (m) m.textContent = ' ';
-    });
-
-    selectedIndex = newIndex;
-    var sel = items[selectedIndex];
-    sel.classList.add('selected');
-    sel.setAttribute('aria-selected', 'true');
-    var marker = sel.querySelector('.article-marker');
-    if (marker) marker.textContent = '>';
-
-    if (scroll) {
-      sel.scrollIntoView({ block: 'nearest', behavior: 'instant' });
-    }
-
-    updateListModeline();
-  }
-
-  function updateListModeline() {
-    var items = getArticleItems();
-    var modeline = bufferList && bufferList.querySelector('.modeline');
-    if (!modeline) return;
-    var scrollEl = modeline.querySelector('[data-scroll-position]');
-    if (scrollEl) {
-      if (!items.length)               scrollEl.textContent = 'Empty';
-      else if (selectedIndex === 0)    scrollEl.textContent = 'Top';
-      else if (selectedIndex === items.length - 1) scrollEl.textContent = 'Bot';
-      else scrollEl.textContent = Math.round((selectedIndex / (items.length - 1)) * 100) + '%';
-    }
-  }
-
-  function openSelected() {
-    var items = getArticleItems();
-    if (!items.length) return;
-    var item = items[selectedIndex];
-    var url = item.dataset.url;
-    if (!url) return;
-    if (item.dataset.external) window.open(url, '_blank', 'noopener');
-    else window.location.href = url;
-  }
-
   // ── Key sequences ──────────────────────────────────────────────────────────
 
   function handleKeySequence(key) {
@@ -128,14 +52,8 @@
       'gp': function () { window.location.href = '/posts/'; },
       'gw': function () { window.location.href = '/wander/'; },
       'gr': function () { window.location.href = '/repo/'; },
-      'gg': function () {
-        if (isPostPage) window.scrollTo({ top: 0 });
-        else updateSelection(0);
-      },
-      'gG': function () {
-        if (isPostPage) window.scrollTo({ top: document.documentElement.scrollHeight });
-        else updateSelection(getArticleItems().length - 1);
-      }
+      'gg': function () { window.scrollTo({ top: 0 }); },
+      'gG': function () { window.scrollTo({ top: document.documentElement.scrollHeight }); }
     };
 
     if (sequences[keySequence]) {
@@ -232,38 +150,8 @@
       // fall through to global shortcuts
     }
 
-    // ── List page shortcuts ────────────────────────────────────────────────
-    if (!isPostPage) {
-      switch (key) {
-        case 'n':
-        case 'ArrowDown':
-          updateSelection(selectedIndex + 1);
-          e.preventDefault();
-          break;
-        case 'p':
-        case 'ArrowUp':
-          updateSelection(selectedIndex - 1);
-          e.preventDefault();
-          break;
-        case 'Enter':
-        case 'o':
-          openSelected();
-          e.preventDefault();
-          break;
-        case ' ':
-          openSelected();
-          e.preventDefault();
-          break;
-        case '<':
-          updateSelection(0);
-          e.preventDefault();
-          break;
-        case '>':
-          updateSelection(getArticleItems().length - 1);
-          e.preventDefault();
-          break;
-      }
-    }
+    // List pages have no cursor of their own: rows are plain links, hovered with
+    // the mouse and focused with Tab. Arrows / Space / Page keys scroll natively.
 
     // ── Global shortcuts ───────────────────────────────────────────────────
     switch (key) {
@@ -372,39 +260,15 @@
     // Clicking the echo message opens shortcut help in palette
     echoMessage?.addEventListener('click', function () { window.emacsBlog?.palette?.open('? '); });
 
-    var util = window.emacsBlog.util;
-
-    // Measure the fixed menu-bar so chrome offsets (body padding, progress-bar
-    // top, anchor scroll-padding) track it without a magic number. Layout-time
-    // only — runs on load, after web-fonts settle, and on resize; never on scroll.
-    var menuBar = document.querySelector('.menu-bar');
-    if (menuBar) {
-      var setMenuH = function () {
-        document.documentElement.style.setProperty('--menu-h', menuBar.offsetHeight + 'px');
-      };
-      setMenuH();
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(setMenuH);
-      window.addEventListener('resize', util.rafThrottle(setMenuH), { passive: true });
-    }
+    // --menu-h (the fixed bar's height, reserved by body padding and
+    // scroll-padding) is declared in theme.css, not measured here. It is rem-based
+    // so it already tracks the +/- font-size cycle, and has a per-breakpoint value
+    // for the taller mobile bar :: which is all the old resize listener was for.
 
     if (isPostPage) {
       addCodeCopyButtons();
       addHeadingAnchors();
       initImageLightbox();
-    }
-
-    if (!isPostPage) {
-      updateSelection(0, false);
-      updateListModeline();
-
-      if (articleList) {
-        articleList.addEventListener('mouseover', function (e) {
-          var item = e.target.closest('.article-item:not(.no-articles)');
-          if (!item) return;
-          var idx = getArticleItems().indexOf(item);
-          if (idx >= 0 && idx !== selectedIndex) updateSelection(idx, false);
-        });
-      }
     }
 
     updateEchoHint();

@@ -79,19 +79,18 @@
 
 {{- with $related -}}
 <ul class="article-list similar-posts" role="list" aria-label="Related posts">
-  <li class="year-divider" role="presentation" aria-hidden="true">
+  <li class="year-divider">
     <span class="year-label">&#9655; See Also</span>
   </li>
   {{- range . }}
   <li class="article-item"
       data-url="{{ .RelPermalink }}"
-      data-title="{{ .Title | lower }}"
-      aria-selected="false">
+      data-title="{{ .Title | lower }}">
     <a href="{{ .RelPermalink }}" class="article-link">
       <span class="article-meta">
-        <span class="article-date">
+        <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">
           <span class="nf nf-sm" aria-hidden="true"> </span>{{ .Date.Format "02 Jan 2006" }}
-        </span>
+        </time>
       </span>
       <span class="article-title">{{ .Title }}</span>
     </a>

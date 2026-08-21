@@ -52,8 +52,7 @@
     <ul class="article-list" id="article-list" role="list">
       {{- $idx := 0 -}}
       {{- range $grouped }}
-      <li class="year-divider" role="presentation" aria-hidden="true"
-          data-year-sep="{{ .Key }}">
+      <li class="year-divider" data-year-sep="{{ .Key }}">
         <span class="year-label">{{ .Key }}</span>
       </li>
       {{- range .Pages }}
@@ -62,21 +61,19 @@
           data-year="{{ .Date.Format "2006" }}"
           data-url="{{ .RelPermalink }}"
           data-title="{{ .Title | lower }}"
-          data-tags="{{ range .Params.tags }}{{ . | lower }} {{ end }}"
-          aria-selected="false">
-        <span class="article-marker" aria-hidden="true"> </span>
+          data-tags="{{ range .Params.tags }}{{ . | lower }} {{ end }}">
         <a href="{{ .RelPermalink }}" class="article-link">
           <span class="article-meta">
             <span class="article-reading-time">
               <span class="nf nf-sm" aria-hidden="true"> </span>{{ .ReadingTime }}m
             </span>
-            <span class="article-date">
+            <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">
               <span class="nf nf-sm" aria-hidden="true"> </span>
               {{- /* Date option 1 – "02 Jan"  e.g. 04 Dec  */ -}}
               {{ .Date.Format "02 Jan" }}
               {{- /* Date option 2 – "01-02-2006"  e.g. 12-04-2023
               {{ .Date.Format "01-02-2006" }} */ -}}
-            </span>
+            </time>
           </span>
           {{- partial "post-icon.html" . -}}
           <span class="article-title">{{ .Title }}</span>
@@ -104,7 +101,6 @@
   {{ partial "modeline.html" (dict
     "buffer" (printf "*%s*" (.Title | default "posts" | lower))
     "mode"   "Dired"
-    "scrollpos" true
   ) }}
 </section>
 

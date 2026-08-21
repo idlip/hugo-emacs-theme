@@ -7,13 +7,14 @@
 {{- $uid := .File.UniqueID -}}
 
 <div class="post-comment">
-  <p class="comment-label">Leave a comment</p>
+  <label class="comment-label" for="comment-{{ $uid }}">Leave a comment</label>
   <textarea id="comment-{{ $uid }}"
             class="comment-textarea"
             placeholder="Write your thoughts…"
             rows="4"></textarea>
   <div class="comment-actions">
     <button class="comment-submit"
+            type="button"
             data-email="{{ $email }}"
             data-subject="Re: {{ .Title }}"
             data-uid="{{ $uid }}">

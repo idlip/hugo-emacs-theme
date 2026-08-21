@@ -15,7 +15,7 @@
         <h1 class="post-title">{{ .Title }}</h1>
       </div>
       {{- /* .post-body so home prose reads like a post body and responds to the
-             `a` alignment cycle (justify / normal / columns). */ -}}
+             `a` alignment cycle (normal / justify / columns). */ -}}
       <div class="post-body">{{ .Content |
         replaceRE `(<img[^>]*\balt=")(?:/|https?://)[^"]*("[^>]*>)\s*<figcaption>([^<]*)</figcaption>` `${1}${3}${2}<figcaption>${3}</figcaption>` |
         replaceRE `(<img[^>]*\btitle=")(?:/|https?://)[^"]*("[^>]*>)\s*<figcaption>([^<]*)</figcaption>` `${1}${3}${2}<figcaption>${3}</figcaption>` |
@@ -30,7 +30,6 @@
     "mode"     "Org"
     "readonly" true
     "keyhint"  "<kbd>x</kbd> palette"
-    "scrollpos" true
   ) }}
 </section>
 {{- else }}

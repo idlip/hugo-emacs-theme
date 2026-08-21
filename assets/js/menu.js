@@ -120,6 +120,14 @@
     if (mlLabel) mlLabel.textContent = text;
     const mlBtn = document.getElementById('ml-pin-btn');
     if (mlBtn) mlBtn.classList.toggle('pinned', pinned);
+    // Announce toggle state, not just a changed label. Three controls carry
+    // data-action="fix-scheme" (M-x dropdown, scheme popup, modeline) :: all must
+    // stay in sync or two of them read stale. The dropdown one is a
+    // menuitemcheckbox, which takes aria-checked instead of aria-pressed.
+    document.querySelectorAll('[data-action="fix-scheme"]').forEach(btn => {
+      const attr = btn.getAttribute('role') === 'menuitemcheckbox' ? 'aria-checked' : 'aria-pressed';
+      btn.setAttribute(attr, pinned ? 'true' : 'false');
+    });
   }
 
   // Live hover preview — temporarily apply hovered scheme (~15 LOC)
@@ -192,9 +200,10 @@
   }
 
   // ── Text Alignment Cycling ────────────────────────────────────────────────
-  // Normal (left) → Justified → Columns. First-line indent is always on (CSS).
-  // Justified is the default (CSS base); the attr is only set once cycled.
-  const ALIGN_STEPS  = ['justify', 'normal', 'columns'];
+  // Normal (left) -> Justified -> Columns. First-line indent is always on (CSS).
+  // Normal is the default and matches the CSS base, so index 0 is the resting
+  // state and the attribute only appears once the user actually cycles.
+  const ALIGN_STEPS  = ['normal', 'justify', 'columns'];
   const ALIGN_LABELS = { justify: 'Justified', normal: 'Normal', columns: 'Columns' };
   let alignIdx = 0;
 

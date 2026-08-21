@@ -140,7 +140,10 @@
           <span class="menu-shortcut">0</span>
         </button>
         <div class="menu-separator" role="separator"></div>
-        <button class="menu-dropdown-item" role="menuitem" data-action="fix-scheme">
+        {{- /* menuitemcheckbox, not menuitem: this is a toggle, and aria-pressed is
+               not valid on a menuitem. updatePinLabel() in menu.js keeps aria-checked
+               in sync here and aria-pressed on the two plain pin buttons. */ -}}
+        <button class="menu-dropdown-item" role="menuitemcheckbox" aria-checked="false" data-action="fix-scheme">
           <span>Pin / Unpin Scheme</span>
         </button>
         <button class="menu-dropdown-item" role="menuitem" data-action="show-help">
@@ -201,6 +204,7 @@
         <div class="menu-separator" role="separator"></div>
         <div class="scheme-popup-actions">
           <button class="scheme-action-btn" id="pin-scheme-btn" data-action="fix-scheme"
+                  aria-pressed="false"
                   title="Pin: lock current scheme, or unpin to go random each session">
             <span class="nf" aria-hidden="true">󰐅 </span> <span id="pin-scheme-label">Pin</span>
           </button>

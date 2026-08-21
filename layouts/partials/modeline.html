@@ -7,11 +7,9 @@
   - .readingtime : optional reading time in minutes
   - .date        : optional publication date string (YYYY-MM-DD)
   - .widthtoggle : true to show the width-cycle button (post pages only)
-  - .scrollpos   : true to show the Top/Bot/% position readout. Only list-type
-                   pages set this — keyboard.js drives it from the selected
-                   article index. Post pages omit it (no per-frame scroll JS).
   - .progress    : true to render the reading-progress bar hugging the modeline's
-                   top edge (post pages with enough content). JS drives scaleX.
+                   top edge (post pages with enough content). Pure CSS
+                   (animation-timeline: scroll(root)) :: no JS drives it.
 */ -}}
 
 {{- $buffer := .buffer | default "*scratch*" -}}
@@ -20,7 +18,6 @@
 {{- $rt := .readingtime | default 0 -}}
 {{- $date := .date | default "" -}}
 {{- $widthtoggle := .widthtoggle | default false -}}
-{{- $scrollpos := .scrollpos | default false -}}
 {{- $progress := .progress | default false -}}
 
 <div class="modeline" role="status">
@@ -29,7 +26,7 @@
 
     {{- if $date -}}
     <span class="ml-group ml-hide-mobile">
-      <span class="nf ml-date-icon" aria-hidden="true"> </span><span class="ml-date"> {{ $date }}</span>
+      <span class="nf ml-date-icon" aria-hidden="true"> </span><time class="ml-date" datetime="{{ $date }}"> {{ $date }}</time>
     </span>
     <span class="ml-sep ml-hide-mobile" aria-hidden="true">·</span>
     {{- end }}
@@ -48,11 +45,6 @@
     <span class="ml-wc">{{ $wc }}w</span>
     {{- end }}
 
-    {{- if $scrollpos }}
-    <span class="ml-sep" aria-hidden="true">·</span>
-    <span class="ml-pos"><span data-scroll-position>All</span></span>
-    {{- end }}
-
   </div>
 
   <span class="ml-fill" aria-hidden="true"></span>
@@ -60,6 +52,7 @@
   <div class="ml-right">
     <button class="ml-pin-btn ml-hide-mobile" id="ml-pin-btn"
             data-action="fix-scheme"
+            aria-pressed="false"
             title="Pin / unpin color scheme"><span id="ml-pin-label">Pin</span></button>
     <button class="ml-echo-msg" id="echo-message"
             data-action="show-help"

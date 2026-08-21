@@ -4,6 +4,10 @@
 */ -}}
 {{- $chipColor := .chipColor -}}
 
+{{- /* Full-line search haystack: name + desc + every "key: value" part, plain-text, lowercase.
+       Powers #topic-search in topic-list-js.html (plain substring match, no JS change needed). */ -}}
+{{- $searchText := printf "%s %s %s" .e.name .e.desc (delimit .e.parts " ") | plainify | lower -}}
+
 {{- /* Pre-scan parts for ref: key to build backlinks before rendering header */ -}}
 {{- $refPages := slice -}}
 {{- range .e.parts -}}
@@ -17,7 +21,7 @@
 {{- end -}}
 
 <li class="article-item topic-item"
-    data-url="{{ .e.url }}" data-title="{{ .e.name | lower }}" data-external="true"
+    data-url="{{ .e.url }}" data-title="{{ $searchText }}" data-external="true"
     {{- if $chipColor }} style="--chip-color: var(--{{ $chipColor }})"{{- end }}>
   <div class="project-left">
     <span class="project-icon nf" aria-hidden="true">{{ .icon }}</span>
@@ -45,9 +49,19 @@
           {{- $rawval := replaceRE `(?s)^[^:]+:(.*)$`  "$1" $p | strings.TrimSpace -}}
           {{- $url    := partial "extract-href.html" $rawval -}}
           {{- if eq $key "tag" -}}
-            <a href="{{ "/tags/" | relURL }}{{ $rawval | urlize }}/" class="project-tag" aria-label="{{ $rawval }}">{{ $rawval }}</a>
+            {{- if index site.Taxonomies.tags ($rawval | urlize) -}}
+              <a href="{{ "/tags/" | relURL }}{{ $rawval | urlize }}/" class="project-tag"
+                 title="check posts tagged as {{ $rawval }}" aria-label="check posts tagged as {{ $rawval }}">{{ $rawval }}</a>
+            {{- else -}}
+              <span class="project-tag" title="site tagged with {{ $rawval }}">{{ $rawval }}</span>
+            {{- end -}}
           {{- else if eq $key "refs" -}}
-            <a href="{{ "/refs/" | relURL }}{{ $rawval | urlize }}/" class="project-tag" aria-label="refs: {{ $rawval }}">{{ $rawval }}</a>
+            {{- if index site.Taxonomies.refs ($rawval | urlize) -}}
+              <a href="{{ "/refs/" | relURL }}{{ $rawval | urlize }}/" class="project-tag"
+                 title="check posts referencing {{ $rawval }}" aria-label="check posts referencing {{ $rawval }}">{{ $rawval }}</a>
+            {{- else -}}
+              <span class="project-tag" title="site references {{ $rawval }}">{{ $rawval }}</span>
+            {{- end -}}
           {{- else if strings.HasPrefix $url "http" -}}
             <a href="{{ $url | safeURL }}" class="project-tag" target="_blank" rel="noopener" aria-label="{{ $key }}">{{ $key }} ↗</a>
           {{- else if $rawval -}}

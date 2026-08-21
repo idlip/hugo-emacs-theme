@@ -111,7 +111,8 @@
             {{- if $doSort }}{{- $items = sort $items "name" }}{{- end }}
 
             {{- range $items }}
-            {{ partial "topic-list-item.html" (dict "e" . "icon" $icon "chipColor" $chipColor) }}
+              {{- $itemIcon := partial "resolve-icon.html" (dict "item" . "iconsMap" $iconsMap "fallback" $icon) -}}
+            {{ partial "topic-list-item.html" (dict "e" . "icon" $itemIcon "chipColor" $chipColor) }}
             {{- end -}}
 
             {{- end -}}
@@ -137,7 +138,8 @@
           {{- end }}
 
           {{- range $items }}
-          {{ partial "topic-list-item.html" (dict "e" . "icon" $icon "chipColor" $chipColor) }}
+            {{- $itemIcon := partial "resolve-icon.html" (dict "item" . "iconsMap" $iconsMap "fallback" $icon) -}}
+          {{ partial "topic-list-item.html" (dict "e" . "icon" $itemIcon "chipColor" $chipColor) }}
           {{- end -}}
 
         {{- end }}

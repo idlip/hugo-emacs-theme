@@ -39,10 +39,13 @@
 
   function run(raw) {
     var q = raw.toLowerCase().trim();
+    /* orderless: every space-separated token must appear somewhere, any order */
+    var tokens = q ? q.split(/\s+/) : [];
     var n = 0;
 
     list.querySelectorAll('.topic-item[data-title]').forEach(function (el) {
-      var ok = !q || (el.dataset.title || '').indexOf(q) !== -1;
+      var hay = el.dataset.title || '';
+      var ok = !q || tokens.every(function (t) { return hay.indexOf(t) !== -1; });
       el.dataset.searchHidden = ok ? '' : '1';
       el.style.display = q ? (ok ? '' : 'none') : '';
       if (ok) n++;

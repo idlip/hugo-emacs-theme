@@ -165,6 +165,14 @@
       case 'i':
         if (!ctrl && !meta) { toggleTheme(); e.preventDefault(); }
         break;
+      // f and 0 were advertised by the menu bar and the M-x list but had no
+      // binding here, so the key did nothing while the button worked.
+      case 'f':
+        if (!ctrl && !meta) { cycleFontMode(); e.preventDefault(); }
+        break;
+      case '0':
+        if (!ctrl && !meta) { resetFontSize(); e.preventDefault(); }
+        break;
       case 'w':
         if (!ctrl && !meta) { cycleWidth(); e.preventDefault(); }
         break;
